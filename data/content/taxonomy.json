@@ -1,0 +1,61 @@
+{
+  "types": [
+    {
+      "id": "portfolio",
+      "label": "Portfolio",
+      "group": "portfolio"
+    },
+    {
+      "id": "study",
+      "label": "Study",
+      "group": "study"
+    },
+    {
+      "id": "update",
+      "label": "Moments",
+      "group": "update"
+    }
+  ],
+  "categories": [
+    {
+      "id": "web-5",
+      "label": "ㄹㄹㅇㄴㄹㄴㅇㄹ",
+      "group": "portfolio"
+    },
+    {
+      "id": "web-4",
+      "label": "ㄹㄴㅇㄹㄴㅇ",
+      "group": "portfolio"
+    },
+    {
+      "id": "web-3",
+      "label": "ㄹㅇㄴㄹㅇㄴㄹㄴㅇㄹ",
+      "group": "portfolio"
+    },
+    {
+      "id": "web-2",
+      "label": "ㄹㅇㄴㄹㄴ",
+      "group": "portfolio"
+    },
+    {
+      "id": "web",
+      "label": "Web",
+      "group": "portfolio"
+    },
+    {
+      "id": "game",
+      "label": "Game",
+      "group": "portfolio"
+    },
+    {
+      "id": "notes",
+      "label": "notes",
+      "group": "study"
+    },
+    {
+      "id": "updates",
+      "label": "updates",
+      "group": "update"
+    }
+  ]
+}

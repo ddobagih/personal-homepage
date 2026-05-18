@@ -1,0 +1,15 @@
+{
+  "name": "thecistus-homepage",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "nodemailer": "^7.0.3"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "set-admin-email": "node scripts/set-admin-email.js",
+    "restore-content-backup": "node scripts/restore-content-backup.js"
+  }
+}

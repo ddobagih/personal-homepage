@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ko" data-analytics="on" data-analytics-endpoint="/__analytics.gif">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>thecistus.com</title>
+  <meta
+    name="description"
+    content="개인 페이지입니다. 포트폴리오, 공부글, 근황을 정리합니다."
+  >
+  <meta name="theme-color" content="#fafaf8">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="thecistus.com">
+  <meta property="og:title" content="thecistus.com | 개인 포트폴리오와 기록">
+  <meta
+    property="og:description"
+    content="개인 페이지입니다. 포트폴리오, 공부글, 근황을 정리합니다."
+  >
+  <meta property="og:url" content="https://thecistus.com/">
+  <meta property="og:image" content="https://thecistus.com/assets/og-card.svg">
+  <meta property="og:image:type" content="image/svg+xml">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="thecistus.com | 개인 포트폴리오와 기록">
+  <meta
+    name="twitter:description"
+    content="개인 페이지입니다. 포트폴리오, 공부글, 근황을 정리합니다."
+  >
+  <meta name="twitter:image" content="https://thecistus.com/assets/og-card.svg">
+  <link rel="canonical" href="https://thecistus.com/">
+  <link rel="icon" href="./assets/og-card.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="./assets/site.css?v=20260410-90">
+</head>
+<body>
+  <a class="skip-link" href="#content-start">본문으로 건너뛰기</a>
+
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#home" onclick="showPage('home'); return false;">
+        <span class="brand-name">thecistus.com</span>
+      </a>
+      <nav class="nav" aria-label="주요 섹션">
+        <a class="nav-link active" href="#home" data-page="home" onclick="showPage('home'); return false;" aria-current="page">Home</a>
+        <a class="nav-link" href="#portfolio" data-page="portfolio" onclick="showPage('portfolio'); return false;">Portfolio</a>
+        <a class="nav-link" href="#study" data-page="study" onclick="showPage('study'); return false;">Study</a>
+        <a class="nav-link" href="#updates" data-page="updates" onclick="showPage('updates'); return false;">Moments</a>
+        <a class="nav-link" href="#admin" data-page="admin" onclick="showPage('admin'); return false;">Admin</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell" id="content-start" tabindex="-1">
+    <section class="page" id="page-home">
+      <div class="shooting-star star-1"></div>
+      <div class="shooting-star star-2"></div>
+      <div class="shooting-star star-3"></div>
+      <div class="shooting-star star-4"></div>
+      <div class="hero hero-cosmos">
+        <canvas class="cosmos-canvas" id="cosmos-canvas"></canvas>
+        <div class="cosmos-vignette" aria-hidden="true"></div>
+        <div class="cosmos-overlay">
+          <div class="cosmos-copy">
+            <div class="mini-label cosmos-label" hidden></div>
+            <h1 class="hero-title" id="hero-title"></h1>
+            <p class="hero-lead" id="hero-lead" hidden></p>
+          </div>
+        </div>
+
+        <div class="cosmos-nav">
+          <button class="cosmos-nav-btn" onclick="prevCosmosSystem()" aria-label="이전 항성계">&#8592;</button>
+          <div class="cosmos-nav-info" id="cosmos-system-label">
+            <span class="cosmos-nav-info-label" hidden></span>
+            <span class="cosmos-nav-info-name">Portfolio</span>
+            <span class="cosmos-nav-info-meta">0</span>
+          </div>
+          <button class="cosmos-nav-btn" onclick="nextCosmosSystem()" aria-label="다음 항성계">&#8594;</button>
+        </div>
+
+        <div class="cosmos-empty-overlay" id="cosmos-empty-overlay" hidden>
+          <div class="cosmos-empty-icon">✦</div>
+          <p class="cosmos-empty-text">Empty</p>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Portfolio</h2>
+        </div>
+        <div class="quick-grid" id="home-grid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Study</h2>
+        </div>
+        <div class="list home-study" id="home-study"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Moments</h2>
+        </div>
+        <div class="list home-feed" id="home-feed"></div>
+      </section>
+
+      <section class="section" id="contact">
+        <div class="section-head">
+          <h2 class="section-title">Contact</h2>
+        </div>
+        <div class="contact-box">
+          <p class="contact-copy" id="contact-copy" hidden></p>
+          <div class="links" id="contact-links"></div>
+          <div class="contact-list" id="contact-list"></div>
+        </div>
+      </section>
+    </section>
+
+    <section class="page" id="page-portfolio" hidden aria-hidden="true">
+      <div class="section" id="portfolio-list-wrap">
+        <div class="section-head">
+          <h2 class="section-title">Portfolio</h2>
+        </div>
+        <div class="links" id="portfolio-filters"></div>
+        <div id="portfolio-filter-summary" hidden></div>
+        <div class="card-list" id="portfolio-list"></div>
+      </div>
+
+      <div class="post-view project-view" id="portfolio-project-view" hidden aria-hidden="true">
+        <button class="back-link back-button" type="button" onclick="closePortfolioProject()">← Projects</button>
+        <div class="project-hero" id="portfolio-project-hero">
+          <div class="project-hero-copy">
+            <div class="mini-label" id="portfolio-project-meta"></div>
+            <h1 class="post-title" id="portfolio-project-title" tabindex="-1"></h1>
+            <p class="project-hero-headline" id="portfolio-project-headline"></p>
+            <p class="project-hero-summary" id="portfolio-project-summary"></p>
+            <div class="links" id="portfolio-project-links"></div>
+          </div>
+          <aside class="project-side-panel">
+            <div class="project-side-grid" id="portfolio-project-facts"></div>
+          </aside>
+        </div>
+
+        <div class="project-showcase" id="portfolio-project-showcase-wrap" hidden>
+          <div class="section-head">
+            <h2 class="section-title">Showcase</h2>
+          </div>
+          <div class="project-showcase-grid" id="portfolio-project-showcase"></div>
+        </div>
+
+        <div class="project-section-grid" id="portfolio-project-sections"></div>
+
+        <div class="project-highlights" id="portfolio-project-highlights-wrap" hidden>
+          <div class="section-head">
+            <h2 class="section-title">Highlights</h2>
+          </div>
+          <div class="points project-points" id="portfolio-project-points"></div>
+        </div>
+
+        <div class="comments-block" id="portfolio-project-comments"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-study" hidden aria-hidden="true">
+      <div class="section" id="study-list-wrap">
+        <div class="section-head">
+          <h2 class="section-title">Study</h2>
+        </div>
+        <div class="links" id="study-filters"></div>
+        <div class="list" id="study-list"></div>
+      </div>
+      <div class="post-view" id="study-post-view" hidden aria-hidden="true">
+        <button class="back-link back-button" type="button" onclick="closeStudyPost()">← Study</button>
+        <div class="post-head">
+          <div class="mini-label" id="study-post-meta"></div>
+          <h1 class="post-title" id="study-post-title" tabindex="-1"></h1>
+          <div class="links" id="study-post-submeta"></div>
+        </div>
+        <div class="post-body" id="study-post-body"></div>
+        <div class="comments-block" id="study-comments"></div>
+        <div class="section">
+          <div class="section-head">
+            <h2 class="section-title">Continue Reading</h2>
+          </div>
+          <div class="links" id="study-related-links"></div>
+          <div class="links" id="study-post-nav"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-updates" hidden aria-hidden="true">
+      <div class="section">
+        <div class="section-head">
+          <h2 class="section-title">Moments</h2>
+        </div>
+        <div class="timeline" id="updates-list"></div>
+      </div>
+    </section>
+
+    <section class="page admin-page" id="page-admin" hidden aria-hidden="true">
+      <div class="section">
+        <div class="panel admin-auth-card" id="admin-auth-gate" hidden>
+          <form class="admin-auth-form admin-auth-flow" id="admin-auth-form" onsubmit="verifyAdminOtp(event)">
+            <div class="admin-auth-inline">
+              <label class="admin-field admin-auth-field">
+                <span class="admin-label">인증번호</span>
+                <input class="admin-input" id="admin-otp-code" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="6자리 코드">
+              </label>
+              <button class="action-btn" id="admin-request-otp-btn" type="button" onclick="requestAdminOtp()">코드 보내기</button>
+              <button class="action-btn primary" type="submit">확인</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="admin-notion-shell" id="admin-auth-shell" hidden>
+          <aside class="admin-notion-sidebar">
+            <div class="admin-notion-sidebar-actions">
+              <div class="admin-panel-tabs" id="admin-panel-tabs"></div>
+              <button class="action-btn primary" type="button" onclick="startContentDraft()">새 페이지</button>
+              <div class="admin-sidebar-tools">
+                <div class="admin-search-box">
+                  <input class="admin-input admin-search-input" id="admin-content-search" type="search" placeholder="페이지 검색" oninput="setAdminContentSearch(this.value)">
+                </div>
+              </div>
+              <div class="admin-sidebar-pages">
+                <div class="admin-page-browser-head">
+                  <div>
+                    <div class="mini-label">Pages</div>
+                    <h3 class="panel-title">게시물</h3>
+                  </div>
+                  <button class="text-link admin-filter-toggle" id="admin-filter-toggle" type="button" onclick="toggleAdminFilterPanel()">필터</button>
+                </div>
+                <div class="admin-archive-toolbar admin-page-browser-filters" id="admin-filter-panel">
+                  <div class="admin-filter-stack">
+                    <div class="links" id="admin-content-status-filters"></div>
+                  </div>
+                  <div class="admin-filter-stack">
+                    <div class="links" id="admin-content-section-filters"></div>
+                  </div>
+                  <div class="admin-filter-stack" id="admin-content-category-filter-wrap">
+                    <div class="links" id="admin-content-category-filters"></div>
+                  </div>
+                </div>
+                <div class="admin-list-head" id="admin-content-list-head"></div>
+                <div class="admin-entries" id="admin-content-list"></div>
+              </div>
+            </div>
+            <div class="admin-notion-sidebar-section admin-notion-sidebar-meta">
+              <button class="text-link" id="admin-logout-btn" type="button" onclick="logoutAdmin()">로그아웃</button>
+            </div>
+          </aside>
+
+          <div class="admin-notion-main">
+            <div class="admin-panel-screen admin-panel-screen-content" id="admin-panel-content">
+                <form class="admin-form admin-notion-form" id="admin-content-form" onsubmit="saveContentDraft(event)">
+                  <div class="admin-editor-grid">
+                    <div class="admin-content-workspace">
+                  <div class="admin-form-head admin-page-head">
+                    <div class="admin-page-title-wrap">
+                      <div class="admin-page-title-stack">
+                      <div class="admin-page-title-editable" id="admin-page-title-editable" contenteditable="true" data-placeholder="제목 없음" spellcheck="false"></div>
+                      <div class="admin-page-properties-inline" id="admin-page-properties-inline"></div>
+                      <div class="admin-property-menu" id="admin-property-menu" hidden></div>
+                      </div>
+                    </div>
+                    <div class="admin-page-actions">
+                      <button class="text-link admin-sidebar-toggle" id="admin-sidebar-toggle" type="button" onclick="toggleAdminSidebar()">페이지</button>
+                      <span class="admin-page-save-state" id="admin-page-save-state"></span>
+                      <button class="text-link admin-shortcut-btn" id="admin-content-draft-top" type="button" onclick="saveDraft()">
+                        <span>임시저장</span>
+                        <span class="admin-shortcut-hint">⌘S</span>
+                      </button>
+                      <button class="action-btn primary admin-shortcut-btn" id="admin-content-submit-top" type="submit">
+                        <span>게시</span>
+                        <span class="admin-shortcut-hint">⇧⌘S</span>
+                      </button>
+                    </div>
+                  </div>
+                  <input id="admin-content-edit-id" type="hidden">
+                  <input id="admin-content-edit-type" type="hidden">
+                  <div class="admin-meta-store" hidden>
+                    <select class="admin-input" id="admin-content-type" onchange="handleContentTypeChange()">
+                      <option value="portfolio">Portfolio</option>
+                      <option value="study">Study</option>
+                      <option value="update">Moments</option>
+                    </select>
+                    <input id="admin-content-type-id" type="hidden">
+                    <input id="admin-content-status" type="hidden">
+                    <input id="admin-content-date" type="hidden">
+                    <input id="admin-content-icon" type="hidden">
+                    <input id="admin-content-cover" type="hidden">
+                    <select class="admin-input" id="admin-content-category"></select>
+                    <input class="admin-input" id="admin-content-id" type="hidden">
+                    <input class="admin-input" id="admin-content-title" type="hidden">
+                  </div>
+                  <section class="admin-block-editor">
+                    <div class="admin-insert-menu" id="admin-insert-menu" hidden></div>
+                    <div class="admin-slash-menu" id="admin-slash-menu" hidden></div>
+                    <div class="admin-format-menu" id="admin-format-menu" hidden></div>
+                    <div class="admin-block-context-menu" id="admin-block-context-menu" hidden></div>
+                    <div class="admin-block-list" id="admin-block-list"></div>
+                  </section>
+                    </div>
+                  </div>
+                </form>
+              </div>
+
+            <div class="admin-panel-screen" id="admin-panel-taxonomy" hidden>
+              <div class="admin-notion-page-head">
+                <div>
+                  <h3 class="panel-title">스키마</h3>
+                </div>
+              </div>
+              <div class="admin-settings-shell">
+                <div class="admin-taxonomy-stack">
+                <section class="admin-settings-card admin-taxonomy-board">
+                  <div class="admin-settings-card-head">
+                    <div>
+                      <h3 class="panel-title">카테고리 구조</h3>
+                    </div>
+                  </div>
+                  <div id="admin-taxonomy-group-list"></div>
+                </section>
+                <div class="admin-taxonomy-grid admin-settings-grid">
+                <section class="admin-taxonomy-column admin-settings-card">
+                  <div class="admin-settings-card-head">
+                    <div>
+                          <div class="mini-label">카테고리</div>
+                      <h3 class="panel-title">카테고리 편집</h3>
+                    </div>
+                  </div>
+                  <form class="admin-form admin-inline-form" id="admin-category-form" onsubmit="saveCategoryDefinition(event)">
+                    <div class="admin-form-head">
+                      <h3 class="panel-title" id="admin-category-form-title">새 카테고리</h3>
+                    </div>
+                    <input id="admin-category-edit-key" type="hidden">
+                    <div class="admin-form-grid">
+                      <label class="admin-field">
+                        <span class="admin-label">이름</span>
+                        <input class="admin-input" id="admin-category-label" type="text" placeholder="프론트엔드">
+                      </label>
+                      <label class="admin-field">
+                        <span class="admin-label">그룹</span>
+                        <select class="admin-input" id="admin-category-group">
+                          <option value="portfolio">Portfolio</option>
+                          <option value="study">Study</option>
+                          <option value="update">Moments</option>
+                        </select>
+                      </label>
+                    </div>
+                    <div class="admin-actions">
+                      <button class="action-btn" id="admin-category-cancel" type="button" onclick="startCategoryDraft()">취소</button>
+                      <button class="action-btn primary" type="submit">저장</button>
+                    </div>
+                  </form>
+                </section>
+                </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="admin-panel-screen" id="admin-panel-site" hidden>
+              <div class="admin-notion-page-head">
+                <div>
+                  <h3 class="panel-title">홈 화면</h3>
+                  <p class="panel-copy">메인 화면에 보이는 제목과 소개 문구를 수정합니다.</p>
+                </div>
+              </div>
+              <div class="admin-settings-shell admin-settings-shell-split">
+                <section class="admin-settings-preview">
+                  <div class="mini-label">Preview</div>
+                  <h4 class="panel-title" id="admin-site-preview-title">개인 페이지</h4>
+                  <p class="panel-copy" id="admin-site-preview-lead">홈에 보일 소개가 여기에 표시됩니다.</p>
+                  <div class="admin-settings-preview-meta">
+                    <span class="pill" id="admin-site-preview-footer">thecistus.com</span>
+                  </div>
+                </section>
+                <form class="admin-form admin-settings-card" id="admin-site-form" onsubmit="saveSiteSettings(event)">
+                  <div class="admin-form-grid">
+                    <label class="admin-field admin-span-2">
+                      <span class="admin-label">제목</span>
+                      <textarea class="admin-textarea" id="admin-site-title" rows="2" placeholder="개인 페이지"></textarea>
+                    </label>
+                    <label class="admin-field admin-span-2">
+                      <span class="admin-label">소개</span>
+                      <textarea class="admin-textarea" id="admin-site-lead" rows="4" placeholder="홈에 보일 짧은 소개"></textarea>
+                    </label>
+                    <label class="admin-field admin-span-2">
+                      <span class="admin-label">푸터</span>
+                      <input class="admin-input" id="admin-site-footer" type="text" placeholder="thecistus.com">
+                    </label>
+                  </div>
+                  <div class="admin-actions">
+                    <button class="action-btn primary" type="submit">저장</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="admin-panel-screen" id="admin-panel-contact" hidden>
+              <div class="admin-notion-page-head">
+                <div>
+                  <h3 class="panel-title">연락</h3>
+                  <p class="panel-copy">연락 섹션의 안내 문구와 링크를 수정합니다.</p>
+                </div>
+              </div>
+              <div class="admin-settings-shell admin-settings-shell-split">
+                <section class="admin-settings-preview">
+                  <div class="mini-label">Preview</div>
+                  <h4 class="panel-title">연락 섹션</h4>
+                  <p class="panel-copy" id="admin-contact-preview-copy">연락 안내 문구가 여기에 표시됩니다.</p>
+                  <div class="admin-settings-preview-links" id="admin-contact-preview-links"></div>
+                </section>
+                <form class="admin-form admin-settings-card" id="admin-contact-form" onsubmit="saveContactSettings(event)">
+                  <div class="admin-form-grid">
+                    <label class="admin-field admin-span-2">
+                      <span class="admin-label">안내 문구</span>
+                      <textarea class="admin-textarea" id="admin-contact-copy" rows="4" placeholder="연락 섹션 안내 문구"></textarea>
+                    </label>
+                    <label class="admin-field">
+                      <span class="admin-label">이메일</span>
+                      <input class="admin-input" id="admin-contact-email" type="email" placeholder="name@example.com">
+                    </label>
+                    <label class="admin-field">
+                      <span class="admin-label">GitHub</span>
+                      <input class="admin-input" id="admin-contact-github" type="text" placeholder="https://github.com/username">
+                    </label>
+                  </div>
+                  <div class="admin-actions">
+                    <button class="action-btn primary" type="submit">저장</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer" id="footer-copy"></footer>
+  </main>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="modal-overlay" id="save-error-modal" hidden>
+    <div class="modal-box">
+      <h3 class="modal-title">Save failed</h3>
+      <p class="modal-copy" id="save-error-copy"></p>
+      <div class="modal-actions">
+        <button class="action-btn primary" type="button" onclick="retrySave()">Retry</button>
+        <button class="action-btn" type="button" onclick="dismissSaveError()">Dismiss</button>
+      </div>
+    </div>
+  </div>
+
+  <script defer src="./assets/js/core.js?v=20260413-87"></script>
+  <script defer src="./assets/js/cosmos.js?v=20260413-87"></script>
+  <script defer src="./assets/site.js?v=20260413-87"></script>
+</body>
+</html>
