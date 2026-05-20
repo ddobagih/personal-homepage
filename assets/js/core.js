@@ -141,6 +141,13 @@ class AdminUIState {
       contentFilterStatus: "published",
       contentFilterTypeId: "all",
       contentListView: "table",
+      previewOpen: false,
+      undoStack: [],
+      redoStack: [],
+      historySnapshots: [],
+      historyOpen: false,
+      suppressHistory: false,
+      historyTimer: 0,
       filterPanelCollapsed: true,
       sidebarOpen: false,
       dragBlockIndex: -1,
@@ -540,6 +547,64 @@ function safeHref(value) {
   return sanitizeUrl(value) || "#";
 }
 
+function safeAssetUrl(value) {
+  const href = sanitizeUrl(value);
+  if (!href || href === "#" || href.startsWith("mailto:")) return "";
+  return href;
+}
+
+function safeEmbedIframeUrl(value) {
+  const href = sanitizeUrl(value);
+  if (!href || href === "#") return "";
+
+  let url;
+  try {
+    url = new URL(href, window.location.origin);
+  } catch {
+    return "";
+  }
+
+  if (url.protocol !== "https:") return "";
+
+  const host = url.hostname.toLowerCase().replace(/^www\./, "");
+  if ((host === "youtube.com" || host === "youtube-nocookie.com") && url.pathname.startsWith("/embed/")) {
+    return url.href;
+  }
+  if (host === "youtu.be") {
+    const videoId = url.pathname.split("/").filter(Boolean)[0] || "";
+    return videoId ? `https://www.youtube.com/embed/${encodeURIComponent(videoId)}` : "";
+  }
+  if (host === "youtube.com" && url.pathname === "/watch" && url.searchParams.get("v")) {
+    return `https://www.youtube.com/embed/${encodeURIComponent(url.searchParams.get("v"))}`;
+  }
+  if (host === "player.vimeo.com" && url.pathname.startsWith("/video/")) {
+    return url.href;
+  }
+  if (host === "vimeo.com" && /^\/\d+/.test(url.pathname)) {
+    const videoId = url.pathname.split("/").filter(Boolean)[0] || "";
+    return videoId ? `https://player.vimeo.com/video/${encodeURIComponent(videoId)}` : "";
+  }
+  if (host === "open.spotify.com" && url.pathname.startsWith("/embed/")) {
+    return url.href;
+  }
+  if (host === "open.spotify.com") {
+    const parts = url.pathname.split("/").filter(Boolean);
+    if (["album", "artist", "episode", "playlist", "show", "track"].includes(parts[0]) && parts[1]) {
+      return `https://open.spotify.com/embed/${encodeURIComponent(parts[0])}/${encodeURIComponent(parts[1])}`;
+    }
+  }
+  if (host === "codepen.io" && url.pathname.includes("/embed/")) {
+    return url.href;
+  }
+  if (host === "codesandbox.io" && url.pathname.startsWith("/embed/")) {
+    return url.href;
+  }
+  if (host === "docs.google.com" && /^\/(document|presentation|spreadsheets|forms)\/d\/.+\/(preview|pubhtml|embed)/.test(url.pathname)) {
+    return url.href;
+  }
+  return "";
+}
+
 function safeExternalAttrs(href) {
   return href.startsWith("http://") || href.startsWith("https://")
     ? 'target="_blank" rel="noreferrer"'
@@ -791,6 +856,9 @@ function normalizeEditorBlock(block, index, options = {}) {
     "todo",
     "numbered",
     "bookmark",
+    "image",
+    "file",
+    "embed",
     "text",
     "bullets",
     "facts",
@@ -808,7 +876,10 @@ function normalizeEditorBlock(block, index, options = {}) {
     indent: clamp(Number(draft.indent) || 0, 0, 6),
     kicker: normalizeText(draft.kicker, ""),
     title: normalizeText(draft.title, ""),
-    href: normalizeText(draft.href, ""),
+    href: normalizeText(draft.href || draft.url, ""),
+    url: normalizeText(draft.url || draft.href, ""),
+    caption: normalizeMultilineText(draft.caption || "", ""),
+    description: normalizeMultilineText(draft.description || "", ""),
     body: kind === "code"
       ? normalizeMultilineText(draft.body, "", { preserveEdges: true })
       : supportsRichBody(kind)
@@ -826,6 +897,14 @@ function normalizeEditorBlock(block, index, options = {}) {
     normalized.items = normalizeBlockFactItems(draft.items);
   } else if (kind === "links" || kind === "showcase") {
     normalized.items = normalizeBlockLinkItems(draft.items, `${prefix}-${kind}`);
+  }
+
+  if (kind === "image" || kind === "embed") {
+    normalized.caption = normalizeMultilineText(draft.caption || draft.body, "");
+    normalized.body = normalized.caption;
+  } else if (kind === "file") {
+    normalized.description = normalizeMultilineText(draft.description || draft.body || draft.caption, "");
+    normalized.body = normalized.description;
   }
 
   return normalized;
@@ -1140,6 +1219,7 @@ const cosmosState = {
   height: 0,
   dpr: 1,
   stars: [],
+  dust: [],
   planets: [],
   renderedPlanets: [],
   frameId: 0,
@@ -1152,6 +1232,9 @@ const cosmosState = {
   // 시스템 전환 페이드 전환
   sceneOpacity: 1,
   sceneOpacityTarget: 1,
+  transitionDirection: 1,
+  warpStartedAt: 0,
+  warpDuration: 0,
   assetsReady: false,
   assetsPromise: null,
   assets: {
@@ -1287,7 +1370,7 @@ function portfolioCaseStudy(project) {
     .filter((block) => block.kind === "bullets")
     .flatMap((block) => block.items.map((item) => item.text))
     .filter(Boolean);
-  const extraBlocks = blocks.filter((block) => ["paragraph", "heading1", "heading2", "quote", "divider", "toggle", "callout", "code"].includes(block.kind));
+  const extraBlocks = blocks.filter((block) => ["paragraph", "heading1", "heading2", "quote", "divider", "toggle", "callout", "code", "image", "file", "embed", "bookmark"].includes(block.kind));
 
   return {
     detail,
@@ -1333,6 +1416,15 @@ function blocksToPlainText(blocks) {
     }
     if (block.kind === "code") {
       return [block.title, block.body].filter(Boolean).join("\n");
+    }
+    if (block.kind === "image") {
+      return [block.title, block.caption, block.url].filter(Boolean).join("\n");
+    }
+    if (block.kind === "file") {
+      return [block.title, block.description, block.url].filter(Boolean).join("\n");
+    }
+    if (block.kind === "embed") {
+      return [block.url, block.caption].filter(Boolean).join("\n");
     }
     if (block.kind === "bullets") {
       return [block.title, ...block.items.map((item) => `- ${item.text}`)].filter(Boolean).join("\n");

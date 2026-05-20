@@ -66,6 +66,11 @@
       <div class="hero hero-cosmos">
         <canvas class="cosmos-canvas" id="cosmos-canvas"></canvas>
         <div class="cosmos-vignette" aria-hidden="true"></div>
+        <div class="cosmos-hover-hud" id="cosmos-hover-hud" role="status" aria-live="polite" hidden>
+          <span class="cosmos-hover-hud-label">Category</span>
+          <strong class="cosmos-hover-hud-title"></strong>
+          <span class="cosmos-hover-hud-meta"></span>
+        </div>
         <div class="cosmos-overlay">
           <div class="cosmos-copy">
             <div class="mini-label cosmos-label" hidden></div>
@@ -272,6 +277,10 @@
                     </div>
                     <div class="admin-page-actions">
                       <button class="text-link admin-sidebar-toggle" id="admin-sidebar-toggle" type="button" onclick="toggleAdminSidebar()">페이지</button>
+                      <button class="text-link" type="button" onclick="toggleAdminPreview()">Preview</button>
+                      <button class="text-link" type="button" onclick="toggleAdminHistory()">History</button>
+                      <button class="text-link" type="button" onclick="adminUndo()">Undo</button>
+                      <button class="text-link" type="button" onclick="adminRedo()">Redo</button>
                       <span class="admin-page-save-state" id="admin-page-save-state"></span>
                       <button class="text-link admin-shortcut-btn" id="admin-content-draft-top" type="button" onclick="saveDraft()">
                         <span>임시저장</span>
@@ -308,6 +317,10 @@
                     <div class="admin-block-list" id="admin-block-list"></div>
                   </section>
                     </div>
+                    <aside class="admin-editor-assist-panel" id="admin-editor-assist-panel" aria-label="편집 보조 패널" hidden>
+                      <section class="admin-preview-pane" id="admin-preview-pane" hidden></section>
+                      <section class="admin-history-panel" id="admin-history-panel" hidden></section>
+                    </aside>
                   </div>
                 </form>
               </div>

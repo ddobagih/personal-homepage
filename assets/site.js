@@ -481,11 +481,15 @@ function setAdminStatus(copy) {
 
 function markAdminContentDirty() {
   if (!authState.authenticated || adminState.activePanel !== "content") return;
+  scheduleAdminHistorySnapshot();
+  renderAdminPreviewPane();
   if (adminState.status === "Edited") return;
   setAdminStatus("Edited");
 }
 
 const ADMIN_RECENT_BLOCKS_KEY = "thecistus-admin-recent-blocks-v1";
+const ADMIN_HISTORY_STORAGE_KEY = "thecistus-admin-page-history-v1";
+const ADMIN_HISTORY_STACK_LIMIT = 40;
 
 function floatingMenuPosition(anchorRect, options = {}) {
   const width = options.width || 280;
@@ -1151,7 +1155,7 @@ function renderPortfolioProjectDetail(projectId, options = {}) {
   $("#portfolio-project-showcase-wrap").hidden = true;
   $("#portfolio-project-showcase").innerHTML = "";
   $("#portfolio-project-sections").innerHTML = blocks.length
-    ? renderNarrativeBlocks(blocks)
+    ? renderSiteNarrativeBlocks(blocks)
     : `
       <section class="project-section-card accent">
         <h2 class="project-section-title">상세 페이지 준비 중</h2>
@@ -1419,7 +1423,7 @@ function openStudyPost(id, options = {}) {
     <span class="pill active">${estimateReadingMinutes(blocksToPlainText(blocks) || post.body)} min read</span>
     <span class="pill">댓글 ${commentCount("study", post.id)}</span>
   `;
-  $("#study-post-body").innerHTML = renderNarrativeBlocks(blocks);
+  $("#study-post-body").innerHTML = renderSiteNarrativeBlocks(blocks);
   $("#study-comments").innerHTML = commentSectionMarkup("study", post.id);
   $("#study-related-links").innerHTML = related.length
     ? related
@@ -1467,7 +1471,7 @@ function renderUpdates() {
       <h3 class="timeline-title">${escapeHtml(item.title)}</h3>
       <div class="timeline-meta">${escapeHtml(item.date)} / ${escapeHtml(resolveCategoryLabel("update", item.category || "updates"))} / 댓글 ${commentCount("update", item.id)}</div>
       <p class="timeline-desc">${escapeHtml(item.desc)}</p>
-      ${item.body ? `<div class="post-body">${renderNarrativeBlocks(contentBlocks("update", item))}</div>` : ""}
+      ${item.body ? `<div class="post-body">${renderSiteNarrativeBlocks(contentBlocks("update", item))}</div>` : ""}
       ${commentSectionMarkup("update", item.id)}
     </article>
   `).join("");
@@ -1593,6 +1597,280 @@ function fillAdminField(id, value) {
 
 function formatLinksForTextarea(links) {
   return links.map((link) => `${link.label}|${link.href}`).join("\n");
+}
+
+function renderSiteNarrativeBlocks(blocks) {
+  const normalized = normalizeEditorBlocks(blocks, { prefix: "render-block" });
+  if (!normalized.length) return "";
+
+  function renderNarrativeRange(startIndex, baseIndent) {
+    let html = "";
+    let index = startIndex;
+    while (index < normalized.length) {
+      const block = normalized[index];
+      const indent = Number(block.indent) || 0;
+      if (indent < baseIndent) break;
+      if (indent > baseIndent) {
+        const nested = renderNarrativeRange(index, indent);
+        html += nested.html;
+        index = nested.nextIndex;
+        continue;
+      }
+      const branch = renderNarrativeBranch(index);
+      html += branch.html;
+      index = branch.nextIndex;
+    }
+    return { html, nextIndex: index };
+  }
+
+  function renderNarrativeBranch(index) {
+    const block = normalized[index];
+    const currentIndent = Number(block.indent) || 0;
+    let nextIndex = index + 1;
+    let childHtml = "";
+    if (nextIndex < normalized.length && (Number(normalized[nextIndex].indent) || 0) > currentIndent) {
+      const childRange = renderNarrativeRange(nextIndex, Number(normalized[nextIndex].indent) || 0);
+      childHtml = childRange.html;
+      nextIndex = childRange.nextIndex;
+    }
+    return {
+      html: renderNarrativeBlockMarkup(block, childHtml),
+      nextIndex
+    };
+  }
+
+  function renderLinkCard({ label, title, url, body = "" }, childHtml = "") {
+    const href = safeHref(url);
+    const nestedMarkup = childHtml ? `<div class="post-block-children">${childHtml}</div>` : "";
+    const cardBody = `
+      <div class="mini-label">${escapeHtml(label)}</div>
+      ${title ? `<h3 class="post-block-title">${escapeHtml(title)}</h3>` : ""}
+      <div class="post-block-bookmark-url">${escapeHtml(url || "")}</div>
+      ${body ? `<div class="post-block-body">${richTextParagraphMarkup(body)}</div>` : ""}
+    `;
+    return `
+      <section class="post-block post-block-bookmark">
+        ${href && href !== "#"
+          ? `<a class="post-block-bookmark-card" href="${href}" ${safeExternalAttrs(href)}>${cardBody}</a>`
+          : `<div class="post-block-bookmark-card">${cardBody}</div>`}
+        ${nestedMarkup}
+      </section>
+    `;
+  }
+
+  function renderNarrativeBlockMarkup(block, childHtml = "") {
+    const nestedMarkup = childHtml ? `<div class="post-block-children">${childHtml}</div>` : "";
+    if (block.kind === "paragraph") {
+      return `
+        <section class="post-block post-block-paragraph">
+          <div class="post-block-body">${richTextParagraphMarkup(block.body)}</div>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "heading1") {
+      return `
+        <section class="post-block post-block-heading">
+          <h2 class="post-block-heading-1">${escapeHtml(block.body || block.title || "")}</h2>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "heading2") {
+      return `
+        <section class="post-block post-block-heading">
+          <h3 class="post-block-heading-2">${escapeHtml(block.body || block.title || "")}</h3>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "quote") {
+      return `
+        <section class="post-block post-block-quote">
+          <blockquote class="post-block-quote-copy">${richTextParagraphMarkup(block.body)}</blockquote>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "divider") {
+      return `
+        <section class="post-block post-block-divider" aria-hidden="true">
+          <hr class="post-block-divider-line">
+        </section>
+      `;
+    }
+    if (block.kind === "todo") {
+      return `
+        <section class="post-block">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <ul class="post-block-list post-block-todo-list">
+            ${block.items.map((item) => `
+              <li class="post-block-todo-item ${item.checked ? "done" : ""}">
+                <span class="post-block-todo-check" aria-hidden="true">${item.checked ? "☑" : "☐"}</span>
+                <span>${escapeHtml(item.text)}</span>
+              </li>
+            `).join("")}
+          </ul>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "numbered") {
+      return `
+        <section class="post-block">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <ol class="post-block-list post-block-numbered-list">
+            ${block.items.map((item) => `<li>${escapeHtml(item.text)}</li>`).join("")}
+          </ol>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "bookmark") {
+      return renderLinkCard({
+        label: "Bookmark",
+        title: block.title,
+        url: block.href,
+        body: block.body
+      }, childHtml);
+    }
+    if (block.kind === "image") {
+      const src = safeAssetUrl(block.url);
+      return `
+        <figure class="post-block post-block-image">
+          ${src
+            ? `<img class="post-block-image-media" src="${escapeHtml(src)}" alt="${escapeHtml(block.title || block.caption || "Image")}" loading="lazy" decoding="async">`
+            : `<div class="post-block-bookmark-card"><div class="mini-label">Image</div><div class="post-block-bookmark-url">${escapeHtml(block.url || "")}</div></div>`}
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${block.caption ? `<figcaption class="post-block-body">${escapeHtml(block.caption).replace(/\n/g, "<br>")}</figcaption>` : ""}
+          ${nestedMarkup}
+        </figure>
+      `;
+    }
+    if (block.kind === "file") {
+      const href = safeHref(block.url);
+      return `
+        <section class="post-block post-block-file">
+          <div class="post-block-bookmark-card">
+            <div class="mini-label">File</div>
+            ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : `<h3 class="post-block-title">파일</h3>`}
+            ${block.description ? `<div class="post-block-body">${escapeHtml(block.description).replace(/\n/g, "<br>")}</div>` : ""}
+            ${href && href !== "#"
+              ? `<a class="action-btn" href="${href}" ${safeExternalAttrs(href)}>${escapeHtml(block.title || "파일 열기")}</a>`
+              : `<div class="post-block-bookmark-url">${escapeHtml(block.url || "")}</div>`}
+          </div>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "embed") {
+      const iframeSrc = safeEmbedIframeUrl(block.url);
+      if (!iframeSrc) {
+        return renderLinkCard({
+          label: "Embed",
+          title: "임베드 링크",
+          url: block.url,
+          body: block.caption
+        }, childHtml);
+      }
+      return `
+        <section class="post-block post-block-embed">
+          <iframe
+            class="post-block-embed-frame"
+            src="${escapeHtml(iframeSrc)}"
+            title="${escapeHtml(block.caption || "Embedded content")}"
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+          ${block.caption ? `<div class="post-block-body">${escapeHtml(block.caption).replace(/\n/g, "<br>")}</div>` : ""}
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "text") {
+      return `
+        <section class="post-block ${block.tone === "accent" ? "accent" : ""}">
+          ${block.kicker ? `<div class="mini-label">${escapeHtml(block.kicker)}</div>` : ""}
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <div class="post-block-body">${richTextParagraphMarkup(block.body)}</div>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "bullets") {
+      return `
+        <section class="post-block">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <ul class="post-block-list">
+            ${block.items.map((item) => `<li>${escapeHtml(item.text)}</li>`).join("")}
+          </ul>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "toggle") {
+      return `
+        <details class="post-block post-block-toggle">
+          <summary class="post-block-toggle-summary">${escapeHtml(block.title || "토글")}</summary>
+          <div class="post-block-toggle-body">
+            ${block.body ? `<div class="post-block-body">${richTextParagraphMarkup(block.body)}</div>` : ""}
+            ${childHtml}
+          </div>
+        </details>
+      `;
+    }
+    if (block.kind === "callout") {
+      return `
+        <section class="post-block post-block-callout">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <div class="post-block-body">${richTextParagraphMarkup(block.body)}</div>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "code") {
+      return `
+        <section class="post-block post-block-code">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <pre class="post-block-code-pre"><code>${escapeHtml(block.body || "")}</code></pre>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "links" || block.kind === "showcase") {
+      return `
+        <section class="post-block">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <div class="links">
+            ${block.items.map((item) => `<a class="action-btn" href="${safeHref(item.href)}" ${safeExternalAttrs(safeHref(item.href))}>${escapeHtml(item.label)}</a>`).join("")}
+          </div>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    if (block.kind === "facts") {
+      return `
+        <section class="post-block">
+          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          <div class="post-facts-grid">
+            ${block.items.map((item) => `
+              <article class="post-fact-chip">
+                <span>${escapeHtml(item.label)}</span>
+                <strong>${escapeHtml(item.value)}</strong>
+              </article>
+            `).join("")}
+          </div>
+          ${nestedMarkup}
+        </section>
+      `;
+    }
+    return "";
+  }
+
+  return renderNarrativeRange(0, Number(normalized[0]?.indent) || 0).html;
 }
 
 function renderAdminSiteForm() {
@@ -1751,7 +2029,20 @@ function renderAdminContentList() {
   if (purged) saveContent("30일 지난 휴지통 항목을 자동 삭제했습니다.").catch(() => {});
 
   if (head) {
-    head.innerHTML = `<span>페이지 ${items.length}</span>`;
+    const views = ["list", "table", "gallery", "board"];
+    head.innerHTML = `
+      <span>페이지 ${items.length}</span>
+      <span class="admin-list-view-switch" aria-label="보기 방식">
+        ${views.map((view) => `
+          <button class="tab-btn ${adminState.contentListView === view ? "active" : ""}" type="button" onclick="setAdminContentListView('${view}')">${escapeHtml({
+            list: "List",
+            table: "Table",
+            gallery: "Gallery",
+            board: "Board"
+          }[view])}</button>
+        `).join("")}
+      </span>
+    `;
   }
 
   if (!items.length) {
@@ -1762,33 +2053,94 @@ function renderAdminContentList() {
     return;
   }
 
-  node.innerHTML = `
-    <div class="admin-page-browser admin-page-browser-flat">
-      ${items.map((item) => {
-        const isSelected = adminState.contentEditId === item.id && adminState.contentEditType === item.type;
-        const statusMeta = adminStatusMeta(item.status);
-        const sideAction = isTrash
-          ? `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지 복원" title="복원" onclick="event.stopPropagation(); restoreContentItem('${item.type}', '${item.id}')">복원</button>`
-          : `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지를 휴지통으로 이동" title="휴지통" onclick="event.stopPropagation(); moveToTrash('${item.type}', '${item.id}')">휴지통</button>`;
-        const subcopy = [item.categoryLabel].filter(Boolean).join(" · ");
-        return `
-          <button class="admin-page-row ${isSelected ? "selected" : ""}" type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
-            <span class="admin-page-row-icon">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
-            <span class="admin-page-row-body">
-              <div class="admin-page-row-topline">
+  const actionFor = (item) => isTrash
+    ? `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지 복원" title="복원" onclick="event.stopPropagation(); restoreContentItem('${item.type}', '${item.id}')">복원</button>`
+    : `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지를 휴지통으로 이동" title="휴지통" onclick="event.stopPropagation(); moveToTrash('${item.type}', '${item.id}')">휴지통</button>`;
+  const selectedClass = (item) => adminState.contentEditId === item.id && adminState.contentEditType === item.type ? "selected" : "";
+  const renderListRow = (item) => {
+    const statusMeta = adminStatusMeta(item.status);
+    const subcopy = [item.categoryLabel].filter(Boolean).join(" · ");
+    return `
+      <button class="admin-page-row ${selectedClass(item)}" type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
+        <span class="admin-page-row-icon">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
+        <span class="admin-page-row-body">
+          <div class="admin-page-row-topline">
+            <strong>${escapeHtml(item.title)}</strong>
+            <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
+          </div>
+          <span>${escapeHtml(subcopy)}</span>
+        </span>
+        <span class="admin-page-row-meta">${actionFor(item)}</span>
+      </button>
+    `;
+  };
+
+  if (adminState.contentListView === "table") {
+    node.innerHTML = `
+      <div class="admin-db-table">
+        <div class="admin-db-row admin-db-head">
+          <span>Title</span><span>Section</span><span>Category</span><span>Status</span><span>Date</span><span></span>
+        </div>
+        ${items.map((item) => {
+          const statusMeta = adminStatusMeta(item.status);
+          return `
+            <button class="admin-db-row ${selectedClass(item)}" type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
+              <span class="admin-db-title"><span>${escapeHtml(item.icon || defaultPageIcon(item.type))}</span><strong>${escapeHtml(item.title)}</strong></span>
+              <span>${escapeHtml(contentTypeMeta(item.type).label)}</span>
+              <span>${escapeHtml(item.categoryLabel || "")}</span>
+              <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
+              <span>${escapeHtml(formatContentTimestamp(item.date, ""))}</span>
+              <span class="admin-db-actions">${actionFor(item)}</span>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    `;
+    return;
+  }
+
+  if (adminState.contentListView === "gallery") {
+    node.innerHTML = `
+      <div class="admin-page-gallery">
+        ${items.map((item) => {
+          const statusMeta = adminStatusMeta(item.status);
+          return `
+            <article class="admin-page-gallery-card ${selectedClass(item)}">
+              <button type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
+                <span class="admin-page-gallery-cover cover-${escapeHtml(item.cover || defaultPageCover(item.type))}">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
                 <strong>${escapeHtml(item.title)}</strong>
+                <span>${escapeHtml(item.categoryLabel || contentTypeMeta(item.type).label)}</span>
                 <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
-              </div>
-              <span>${escapeHtml(subcopy)}</span>
-            </span>
-            <span class="admin-page-row-meta">
-              ${sideAction}
-            </span>
-          </button>
-        `;
-      }).join("")}
-    </div>
-  `;
+              </button>
+              ${actionFor(item)}
+            </article>
+          `;
+        }).join("")}
+      </div>
+    `;
+    return;
+  }
+
+  if (adminState.contentListView === "board") {
+    const columns = ["published", "draft", "trash"];
+    node.innerHTML = `
+      <div class="admin-page-board">
+        ${columns.map((status) => {
+          const statusMeta = adminStatusMeta(status);
+          const columnItems = items.filter((item) => item.status === status);
+          return `
+            <section class="admin-page-board-column">
+              <div class="admin-page-board-head">${escapeHtml(statusMeta.label)} · ${columnItems.length}</div>
+              ${columnItems.map(renderListRow).join("") || `<div class="admin-taxonomy-empty-copy">비어 있음</div>`}
+            </section>
+          `;
+        }).join("")}
+      </div>
+    `;
+    return;
+  }
+
+  node.innerHTML = `<div class="admin-page-browser admin-page-browser-flat">${items.map(renderListRow).join("")}</div>`;
 }
 
 function renderAdminPropertiesPanel() {
@@ -1819,6 +2171,10 @@ function renderAdminPagePropertiesInline() {
   if (!node) return;
   const section = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
   const category = $("#admin-content-category")?.value || defaultCategoryId(section);
+  const status = currentAdminStatusValue();
+  const date = currentAdminDateValue(section);
+  const icon = currentAdminIconValue(section);
+  const cover = $("#admin-content-cover")?.value || defaultPageCover(section);
   const sectionOptions = CONTENT_GROUPS.map((group) => `
     <option value="${escapeHtml(group)}" ${group === section ? "selected" : ""}>
       ${escapeHtml(contentTypeMeta(group).label)}
@@ -1829,8 +2185,24 @@ function renderAdminPagePropertiesInline() {
       ${escapeHtml(definition.label)}
     </option>
   `).join("");
+  const statusOptions = ["published", "draft", "trash"].map((item) => `
+    <option value="${escapeHtml(item)}" ${item === status ? "selected" : ""}>${escapeHtml(adminStatusMeta(item).label)}</option>
+  `).join("");
+  const coverOptions = ["sky", "mint", "rose", "amber", "violet"].map((item) => `
+    <option value="${escapeHtml(item)}" ${item === cover ? "selected" : ""}>${escapeHtml(item)}</option>
+  `).join("");
 
   node.innerHTML = `
+    <label class="admin-page-property-select admin-page-property-compact">
+      <span class="admin-page-property-key">아이콘</span>
+      <input class="admin-page-property-input" value="${escapeHtml(icon)}" maxlength="4" oninput="changeAdminProperty('icon', this.value)">
+    </label>
+    <label class="admin-page-property-select admin-page-property-compact">
+      <span class="admin-page-property-key">커버</span>
+      <select class="admin-page-property-input" onchange="changeAdminProperty('cover', this.value)">
+        ${coverOptions}
+      </select>
+    </label>
     <label class="admin-page-property-select">
       <span class="admin-page-property-key">그룹</span>
       <select class="admin-page-property-input" onchange="changeAdminProperty('section', this.value)">
@@ -1842,6 +2214,16 @@ function renderAdminPagePropertiesInline() {
       <select class="admin-page-property-input" onchange="changeAdminProperty('category', this.value)">
         ${categoryOptions}
       </select>
+    </label>
+    <label class="admin-page-property-select admin-page-property-compact">
+      <span class="admin-page-property-key">상태</span>
+      <select class="admin-page-property-input" onchange="changeAdminProperty('status', this.value)">
+        ${statusOptions}
+      </select>
+    </label>
+    <label class="admin-page-property-select">
+      <span class="admin-page-property-key">날짜</span>
+      <input class="admin-page-property-input" value="${escapeHtml(date)}" oninput="changeAdminProperty('date', this.value)">
     </label>
   `;
 }
@@ -1871,6 +2253,10 @@ function setAdminPropertyValue(key, value) {
     fillAdminField("admin-content-icon", value || defaultPageIcon($("#admin-content-type")?.value || adminState.contentEditType || "portfolio"));
   } else if (key === "cover") {
     fillAdminField("admin-content-cover", value || defaultPageCover($("#admin-content-type")?.value || adminState.contentEditType || "portfolio"));
+  } else if (key === "status") {
+    fillAdminField("admin-content-status", normalizeContentStatus(value));
+  } else if (key === "date") {
+    fillAdminField("admin-content-date", value);
   }
   renderAdminPagePropertiesInline();
   renderAdminPageChrome();
@@ -1940,7 +2326,7 @@ function toggleAdminIconPicker() {
 }
 
 function setAdminContentListView(view) {
-  adminState.contentListView = view === "table" ? "table" : "cards";
+  adminState.contentListView = ["list", "table", "gallery", "board"].includes(view) ? view : "list";
   renderAdminContentList();
 }
 
@@ -2138,6 +2524,10 @@ function availableAdminBlockKinds(type = adminState.contentEditType || "portfoli
     { id: "divider", label: "구분선" },
     { id: "callout", label: "콜아웃" },
     { id: "code", label: "코드" },
+    { id: "bookmark", label: "북마크" },
+    { id: "image", label: "이미지" },
+    { id: "file", label: "파일" },
+    { id: "embed", label: "임베드" },
     { id: "text", label: "섹션" },
     ...(type === "portfolio" ? [
       { id: "facts", label: "정보 카드" },
@@ -2158,6 +2548,9 @@ function blockKindLabel(kind) {
     quote: "인용",
     divider: "구분선",
     bookmark: "북마크",
+    image: "이미지",
+    file: "파일",
+    embed: "임베드",
     text: "섹션",
     callout: "콜아웃",
     code: "코드",
@@ -2192,6 +2585,15 @@ function adminBlockTemplate(kind) {
   if (kind === "bookmark") {
     return { kind, title: "", body: "", href: "" };
   }
+  if (kind === "image") {
+    return { kind, title: "", caption: "", url: "" };
+  }
+  if (kind === "file") {
+    return { kind, title: "", description: "", url: "" };
+  }
+  if (kind === "embed") {
+    return { kind, caption: "", url: "" };
+  }
   if (kind === "text") {
     return { kind, title: "", body: "", kicker: "", tone: "default" };
   }
@@ -2218,12 +2620,14 @@ function adminBlockTemplate(kind) {
 
 function defaultFieldForBlockKind(kind) {
   if (kind === "bookmark") return "href";
+  if (["image", "file", "embed"].includes(kind)) return "url";
   if (["paragraph", "heading1", "heading2", "quote", "text", "toggle", "callout", "code"].includes(kind)) return "body";
   return "items";
 }
 
 function entryFieldForBlockKind(kind) {
   if (kind === "bookmark") return "href";
+  if (["image", "file", "embed"].includes(kind)) return "url";
   if (["text", "toggle", "callout", "code", "facts", "links", "showcase"].includes(kind)) return "title";
   return defaultFieldForBlockKind(kind);
 }
@@ -2287,6 +2691,9 @@ function adminBlockPlainLines(block, options = {}) {
   pushValue("kicker");
   pushValue("title");
   pushValue("href");
+  pushValue("url");
+  pushValue("caption");
+  pushValue("description");
   pushValue("body");
 
   if (excludeField !== "items" && Array.isArray(block.items)) {
@@ -2317,6 +2724,25 @@ function adminListItemsFromLines(lines = [], kind = "bullets") {
   const normalized = lines.map((line) => normalizeText(line, "")).filter(Boolean);
   if (kind === "todo") return normalized.map((text) => ({ checked: false, text }));
   return normalized.map((text) => ({ text }));
+}
+
+function adminFirstUrlLine(lines = []) {
+  return lines.find((line) => {
+    const href = sanitizeUrl(line);
+    return href && href !== "#" && !href.startsWith("mailto:");
+  }) || "";
+}
+
+function adminLinesWithoutFirstMatch(lines = [], value = "") {
+  if (!value) return lines;
+  let removed = false;
+  return lines.filter((line) => {
+    if (!removed && line === value) {
+      removed = true;
+      return false;
+    }
+    return true;
+  });
 }
 
 function adminConvertedBlock(kind, current = null, activeField = "") {
@@ -2360,6 +2786,35 @@ function adminConvertedBlock(kind, current = null, activeField = "") {
       title: normalizeText(current?.title, firstUrl ? "" : plain),
       href: firstUrl,
       body: remainingLines.join("\n").trim()
+    };
+  }
+  if (kind === "image") {
+    const firstUrl = adminFirstUrlLine([normalizeText(current?.url || current?.href, ""), ...allLines]);
+    const remainingLines = adminLinesWithoutFirstMatch(allLines, firstUrl);
+    return {
+      ...template,
+      title: normalizeText(current?.title, ""),
+      url: firstUrl,
+      caption: remainingLines.join("\n").trim()
+    };
+  }
+  if (kind === "file") {
+    const firstUrl = adminFirstUrlLine([normalizeText(current?.url || current?.href, ""), ...allLines]);
+    const remainingLines = adminLinesWithoutFirstMatch(allLines, firstUrl);
+    return {
+      ...template,
+      title: normalizeText(current?.title, firstUrl ? "" : (remainingLines[0] || "")),
+      url: firstUrl,
+      description: remainingLines.join("\n").trim()
+    };
+  }
+  if (kind === "embed") {
+    const firstUrl = adminFirstUrlLine([normalizeText(current?.url || current?.href, ""), ...allLines]);
+    const remainingLines = adminLinesWithoutFirstMatch(allLines, firstUrl);
+    return {
+      ...template,
+      url: firstUrl,
+      caption: remainingLines.join("\n").trim()
     };
   }
   if (["bullets", "numbered", "todo"].includes(kind)) {
@@ -2437,6 +2892,20 @@ function adminEnterAction(block, field) {
     if (field === "href") return { type: "focus-field", field: "body" };
     return { type: "insert", kind: "paragraph" };
   }
+  if (kind === "image") {
+    if (field === "title") return { type: "focus-field", field: "url" };
+    if (field === "url") return { type: "focus-field", field: "caption" };
+    return { type: "insert", kind: "paragraph" };
+  }
+  if (kind === "file") {
+    if (field === "title") return { type: "focus-field", field: "url" };
+    if (field === "url") return { type: "focus-field", field: "description" };
+    return { type: "insert", kind: "paragraph" };
+  }
+  if (kind === "embed") {
+    if (field === "url") return { type: "focus-field", field: "caption" };
+    return { type: "insert", kind: "paragraph" };
+  }
   if (["bullets", "todo", "numbered"].includes(kind)) {
     if (field === "title") return { type: "focus-list", rowIndex: 0 };
     return { type: "insert", kind: "paragraph" };
@@ -2463,6 +2932,15 @@ function isAdminBlockEmpty(block) {
   }
   if (block.kind === "bookmark") {
     return !normalizeText(block.title, "") && !normalizeText(block.body, "") && !normalizeText(block.href, "");
+  }
+  if (block.kind === "image") {
+    return !normalizeText(block.title, "") && !normalizeText(block.caption, "") && !normalizeText(block.url, "");
+  }
+  if (block.kind === "file") {
+    return !normalizeText(block.title, "") && !normalizeText(block.description, "") && !normalizeText(block.url, "");
+  }
+  if (block.kind === "embed") {
+    return !normalizeText(block.caption, "") && !normalizeText(block.url, "");
   }
   if (["paragraph", "heading1", "heading2", "quote", "text", "toggle", "callout", "code"].includes(block.kind)) {
     return !normalizeText(block.kicker, "") && !normalizeText(block.title, "") && !normalizeText(block.body, "");
@@ -2838,6 +3316,56 @@ class AdminBlockEditorController {
                 ${renderAdminEditable("title", block.title, "Bookmark title", "admin-editable-title")}
                 ${renderAdminEditable("href", block.href, "https://example.com", "admin-editable-kicker")}
                 ${renderAdminEditable("body", block.body, "링크에 대한 메모를 남기세요.", "admin-editable-body", { rich: true })}
+              </div>
+            </div>
+            ${footer}
+          </article>
+        `;
+      }
+
+      if (block.kind === "image") {
+        return `
+          <article class="admin-block-card ${selected ? "selected" : ""} ${current ? "current" : ""}" style="--block-indent:${block.indent * 1.45}rem" data-block-id="${escapeHtml(block.id)}" data-block-index="${index}" data-kind="${escapeHtml(block.kind)}" data-indent="${block.indent}" data-collapsed="${block.collapsed ? "true" : "false"}">
+            ${side}
+            ${header}
+            <div class="admin-block-fields">
+              <div class="admin-field admin-span-2">
+                ${renderAdminEditable("title", block.title, "이미지 제목", "admin-editable-title")}
+                ${renderAdminEditable("url", block.url, "https://example.com/image.jpg", "admin-editable-kicker")}
+                ${renderAdminEditable("caption", block.caption, "이미지 캡션", "admin-editable-body")}
+              </div>
+            </div>
+            ${footer}
+          </article>
+        `;
+      }
+
+      if (block.kind === "file") {
+        return `
+          <article class="admin-block-card ${selected ? "selected" : ""} ${current ? "current" : ""}" style="--block-indent:${block.indent * 1.45}rem" data-block-id="${escapeHtml(block.id)}" data-block-index="${index}" data-kind="${escapeHtml(block.kind)}" data-indent="${block.indent}" data-collapsed="${block.collapsed ? "true" : "false"}">
+            ${side}
+            ${header}
+            <div class="admin-block-fields">
+              <div class="admin-field admin-span-2">
+                ${renderAdminEditable("title", block.title, "파일명", "admin-editable-title")}
+                ${renderAdminEditable("url", block.url, "https://example.com/file.pdf", "admin-editable-kicker")}
+                ${renderAdminEditable("description", block.description, "파일 설명", "admin-editable-body")}
+              </div>
+            </div>
+            ${footer}
+          </article>
+        `;
+      }
+
+      if (block.kind === "embed") {
+        return `
+          <article class="admin-block-card ${selected ? "selected" : ""} ${current ? "current" : ""}" style="--block-indent:${block.indent * 1.45}rem" data-block-id="${escapeHtml(block.id)}" data-block-index="${index}" data-kind="${escapeHtml(block.kind)}" data-indent="${block.indent}" data-collapsed="${block.collapsed ? "true" : "false"}">
+            ${side}
+            ${header}
+            <div class="admin-block-fields">
+              <div class="admin-field admin-span-2">
+                ${renderAdminEditable("url", block.url, "https://www.youtube.com/embed/...", "admin-editable-title")}
+                ${renderAdminEditable("caption", block.caption, "임베드 캡션", "admin-editable-body")}
               </div>
             </div>
             ${footer}
@@ -3549,6 +4077,34 @@ function adminBlockKindMeta(kindId) {
       keywords: ["코드", "스니펫", "프리", "snippet", "code", "pre"],
       commands: ["code", "code-block", "snippet", "pre", "코드", "코드블록"]
     },
+    bookmark: {
+      icon: "↗",
+      description: "URL을 북마크 카드로 보여줍니다",
+      hint: "Bookmark",
+      keywords: ["북마크", "링크", "bookmark", "url", "link"],
+      commands: ["bookmark", "url", "link", "북마크", "링크"]
+    },
+    image: {
+      icon: "▧",
+      description: "이미지 URL과 캡션을 추가합니다",
+      hint: "Image",
+      keywords: ["이미지", "사진", "그림", "image", "photo", "picture"],
+      commands: ["image", "img", "photo", "picture", "이미지", "사진"]
+    },
+    file: {
+      icon: "⇩",
+      description: "파일 또는 PDF 링크를 추가합니다",
+      hint: "File",
+      keywords: ["파일", "첨부", "pdf", "file", "download"],
+      commands: ["file", "pdf", "download", "attachment", "파일", "첨부", "다운로드"]
+    },
+    embed: {
+      icon: "▣",
+      description: "허용된 URL은 iframe으로, 아니면 링크 카드로 보여줍니다",
+      hint: "Embed",
+      keywords: ["임베드", "삽입", "iframe", "embed", "youtube", "video"],
+      commands: ["embed", "iframe", "video", "youtube", "임베드", "삽입"]
+    },
     text: {
       icon: "¶",
       description: "긴 설명 섹션을 묶는 맞춤 블록입니다",
@@ -3622,6 +4178,9 @@ function adminBlockKindGroup(kindId) {
     callout: "basic",
     code: "basic",
     bookmark: "media",
+    image: "media",
+    file: "media",
+    embed: "media",
     text: "advanced",
     links: "media",
     facts: "advanced",
@@ -3635,7 +4194,7 @@ function adminBlockGroupLabel(groupId) {
     results: "검색 결과",
     basic: "기본 블록",
     lists: "목록",
-    media: "링크",
+    media: "미디어",
     advanced: "맞춤 블록"
   }[groupId] || "Blocks";
 }
@@ -3872,7 +4431,7 @@ class AdminInteractionController {
       sections.push({ id: "recent", label: adminBlockGroupLabel("recent"), items: recentItems });
     }
 
-    [["basic", 8], ["lists", 4], ["media", 2], ["advanced", 3]].forEach(([groupId, limit]) => {
+    [["basic", 8], ["lists", 4], ["media", 5], ["advanced", 3]].forEach(([groupId, limit]) => {
       const items = kinds
         .filter((kind) => adminBlockKindGroup(kind.id) === groupId && !recentItems.some((recent) => recent.id === kind.id))
         .slice(0, limit);
@@ -5689,11 +6248,14 @@ function parseAdminFactItemsFromNode(node) {
 
 function parseAdminBlockField(kind, field, value, index) {
   const raw = String(value || "");
-  if (field === "href") {
+  if (field === "href" || field === "url") {
     return normalizeText(raw, "");
   }
   if (field === "kicker" || field === "title") {
     return normalizeText(raw, "");
+  }
+  if (field === "caption" || field === "description") {
+    return normalizeMultilineText(raw, "");
   }
   if (field === "body") {
     if (supportsRichBody(kind)) {
@@ -5846,6 +6408,258 @@ function setAdminPageTitle(value = "") {
   if (titleInput) {
     titleInput.value = value;
   }
+}
+
+function ensureAdminHistoryState() {
+  adminState.undoStack = Array.isArray(adminState.undoStack) ? adminState.undoStack : [];
+  adminState.redoStack = Array.isArray(adminState.redoStack) ? adminState.redoStack : [];
+  adminState.historySnapshots = Array.isArray(adminState.historySnapshots) ? adminState.historySnapshots : [];
+  adminState.historyOpen = Boolean(adminState.historyOpen);
+  adminState.previewOpen = adminState.previewOpen !== false;
+  adminState.suppressHistory = Boolean(adminState.suppressHistory);
+}
+
+function adminHistoryPageKey(snapshot = null) {
+  const type = snapshot?.type || $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
+  const id = snapshot?.editingId || $("#admin-content-edit-id")?.value?.trim() || adminState.contentEditId || $("#admin-content-id")?.value?.trim() || "__new__";
+  return `${type}:${id}`;
+}
+
+function adminSnapshotFromDom() {
+  const form = $("#admin-content-form");
+  if (!form) return null;
+  syncAdminPageMetaFromDom();
+  const type = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
+  const blocks = syncAdminBlocksFromDom();
+  return {
+    key: adminHistoryPageKey(),
+    type,
+    editingId: $("#admin-content-edit-id")?.value?.trim() || adminState.contentEditId || "",
+    editingType: $("#admin-content-edit-type")?.value?.trim() || "",
+    requestedId: $("#admin-content-id")?.value?.trim() || "",
+    status: $("#admin-content-status")?.value || "draft",
+    category: $("#admin-content-category")?.value || defaultCategoryId(type),
+    date: $("#admin-content-date")?.value || "",
+    icon: $("#admin-content-icon")?.value || defaultPageIcon(type),
+    cover: $("#admin-content-cover")?.value || defaultPageCover(type),
+    title: $("#admin-content-title")?.value || "",
+    blocks: JSON.parse(JSON.stringify(blocks || [])),
+    savedAt: new Date().toISOString()
+  };
+}
+
+function adminSnapshotSignature(snapshot) {
+  if (!snapshot) return "";
+  return JSON.stringify({
+    type: snapshot.type,
+    editingId: snapshot.editingId,
+    requestedId: snapshot.requestedId,
+    status: snapshot.status,
+    category: snapshot.category,
+    date: snapshot.date,
+    icon: snapshot.icon,
+    cover: snapshot.cover,
+    title: snapshot.title,
+    blocks: snapshot.blocks
+  });
+}
+
+function pushAdminUndoSnapshot(snapshot = adminSnapshotFromDom(), options = {}) {
+  ensureAdminHistoryState();
+  if (!snapshot || adminState.suppressHistory) return;
+  const signature = adminSnapshotSignature(snapshot);
+  const previous = adminState.undoStack[adminState.undoStack.length - 1];
+  if (previous && adminSnapshotSignature(previous) === signature) return;
+  adminState.undoStack.push(snapshot);
+  if (adminState.undoStack.length > ADMIN_HISTORY_STACK_LIMIT) {
+    adminState.undoStack = adminState.undoStack.slice(-ADMIN_HISTORY_STACK_LIMIT);
+  }
+  if (options.clearRedo !== false) adminState.redoStack = [];
+  if (options.persist !== false) saveAdminHistorySnapshot(snapshot);
+}
+
+function applyAdminSnapshot(snapshot, options = {}) {
+  if (!snapshot) return;
+  ensureAdminHistoryState();
+  adminState.suppressHistory = true;
+  try {
+    adminState.contentEditType = snapshot.type || "portfolio";
+    adminState.contentEditId = snapshot.editingId || null;
+    fillAdminField("admin-content-type", snapshot.type || "portfolio");
+    renderAdminContentTypeSelect(defaultAdminTypeId(snapshot.type || "portfolio"));
+    renderAdminContentCategorySelect(snapshot.category || "");
+    fillAdminField("admin-content-edit-id", snapshot.editingId || "");
+    fillAdminField("admin-content-edit-type", snapshot.editingType || (snapshot.editingId ? snapshot.type : ""));
+    fillAdminField("admin-content-id", snapshot.requestedId || snapshot.editingId || "");
+    fillAdminField("admin-content-status", snapshot.status || "draft");
+    fillAdminField("admin-content-category", snapshot.category || defaultCategoryId(snapshot.type || "portfolio"));
+    fillAdminField("admin-content-date", snapshot.date || "");
+    fillAdminField("admin-content-icon", snapshot.icon || defaultPageIcon(snapshot.type || "portfolio"));
+    fillAdminField("admin-content-cover", snapshot.cover || defaultPageCover(snapshot.type || "portfolio"));
+    setAdminPageTitle(snapshot.title || "");
+    adminState.editorBlocks = normalizeEditorBlocksForNotionFlow(snapshot.blocks || [], { prefix: `admin-${snapshot.type || "portfolio"}-history-block` });
+    clearAdminBlockSelection();
+    renderAdminPagePropertiesInline();
+    renderAdminBlockList();
+    renderAdminPageChrome();
+    renderAdminPreviewPane();
+    renderAdminHistoryPanel();
+  } finally {
+    adminState.suppressHistory = false;
+  }
+  if (options.dirty !== false) setAdminStatus("Edited");
+}
+
+function loadAdminHistoryStore() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ADMIN_HISTORY_STORAGE_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveAdminHistoryStore(store) {
+  try {
+    localStorage.setItem(ADMIN_HISTORY_STORAGE_KEY, JSON.stringify(store));
+  } catch {
+    // Ignore storage errors in the editor UI.
+  }
+}
+
+function saveAdminHistorySnapshot(snapshot = adminSnapshotFromDom()) {
+  ensureAdminHistoryState();
+  if (!snapshot) return;
+  const store = loadAdminHistoryStore();
+  const key = adminHistoryPageKey(snapshot);
+  const list = Array.isArray(store[key]) ? store[key] : [];
+  const signature = adminSnapshotSignature(snapshot);
+  const previous = list[0];
+  if (!previous || adminSnapshotSignature(previous) !== signature) {
+    store[key] = [snapshot, ...list].slice(0, ADMIN_HISTORY_STACK_LIMIT);
+    saveAdminHistoryStore(store);
+  }
+  adminState.historySnapshots = store[key] || [];
+  renderAdminHistoryPanel();
+}
+
+function loadAdminHistorySnapshots() {
+  ensureAdminHistoryState();
+  const store = loadAdminHistoryStore();
+  adminState.historySnapshots = Array.isArray(store[adminHistoryPageKey()]) ? store[adminHistoryPageKey()] : [];
+  return adminState.historySnapshots;
+}
+
+function scheduleAdminHistorySnapshot() {
+  ensureAdminHistoryState();
+  if (adminState.suppressHistory) return;
+  clearTimeout(adminState.historySnapshotTimer);
+  adminState.historySnapshotTimer = setTimeout(() => {
+    pushAdminUndoSnapshot(adminSnapshotFromDom());
+    renderAdminPreviewPane();
+  }, 350);
+}
+
+function adminUndo() {
+  ensureAdminHistoryState();
+  const current = adminSnapshotFromDom();
+  if (current) pushAdminUndoSnapshot(current, { clearRedo: false, persist: false });
+  if (adminState.undoStack.length < 2) return;
+  const latest = adminState.undoStack.pop();
+  const previous = adminState.undoStack[adminState.undoStack.length - 1];
+  if (latest) adminState.redoStack.push(latest);
+  applyAdminSnapshot(previous);
+}
+
+function adminRedo() {
+  ensureAdminHistoryState();
+  const next = adminState.redoStack.pop();
+  if (!next) return;
+  adminState.undoStack.push(next);
+  if (adminState.undoStack.length > ADMIN_HISTORY_STACK_LIMIT) {
+    adminState.undoStack = adminState.undoStack.slice(-ADMIN_HISTORY_STACK_LIMIT);
+  }
+  applyAdminSnapshot(next);
+}
+
+function syncAdminAssistPanelVisibility() {
+  const panel = $("#admin-editor-assist-panel");
+  if (!panel) return;
+  const previewOpen = Boolean($("#admin-preview-pane") && !$("#admin-preview-pane").hidden);
+  const historyOpen = Boolean($("#admin-history-panel") && !$("#admin-history-panel").hidden);
+  panel.hidden = !previewOpen && !historyOpen;
+}
+
+function renderAdminPreviewPane() {
+  const pane = $("#admin-preview-pane");
+  if (!pane) return;
+  const snapshot = adminSnapshotFromDom();
+  if (!snapshot) return;
+  if (adminState.previewOpen === false) {
+    pane.hidden = true;
+    syncAdminAssistPanelVisibility();
+    return;
+  }
+  pane.hidden = false;
+  const meta = [contentTypeMeta(snapshot.type).label, resolveCategoryLabel(snapshot.type, snapshot.category), formatContentTimestamp(snapshot.date, "")]
+    .filter(Boolean)
+    .join(" · ");
+  pane.innerHTML = `
+    <article class="admin-preview-article">
+      <div class="admin-preview-meta">${escapeHtml(meta)}</div>
+      <h1 class="admin-preview-title">${escapeHtml(snapshot.title || "제목 없음")}</h1>
+      <div class="admin-preview-body">
+        ${snapshot.blocks?.length ? renderSiteNarrativeBlocks(snapshot.blocks) : ""}
+      </div>
+    </article>
+  `;
+  syncAdminAssistPanelVisibility();
+}
+
+function toggleAdminPreview() {
+  ensureAdminHistoryState();
+  adminState.previewOpen = !adminState.previewOpen;
+  renderAdminPreviewPane();
+}
+
+function renderAdminHistoryPanel() {
+  const panel = $("#admin-history-panel");
+  if (!panel) return;
+  ensureAdminHistoryState();
+  if (!adminState.historyOpen) {
+    panel.hidden = true;
+    syncAdminAssistPanelVisibility();
+    return;
+  }
+  const snapshots = adminState.historySnapshots.length ? adminState.historySnapshots : loadAdminHistorySnapshots();
+  panel.hidden = false;
+  panel.innerHTML = snapshots.length
+    ? snapshots.map((snapshot, index) => `
+      <button class="admin-history-item" type="button" onclick="restoreAdminHistorySnapshot(${index})">
+        <strong>${escapeHtml(snapshot.title || "제목 없음")}</strong>
+        <span>${escapeHtml(new Date(snapshot.savedAt || Date.now()).toLocaleString())}</span>
+      </button>
+    `).join("")
+    : `<div class="admin-history-empty">저장된 기록이 없습니다.</div>`;
+  syncAdminAssistPanelVisibility();
+}
+
+function toggleAdminHistory() {
+  ensureAdminHistoryState();
+  adminState.historyOpen = !adminState.historyOpen;
+  loadAdminHistorySnapshots();
+  renderAdminHistoryPanel();
+}
+
+function restoreAdminHistorySnapshot(index) {
+  ensureAdminHistoryState();
+  const snapshots = adminState.historySnapshots.length ? adminState.historySnapshots : loadAdminHistorySnapshots();
+  const snapshot = snapshots[Number(index)];
+  if (!snapshot) return;
+  const current = adminSnapshotFromDom();
+  if (current) pushAdminUndoSnapshot(current, { clearRedo: false, persist: false });
+  applyAdminSnapshot(snapshot);
+  pushAdminUndoSnapshot(snapshot, { clearRedo: false, persist: false });
 }
 
 function adminMarkdownShortcutKind(value = "") {
@@ -6191,6 +7005,38 @@ function readEditorBlockFromNode(node, index) {
       body: parseAdminBlockField(kind, "body", node.querySelector('[data-field="body"]')?.innerHTML || "", index)
     };
   }
+  if (kind === "image") {
+    return {
+      id: node.dataset.blockId || "",
+      kind,
+      collapsed: node.dataset.collapsed === "true",
+      indent: Number(node.dataset.indent ?? 0) || 0,
+      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      url: parseAdminBlockField(kind, "url", editableNodeRawText(node.querySelector('[data-field="url"]')), index),
+      caption: parseAdminBlockField(kind, "caption", editableNodeRawText(node.querySelector('[data-field="caption"]')), index)
+    };
+  }
+  if (kind === "file") {
+    return {
+      id: node.dataset.blockId || "",
+      kind,
+      collapsed: node.dataset.collapsed === "true",
+      indent: Number(node.dataset.indent ?? 0) || 0,
+      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      url: parseAdminBlockField(kind, "url", editableNodeRawText(node.querySelector('[data-field="url"]')), index),
+      description: parseAdminBlockField(kind, "description", editableNodeRawText(node.querySelector('[data-field="description"]')), index)
+    };
+  }
+  if (kind === "embed") {
+    return {
+      id: node.dataset.blockId || "",
+      kind,
+      collapsed: node.dataset.collapsed === "true",
+      indent: Number(node.dataset.indent ?? 0) || 0,
+      url: parseAdminBlockField(kind, "url", editableNodeRawText(node.querySelector('[data-field="url"]')), index),
+      caption: parseAdminBlockField(kind, "caption", editableNodeRawText(node.querySelector('[data-field="caption"]')), index)
+    };
+  }
   if (kind === "todo") {
     return {
       id: node.dataset.blockId || "",
@@ -6408,6 +7254,13 @@ function renderAdminContentForm() {
   renderAdminPagePropertiesInline();
   renderAdminBlockList();
   renderAdminPageChrome();
+  ensureAdminHistoryState();
+  adminState.undoStack = [];
+  adminState.redoStack = [];
+  loadAdminHistorySnapshots();
+  pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
+  renderAdminPreviewPane();
+  renderAdminHistoryPanel();
 }
 
 function replaceTypeIdAcrossContent(oldTypeId, nextTypeId) {
@@ -6696,6 +7549,7 @@ class AdminEditorController {
     if (topSubmitBtn) topSubmitBtn.disabled = true;
 
     try {
+      saveAdminHistorySnapshot(adminSnapshotFromDom());
       const { nextItem, type, editingId, editingType } = this.buildContentItemFromForm(status);
 
       if (editingType && editingId) {
@@ -6717,6 +7571,7 @@ class AdminEditorController {
       renderAdminContentList();
       const label = status === "draft" ? "Draft saved" : "Published";
       await persistContent(label, label, status === "draft" ? "Saved as draft." : "Content published.", label);
+      saveAdminHistorySnapshot(adminSnapshotFromDom());
     } finally {
       if (submitBtn) submitBtn.disabled = false;
       if (topSubmitBtn) topSubmitBtn.disabled = false;
@@ -7561,6 +8416,11 @@ window.startContentDraft = startContentDraft;
 window.handleContentTypeChange = handleContentTypeChange;
 window.saveContentDraft = saveContentDraft;
 window.saveDraft = saveDraft;
+window.adminUndo = adminUndo;
+window.adminRedo = adminRedo;
+window.toggleAdminPreview = toggleAdminPreview;
+window.toggleAdminHistory = toggleAdminHistory;
+window.restoreAdminHistorySnapshot = restoreAdminHistorySnapshot;
 window.addAdminBlock = addAdminBlock;
 window.insertAdminBlock = insertAdminBlock;
 window.openAdminInsertMenu = openAdminInsertMenu;

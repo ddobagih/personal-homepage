@@ -321,6 +321,136 @@ function contentItemsForCosmos(group) {
   return source.filter((item) => (item?.status || "published") !== "trash");
 }
 
+const COSMOS_GROUP_THEMES = {
+  portfolio: {
+    hue: 38,
+    hueShift: 22,
+    accent: [255, 209, 129],
+    secondary: [154, 214, 255],
+    orbit: [255, 218, 160],
+    moon: [255, 238, 202],
+    ringThreshold: 4,
+    ringModulo: 5,
+    glowScale: 1.18,
+    maxMoons: 6
+  },
+  study: {
+    hue: 205,
+    hueShift: -34,
+    accent: [154, 214, 255],
+    secondary: [116, 238, 220],
+    orbit: [128, 210, 255],
+    moon: [196, 235, 255],
+    ringThreshold: 5,
+    ringModulo: 4,
+    glowScale: 1.08,
+    maxMoons: 5
+  },
+  updates: {
+    hue: 276,
+    hueShift: 38,
+    accent: [190, 140, 255],
+    secondary: [255, 122, 191],
+    orbit: [220, 162, 255],
+    moon: [238, 214, 255],
+    ringThreshold: 3,
+    ringModulo: 6,
+    glowScale: 1.25,
+    maxMoons: 4
+  }
+};
+COSMOS_GROUP_THEMES.update = COSMOS_GROUP_THEMES.updates;
+
+function cosmosPrefersReducedMotion() {
+  return typeof window !== "undefined"
+    && typeof window.matchMedia === "function"
+    && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function cosmosIsLowPowerDevice() {
+  if (typeof navigator === "undefined") return false;
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  return Boolean(connection?.saveData) || (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4);
+}
+
+function cosmosRenderProfile(width = cosmosState.width, height = cosmosState.height) {
+  const reducedMotion = cosmosPrefersReducedMotion();
+  const lowPower = cosmosIsLowPowerDevice();
+  const mobile = Math.min(width || 0, height || 0) < 620 || (width || 0) < 720;
+  const light = reducedMotion || lowPower || mobile;
+  return {
+    reducedMotion,
+    lowPower,
+    mobile,
+    light,
+    maxPlanets: reducedMotion ? 6 : mobile ? 8 : lowPower ? 12 : 22,
+    maxMoons: reducedMotion ? 1 : mobile ? 2 : lowPower ? 3 : 6,
+    starMultiplier: reducedMotion ? 0.34 : mobile ? 0.48 : lowPower ? 0.64 : 1,
+    dustMultiplier: reducedMotion ? 0.24 : mobile ? 0.42 : lowPower ? 0.58 : 1,
+    backgroundDetail: reducedMotion ? 0 : mobile || lowPower ? 1 : 2,
+    frameInterval: reducedMotion ? 120 : mobile || lowPower ? 48 : COSMOS_CONFIG.frameInterval,
+    radarSize: reducedMotion ? 62 : mobile ? 74 : lowPower ? 88 : 108,
+    starOrbitScale: reducedMotion ? 0 : mobile ? 0.48 : lowPower ? 0.72 : 1,
+    pointerScale: reducedMotion ? 0 : mobile ? 0.42 : lowPower ? 0.62 : 1,
+    warpEnabled: !reducedMotion
+  };
+}
+
+function rgbaString(rgb, alpha) {
+  const value = Array.isArray(rgb) ? rgb.join(", ") : rgb;
+  return `rgba(${value}, ${alpha})`;
+}
+
+function blendRgbArrays(from, to, amount) {
+  return from.map((value, index) => Math.round(value + ((to[index] - value) * amount)));
+}
+
+function categoryAccentRgb(theme, categoryHash) {
+  const mix = ((categoryHash % 100) / 100) * 0.72;
+  const base = blendRgbArrays(theme.accent, theme.secondary, mix);
+  return base.map((value, index) => {
+    const channelShift = ((categoryHash >> (index * 3)) % 17) - 8;
+    return clamp(value + channelShift, 0, 255);
+  });
+}
+
+function categoryPlanetPalette(basePalette, accentRgb, theme, categoryHash) {
+  const accent = accentRgb.join(", ");
+  const shadowStrength = 0.72 + ((categoryHash % 5) * 0.025);
+  return {
+    ...basePalette,
+    glow: `rgba(${accent}, ${Math.min(0.34, 0.17 * (theme.glowScale || 1)).toFixed(3)})`,
+    atmosphere: `rgba(${accent}, ${Math.min(0.26, 0.09 * (theme.glowScale || 1)).toFixed(3)})`,
+    band: `rgba(${accent}, 0.075)`,
+    shadow: `rgba(8, 10, 24, ${shadowStrength.toFixed(2)})`
+  };
+}
+
+function cosmosGroupTheme(systemOrGroup) {
+  const key = typeof systemOrGroup === "string"
+    ? systemOrGroup
+    : (systemOrGroup?.typeId || systemOrGroup?.group || "portfolio");
+  return COSMOS_GROUP_THEMES[key] || COSMOS_GROUP_THEMES.portfolio;
+}
+
+function latestPostTimestamp(posts) {
+  return posts.reduce((latest, post) => {
+    const rawDate = normalizeText(post?.date || post?.year || "", "");
+    if (!rawDate) return latest;
+    const timestamp = Date.parse(rawDate.length === 4 ? `${rawDate}-12-31T00:00:00` : rawDate);
+    return Number.isFinite(timestamp) ? Math.max(latest, timestamp) : latest;
+  }, 0);
+}
+
+function recencyLabelFromTimestamp(timestamp) {
+  if (!timestamp) return "최근성 미정";
+  const days = (Date.now() - timestamp) / 86400000;
+  if (days <= 14) return "아주 최근";
+  if (days <= 60) return "최근";
+  if (days <= 180) return "보통";
+  return "오래됨";
+}
+
 class CosmosController {
   constructor(stateRef, groupThemes) {
     this.state = stateRef;
@@ -344,16 +474,24 @@ class CosmosController {
       // 카테고리 = 행성, 게시물 수 = 위성 개수
       const items = [...categoryMap.entries()].slice(0, MAX_PLANETS).map(([catId, posts]) => {
         const categoryLabel = resolveCategoryLabel(group, catId);
+        const latestTimestamp = latestPostTimestamp(posts);
         return {
           key: `${config.id}:${catId}`,
           title: categoryLabel,
           body: `글 ${posts.length}개`,
+          group,
+          groupLabel: config.sectionLabel,
           targetType: group,
           targetPage: config.page,
           targetCategory: catId,
           targetItemId: posts[0]?.id || null,
+          targetId: posts[0]?.id || null,
+          postCount: posts.length,
           satelliteCount: posts.length,
-          date: ""
+          latestTimestamp,
+          recentness: recencyLabelFromTimestamp(latestTimestamp),
+          date: latestTimestamp ? new Date(latestTimestamp).toISOString().slice(0, 10) : "",
+          visualSeed: hashString(`${config.id}:${catId}:${posts.length}`)
         };
       });
       return {
@@ -478,6 +616,7 @@ class CosmosController {
     this.state.focusKey = activeItem?.key || "";
     if (!items.some((item) => item.key === this.state.hoverKey) && this.state.hoverKey !== system?.starKey) {
       this.state.hoverKey = "";
+      hideCosmosHoverHud();
     }
     syncCosmosScene(items);
     this.updateSystemLabel();
@@ -492,6 +631,20 @@ class CosmosController {
     const total = this.state.systems.length || this.buildSystems().length || 1;
     const next = ((index % total) + total) % total;
     if (next === this.state.activeSystemIndex) return;
+    const reducedMotion = cosmosPrefersReducedMotion();
+    const direction = index > this.state.activeSystemIndex ? 1 : -1;
+    this.state.transitionDirection = direction;
+    this.state.warpStartedAt = reducedMotion ? 0 : performance.now();
+    this.state.warpDuration = reducedMotion ? 0 : 760;
+
+    if (reducedMotion) {
+      this.state.activeSystemIndex = next;
+      this.state.sceneOpacity = 1;
+      this.state.sceneOpacityTarget = 1;
+      this.syncItems();
+      return;
+    }
+
     // 페이드아웃 → 전환 → 페이드인
     this.state.sceneOpacity = 1;
     this.state.sceneOpacityTarget = 0;
@@ -557,6 +710,61 @@ function openCosmosSunBeta() {
   cosmosController.openSun();
 }
 
+function cosmosHoverHudNode() {
+  return document.getElementById("cosmos-hover-hud");
+}
+
+function hideCosmosHoverHud() {
+  const hud = cosmosHoverHudNode();
+  if (!hud) return;
+  hud.hidden = true;
+}
+
+function updateCosmosHoverHud(hoveredBody, event) {
+  const hud = cosmosHoverHudNode();
+  if (!hud || !event || hoveredBody?.type !== "planet") {
+    hideCosmosHoverHud();
+    return;
+  }
+
+  const item = cosmosState.items.find((candidate) => candidate.key === hoveredBody.key);
+  if (!item) {
+    hideCosmosHoverHud();
+    return;
+  }
+
+  const planet = hoveredBody.planet
+    || cosmosState.renderedPlanets.find((candidate) => candidate.itemKey === hoveredBody.key)
+    || cosmosState.planets.find((candidate) => candidate.itemKey === hoveredBody.key);
+  const titleNode = hud.querySelector(".cosmos-hover-hud-title");
+  const metaNode = hud.querySelector(".cosmos-hover-hud-meta");
+  const labelNode = hud.querySelector(".cosmos-hover-hud-label");
+  const postCount = item.postCount || item.satelliteCount || 0;
+
+  if (labelNode) labelNode.textContent = item.groupLabel || "Category";
+  if (titleNode) titleNode.textContent = truncateText(item.title || "Untitled", 32);
+  if (metaNode) metaNode.textContent = `글 ${postCount}개 · ${item.recentness || "최근성 미정"}`;
+  hud.style.setProperty("--hud-accent", planet?.accentColor || rgbaString(cosmosGroupTheme(item.group).accent, 0.72));
+  hud.hidden = false;
+
+  const hero = hud.closest(".hero-cosmos");
+  const heroRect = hero?.getBoundingClientRect();
+  if (!heroRect) return;
+
+  const hudWidth = hud.offsetWidth || 168;
+  const hudHeight = hud.offsetHeight || 72;
+  const gap = 14;
+  let left = event.clientX - heroRect.left + gap;
+  let top = event.clientY - heroRect.top - (hudHeight * 0.35);
+
+  if (left + hudWidth > heroRect.width - 10) {
+    left = event.clientX - heroRect.left - hudWidth - gap;
+  }
+  top = clamp(top, 10, Math.max(10, heroRect.height - hudHeight - 10));
+  left = clamp(left, 10, Math.max(10, heroRect.width - hudWidth - 10));
+  hud.style.transform = `translate3d(${Math.round(left)}px, ${Math.round(top)}px, 0)`;
+}
+
 function setupCosmosAnimation() {
   const canvas = $("#cosmos-canvas");
   if (!canvas) return false;
@@ -587,13 +795,19 @@ function setupCosmosAnimation() {
   };
 
   const handlePointerMove = (event) => {
-    cosmosState.pointer.targetX = 0;
-    cosmosState.pointer.targetY = 0;
+    const rect = canvas.getBoundingClientRect();
+    const profile = cosmosRenderProfile(rect.width, rect.height);
+    const safeWidth = rect.width || 1;
+    const safeHeight = rect.height || 1;
+    cosmosState.pointer.targetX = (((event.clientX - rect.left) / safeWidth) - 0.5) * COSMOS_CONFIG.pointerRange * profile.pointerScale;
+    cosmosState.pointer.targetY = (((event.clientY - rect.top) / safeHeight) - 0.5) * COSMOS_CONFIG.pointerRange * profile.pointerScale;
     const hoveredBody = celestialBodyAtCanvasPoint(event.clientX, event.clientY);
     const newKey = hoveredBody?.key || "";
     updateCardHighlight(newKey, cosmosState.hoverKey);
     cosmosState.hoverKey = newKey;
+    updateCosmosHoverHud(hoveredBody, event);
     canvas.style.cursor = hoveredBody ? "pointer" : "default";
+    if (profile.reducedMotion) drawCosmosFrame(performance.now());
   };
 
   const handlePointerLeave = () => {
@@ -601,7 +815,9 @@ function setupCosmosAnimation() {
     cosmosState.pointer.targetY = 0;
     updateCardHighlight("", cosmosState.hoverKey);
     cosmosState.hoverKey = "";
+    hideCosmosHoverHud();
     canvas.style.cursor = "default";
+    if (cosmosPrefersReducedMotion()) drawCosmosFrame(performance.now());
   };
 
   const handleCanvasClick = (event) => {
@@ -674,11 +890,12 @@ function resizeCosmosCanvas() {
 }
 
 function createCosmosStars(width, height) {
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const profile = cosmosRenderProfile(width, height);
+  const starCount = (count) => Math.max(6, Math.round(count * profile.starMultiplier));
   const layers = [
-    { count: reducedMotion ? 70 : 120, depth: 0.12, size: [0.35, 0.95], alpha: [0.08, 0.28] },
-    { count: reducedMotion ? 30 : 54, depth: 0.28, size: [0.65, 1.55], alpha: [0.14, 0.48] },
-    { count: reducedMotion ? 10 : 18, depth: 0.46, size: [1.05, 2.4], alpha: [0.2, 0.72] }
+    { count: starCount(120), depth: 0.12, size: [0.35, 0.95], alpha: [0.08, 0.28] },
+    { count: starCount(54), depth: 0.28, size: [0.65, 1.55], alpha: [0.14, 0.48] },
+    { count: starCount(18), depth: 0.46, size: [1.05, 2.4], alpha: [0.2, 0.72] }
   ];
   const colors = [
     "255,255,255",
@@ -691,13 +908,35 @@ function createCosmosStars(width, height) {
     y: Math.random() * height,
     radius: layer.size[0] + (Math.random() * (layer.size[1] - layer.size[0])),
     alpha: layer.alpha[0] + (Math.random() * (layer.alpha[1] - layer.alpha[0])),
-    twinkleSpeed: 0.00025 + (Math.random() * 0.00045),
-    twinkleAmplitude: 0.03 + (Math.random() * 0.08),
+    twinkleSpeed: profile.reducedMotion ? 0 : 0.00025 + (Math.random() * 0.00045),
+    twinkleAmplitude: profile.reducedMotion ? 0.01 : 0.03 + (Math.random() * 0.08),
     phase: Math.random() * Math.PI * 2,
-    drift: (layerIndex + 1) * (0.0004 + Math.random() * 0.0003),
+    drift: profile.reducedMotion ? 0 : (layerIndex + 1) * (0.0004 + Math.random() * 0.0003),
     depth: layer.depth,
+    streakLength: profile.reducedMotion || layerIndex < 2 ? 0 : 8 + (Math.random() * 18),
+    streakAngle: -0.55 + (Math.random() * 0.18),
     color: colors[(layerIndex + Math.floor(Math.random() * colors.length)) % colors.length]
   })));
+}
+
+function createCosmosDust(width, height) {
+  const profile = cosmosRenderProfile(width, height);
+  const count = Math.max(8, Math.round(46 * profile.dustMultiplier));
+  const colors = ["118, 154, 255", "174, 220, 255", "255, 191, 224"];
+  return Array.from({ length: count }, (_, index) => {
+    const depth = 0.16 + (Math.random() * 0.58);
+    return {
+      x: Math.random() * width,
+      y: Math.random() * height,
+      length: 10 + (Math.random() * 42 * depth),
+      width: 0.4 + (Math.random() * 1.1),
+      alpha: 0.018 + (Math.random() * 0.055),
+      angle: -0.54 + (Math.random() * 0.28),
+      depth,
+      drift: profile.reducedMotion ? 0 : 0.006 + (Math.random() * 0.014),
+      color: colors[index % colors.length]
+    };
+  });
 }
 
 // ── 태양계 공유 상수 ────────────────────────────────────────────
@@ -794,6 +1033,10 @@ const PLANET_ARCHETYPES = [
 // Create orbiting planets — each item (post) = one planet
 function createCosmosPlanets(items, width, height) {
   const minDimension = Math.min(width, height);
+  const system = currentCosmosSystem();
+  const theme = cosmosGroupTheme(system);
+  const profile = cosmosRenderProfile(width, height);
+  const visibleItems = items.slice(0, profile.maxPlanets);
 
   // 5번: 모바일 대응 — 작은 화면에서 궤도 전체를 압축
   // 화면이 작을수록 궤도 간격을 줄여서 캔버스 밖으로 나가지 않게
@@ -804,12 +1047,14 @@ function createCosmosPlanets(items, width, height) {
   // 코로나 엣지 = SUN_BASE_FACTOR * SUN_CORONA_FACTOR, 단일 소스
   const sunCoronaRadius = minDimension * SUN_BASE_FACTOR * SUN_CORONA_FACTOR;
 
-  return items.map((item, index) => {
+  return visibleItems.map((item, index) => {
     const seed = hashString(item.key);
     // 같은 카테고리 → 같은 행성 타입으로 일관성 있는 시각적 그룹핑
-    const categoryHash = hashString(item.targetCategory || "default");
+    const categoryHash = item.visualSeed || hashString(item.targetCategory || "default");
     const archetype = PLANET_ARCHETYPES[categoryHash % PLANET_ARCHETYPES.length];
-    const maxItems = Math.max(items.length, 1);
+    const maxItems = Math.max(visibleItems.length, 1);
+    const accentRgb = categoryAccentRgb(theme, categoryHash);
+    const accent = accentRgb.join(", ");
 
     // 행성 궤도 겹침 방지: 선형 등간격 배치
     // innerEdge = 별 코로나 바깥 여백, outerEdge = 캔버스 범위 내 최대 궤도
@@ -840,10 +1085,8 @@ function createCosmosPlanets(items, width, height) {
 
     // 카테고리별 궤도 색상으로 시각적 그룹핑 (실선이므로 alpha 더 낮게)
     const orbitAlpha = 0.07 + ((categoryHash % 4) * 0.012);
-    const orbitR = 180 + ((categoryHash * 37) % 75);
-    const orbitG = 180 + ((categoryHash * 53) % 75);
-    const orbitB = 200 + ((categoryHash * 19) % 55);
-    const orbitColor = `rgba(${orbitR}, ${orbitG}, ${orbitB}, ${orbitAlpha.toFixed(2)})`;
+    const orbitRgb = blendRgbArrays(theme.orbit, accentRgb, 0.46);
+    const orbitColor = `rgba(${orbitRgb.join(", ")}, ${orbitAlpha.toFixed(2)})`;
 
     // 7번: 안쪽 행성이 바깥쪽보다 훨씬 빠르게 — 케플러 법칙 근사
     // 궤도 반지름에 반비례하는 속도 (실제 태양계처럼)
@@ -852,14 +1095,16 @@ function createCosmosPlanets(items, width, height) {
     const speed = baseSpeed + ((seed % 5) * 0.000006);
 
     // 위성 궤도도 행성 크기에 따라 자동으로 커짐 (radius 기반)
-    const moonCount = Math.min(postCount, 6);
+    const moonCount = Math.min(postCount, theme.maxMoons || profile.maxMoons, profile.maxMoons);
     const moonBaseOrbit = radius * (1.6 + postRichness * 0.5);  // 글 많을수록 위성 궤도 더 넓게
     const satellites = Array.from({ length: moonCount }, (_, mi) => ({
       phase: (mi / Math.max(moonCount, 1)) * Math.PI * 2 + (seed % 100) * 0.06,
       orbitRadius: moonBaseOrbit + (mi * radius * 0.24),
       radius: clamp(radius * 0.10, 1.5, 3.5),
       speed: 0.00055 + (mi * 0.00018) + ((seed % 4) * 0.00006),
-      tilt: 0.30 + ((seed >> (mi + 1)) % 8) * 0.05
+      tilt: 0.30 + ((seed >> (mi + 1)) % 8) * 0.05,
+      color: rgbaString(blendRgbArrays(theme.moon, accentRgb, mi % 2 ? 0.30 : 0.16), 0.94),
+      orbitColor: rgbaString(blendRgbArrays(theme.orbit, accentRgb, 0.38), 0.11)
     }));
 
     return {
@@ -874,14 +1119,18 @@ function createCosmosPlanets(items, width, height) {
       orbitRotation: (((seed % 18) - 9) * Math.PI) / 180,
       parallax: 6 + (index * 1.8),
       selfRotationSpeed: 0.00003 + ((seed % 7) * 0.000006),
-      palette: archetype.palette,
-      ring: archetype.ring,
+      palette: categoryPlanetPalette(archetype.palette, accentRgb, theme, categoryHash),
+      ring: archetype.ring || postCount >= theme.ringThreshold || (categoryHash % (theme.ringModulo || 5)) === 0,
       ringTilt: -0.38 + (((seed >> 2) % 24) / 100),
-      ringWidth: radius * 1.78,
+      ringWidth: radius * (1.72 + ((categoryHash % 9) * 0.035)),
       moons: satellites,
       satelliteCount: postCount,
       surfacePhase: (seed % 240) / 240,
-      atmosphere: 0.05 + (((seed >> 4) % 6) / 100),
+      atmosphere: 0.05 + (((seed >> 4) % 6) / 100) + ((theme.glowScale || 1) - 1) * 0.04,
+      accentColor: `rgba(${accent}, 0.82)`,
+      accentRgb,
+      moonColor: rgbaString(theme.moon, 0.94),
+      ringColor: rgbaString(blendRgbArrays([240, 225, 195], accentRgb, 0.54), 0.58),
       orbitColor,
       orbitAlpha
     };
@@ -891,6 +1140,7 @@ function createCosmosPlanets(items, width, height) {
 function rebuildCosmosScene() {
   if (!cosmosState.width || !cosmosState.height) return;
   cosmosState.stars = createCosmosStars(cosmosState.width, cosmosState.height);
+  cosmosState.dust = createCosmosDust(cosmosState.width, cosmosState.height);
   cosmosState.planets = createCosmosPlanets(cosmosState.items, cosmosState.width, cosmosState.height);
 }
 
@@ -958,13 +1208,25 @@ function celestialBodyAtCanvasPoint(clientX, clientY) {
   }
 
   // Check Planets (world coords — planet.x/y are world space)
-  const hoveredPlanet = [...cosmosState.renderedPlanets]
+  const renderedPlanets = Array.isArray(cosmosState.renderedPlanets) && cosmosState.renderedPlanets.length
+    ? cosmosState.renderedPlanets
+    : (Array.isArray(cosmosState.planets) ? cosmosState.planets : []).map((planet) => planetRenderState(
+      planet,
+      centerX,
+      centerY,
+      cosmosState.lastFrameTimestamp || performance.now(),
+      cosmosState.pointer?.x || 0,
+      cosmosState.pointer?.y || 0,
+      1
+    ));
+  const hoveredPlanet = [...renderedPlanets]
     .reverse()
     .find((planet) => {
-      return ((worldX - planet.x) ** 2) + ((worldY - planet.y) ** 2) <= ((planet.radius + 15) ** 2);
+      const hitRadius = Math.max(planet.radius + 15, planet.ring ? planet.ringWidth * 0.48 : 0);
+      return ((worldX - planet.x) ** 2) + ((worldY - planet.y) ** 2) <= (hitRadius ** 2);
     }) || null;
 
-  return hoveredPlanet ? { type: "planet", key: hoveredPlanet.itemKey } : null;
+  return hoveredPlanet ? { type: "planet", key: hoveredPlanet.itemKey, planet: hoveredPlanet } : null;
 }
 
 // Alpha = warm gold/blue, Beta = cool cyan/indigo, Gamma = pink/magenta
@@ -1233,7 +1495,49 @@ function drawCosmosStars(ctx, width, height, timestamp, pointerX, pointerY) {
     ctx.arc(x, y, star.radius, 0, Math.PI * 2);
     ctx.fill();
 
+    if (star.streakLength) {
+      const streakAlpha = alpha * 0.32;
+      const dx = Math.cos(star.streakAngle) * star.streakLength;
+      const dy = Math.sin(star.streakAngle) * star.streakLength;
+      const gradient = ctx.createLinearGradient(x - dx, y - dy, x + dx, y + dy);
+      gradient.addColorStop(0, `rgba(${star.color}, 0)`);
+      gradient.addColorStop(0.5, `rgba(${star.color}, ${streakAlpha.toFixed(3)})`);
+      gradient.addColorStop(1, `rgba(${star.color}, 0)`);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = Math.max(0.5, star.radius * 0.65);
+      ctx.beginPath();
+      ctx.moveTo(x - dx, y - dy);
+      ctx.lineTo(x + dx, y + dy);
+      ctx.stroke();
+    }
   });
+}
+
+function drawCosmosDust(ctx, width, height, timestamp, pointerX, pointerY) {
+  const dust = Array.isArray(cosmosState.dust) ? cosmosState.dust : [];
+  if (!dust.length) return;
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  dust.forEach((particle) => {
+    const drift = timestamp * particle.drift;
+    const x = ((particle.x + drift + pointerX * particle.depth * 3) % (width + 80)) - 40;
+    const y = ((particle.y + drift * 0.18 + pointerY * particle.depth * 2) % (height + 80)) - 40;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(particle.angle);
+    const gradient = ctx.createLinearGradient(-particle.length / 2, 0, particle.length / 2, 0);
+    gradient.addColorStop(0, `rgba(${particle.color}, 0)`);
+    gradient.addColorStop(0.48, `rgba(${particle.color}, ${particle.alpha})`);
+    gradient.addColorStop(1, `rgba(${particle.color}, 0)`);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = particle.width;
+    ctx.beginPath();
+    ctx.moveTo(-particle.length / 2, 0);
+    ctx.lineTo(particle.length / 2, 0);
+    ctx.stroke();
+    ctx.restore();
+  });
+  ctx.restore();
 }
 
 // 별 자전 위상 (timestamp 기반으로 연속 스크롤)
@@ -1442,7 +1746,9 @@ function drawPlanetRing(ctx, planet, frontSide = false) {
   ];
 
   bands.forEach(({ rx, alpha, w }) => {
-    ctx.strokeStyle = `rgba(240, 225, 195, ${alpha})`;
+    ctx.strokeStyle = frontSide && planet.accentRgb
+      ? `rgba(${planet.accentRgb.join(", ")}, ${Math.min(0.68, alpha + 0.12)})`
+      : (planet.ringColor || `rgba(240, 225, 195, ${alpha})`).replace(/0\.\d+\)/, `${alpha})`);
     ctx.lineWidth = w;
     ctx.beginPath();
     ctx.ellipse(0, 0, rx, ry, 0, startAngle, endAngle);
@@ -1614,14 +1920,14 @@ function drawPlanetMoons(ctx, planet, timestamp) {
 
     // 궤도 트랙 (아주 얇게)
     ctx.beginPath();
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.09)";
+    ctx.strokeStyle = moon.orbitColor || "rgba(255, 255, 255, 0.09)";
     ctx.lineWidth = 0.6;
     ctx.ellipse(planet.x, planet.y, moon.orbitRadius, moon.orbitRadius * moon.tilt, 0, 0, Math.PI * 2);
     ctx.stroke();
 
     // 위성 본체 — 작은 글로우 점
     const glow = ctx.createRadialGradient(x, y, 0, x, y, moon.radius * 2.2);
-    glow.addColorStop(0,   "rgba(220, 230, 255, 0.90)");
+    glow.addColorStop(0,   moon.color || planet.moonColor || "rgba(220, 230, 255, 0.90)");
     glow.addColorStop(0.4, "rgba(180, 200, 255, 0.45)");
     glow.addColorStop(1,   "rgba(140, 170, 255, 0)");
     ctx.fillStyle = glow;
@@ -1630,7 +1936,7 @@ function drawPlanetMoons(ctx, planet, timestamp) {
     ctx.fill();
 
     ctx.beginPath();
-    ctx.fillStyle = "rgba(240, 245, 255, 0.92)";
+    ctx.fillStyle = moon.color || planet.moonColor || "rgba(240, 245, 255, 0.92)";
     ctx.arc(x, y, moon.radius, 0, Math.PI * 2);
     ctx.fill();
   });
@@ -1642,6 +1948,7 @@ function drawPlanet(ctx, planet, timestamp, selected, hovered) {
   const glow = ctx.createRadialGradient(planet.x, planet.y, planet.radius * 0.45, planet.x, planet.y, planet.radius * 2.8);
   glow.addColorStop(0, planet.palette.glow);
   glow.addColorStop(0.4, planet.palette.glow.replace(/0\.\d+\)/, "0.08)"));
+  if (planet.accentRgb) glow.addColorStop(0.72, `rgba(${planet.accentRgb.join(", ")}, 0.045)`);
   glow.addColorStop(1, "rgba(0, 0, 0, 0)");
   ctx.fillStyle = glow;
   ctx.beginPath();
@@ -1674,8 +1981,8 @@ function drawPlanet(ctx, planet, timestamp, selected, hovered) {
     planet.x + Math.cos(planet.lightAngle) * planet.radius,
     planet.y + Math.sin(planet.lightAngle) * planet.radius
   );
-  shadow.addColorStop(0,    "rgba(0, 0, 8, 0.94)");  // 그림자 한가운데 — 거의 완전한 어둠
-  shadow.addColorStop(0.36, "rgba(0, 0, 8, 0.82)");  // 여전히 어두운 구역
+  shadow.addColorStop(0,    planet.palette.shadow || "rgba(0, 0, 8, 0.94)");  // 그림자 한가운데 — 거의 완전한 어둠
+  shadow.addColorStop(0.36, (planet.palette.shadow || "rgba(0, 0, 8, 0.82)").replace(/0\.\d+\)/, "0.82)"));  // 여전히 어두운 구역
   shadow.addColorStop(0.50, "rgba(0, 0, 8, 0.45)");  // 터미네이터(명암 경계)
   shadow.addColorStop(0.62, "rgba(0, 0, 8, 0.08)");  // 밝은 쪽으로 넘어감
   shadow.addColorStop(1,    "rgba(0, 0, 8, 0)");
@@ -1783,9 +2090,9 @@ function drawPlanet(ctx, planet, timestamp, selected, hovered) {
 
     // 왼쪽 카테고리 색상 바
     ctx.save();
-    ctx.fillStyle = planet.palette.atmosphere || "rgba(140, 180, 255, 0.5)";
+    ctx.fillStyle = planet.accentColor || planet.palette.atmosphere || "rgba(140, 180, 255, 0.5)";
     ctx.beginPath();
-    ctx.roundRect(tooltipX, tooltipY, 3, boxHeight, [10, 0, 0, 10]);
+    roundedRect(ctx, tooltipX, tooltipY, 3, boxHeight, 2);
     ctx.fill();
     ctx.restore();
 
@@ -1798,8 +2105,98 @@ function drawPlanet(ctx, planet, timestamp, selected, hovered) {
   }
 }
 
+function drawCosmosWarp(ctx, width, height, timestamp) {
+  if (!cosmosState.warpStartedAt || !cosmosState.warpDuration) return;
+  const elapsed = timestamp - cosmosState.warpStartedAt;
+  if (elapsed >= cosmosState.warpDuration) {
+    cosmosState.warpStartedAt = 0;
+    cosmosState.warpDuration = 0;
+    return;
+  }
+  const progress = clamp(elapsed / cosmosState.warpDuration, 0, 1);
+  const intensity = Math.sin(progress * Math.PI);
+  if (intensity <= 0.01) return;
+
+  const direction = cosmosState.transitionDirection || 1;
+  const centerY = height * 0.5;
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  for (let index = 0; index < 34; index += 1) {
+    const y = (height * ((index * 37) % 100) / 100) + Math.sin(index * 1.7) * 28;
+    const length = (80 + ((index % 7) * 22)) * intensity;
+    const x = direction > 0 ? width * progress - length * 0.5 + index * 3 : width * (1 - progress) - length * 0.5 - index * 3;
+    const alpha = (0.03 + (index % 5) * 0.012) * intensity;
+    const gradient = ctx.createLinearGradient(x, y, x + length * direction, y + (centerY - y) * 0.05);
+    gradient.addColorStop(0, "rgba(136, 184, 255, 0)");
+    gradient.addColorStop(0.45, `rgba(174, 213, 255, ${alpha})`);
+    gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = 1 + intensity * 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + length * direction, y + (centerY - y) * 0.05);
+    ctx.stroke();
+  }
+  ctx.fillStyle = `rgba(120, 170, 255, ${(0.035 * intensity).toFixed(3)})`;
+  ctx.fillRect(0, 0, width, height);
+  ctx.restore();
+}
+
+function drawCosmosRadar(ctx, width, height, centerX, centerY, systemScale = 1) {
+  const profile = cosmosRenderProfile(width, height);
+  if (profile.reducedMotion && width < 540) return;
+  const size = profile.radarSize;
+  const x = width - size - 18;
+  const y = height - size - 18;
+  const radius = size / 2;
+  const currentSystem = currentCosmosSystem();
+  const theme = cosmosGroupTheme(currentSystem);
+
+  ctx.save();
+  ctx.translate(x + radius, y + radius);
+  ctx.globalAlpha = 0.82;
+  ctx.fillStyle = "rgba(3, 7, 18, 0.52)";
+  ctx.strokeStyle = rgbaString(theme.orbit, 0.30);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.strokeStyle = "rgba(255,255,255,0.08)";
+  [0.38, 0.68].forEach((scale) => {
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * scale, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  ctx.beginPath();
+  ctx.moveTo(-radius * 0.75, 0);
+  ctx.lineTo(radius * 0.75, 0);
+  ctx.moveTo(0, -radius * 0.75);
+  ctx.lineTo(0, radius * 0.75);
+  ctx.stroke();
+
+  const maxOrbit = Math.max(...cosmosState.planets.map((planet) => planet.orbitRadiusX), 1);
+  cosmosState.renderedPlanets.forEach((planet) => {
+    const rx = ((planet.x - centerX) / (maxOrbit * systemScale * 1.25)) * radius * 0.72;
+    const ry = ((planet.y - centerY) / (maxOrbit * systemScale * 1.25)) * radius * 0.72;
+    const active = planet.itemKey === cosmosState.focusKey || planet.itemKey === cosmosState.hoverKey;
+    ctx.fillStyle = active ? "rgba(255,255,255,0.95)" : planet.accentColor || rgbaString(theme.accent, 0.72);
+    ctx.beginPath();
+    ctx.arc(rx, ry, active ? 2.8 : 1.8, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle = rgbaString(theme.accent, 0.90);
+  ctx.beginPath();
+  ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
 function drawCosmosFrame(timestamp) {
   if (!cosmosState.ctx || !cosmosState.width || !cosmosState.height) return;
+  cosmosState.lastFrameTimestamp = timestamp;
 
   const ctx = cosmosState.ctx;
   const width = cosmosState.width;
@@ -1807,11 +2204,12 @@ function drawCosmosFrame(timestamp) {
   const minDimension = Math.min(width, height);
   const currentSystem = currentCosmosSystem();
   if (!currentSystem) return;
+  const profile = cosmosRenderProfile(width, height);
   const baseX = width < 820 ? width * 0.5 : width * 0.52;
   const baseY = height * 0.48;
 
   // 별 공전: 타원 궤도로 천천히 이동 (~55초/바퀴)
-  const starOrbitR = minDimension * 0.11;
+  const starOrbitR = minDimension * 0.11 * profile.starOrbitScale;
   const starAngle  = timestamp * 0.000115;
   const centerX = baseX + Math.cos(starAngle) * starOrbitR;
   const centerY = baseY + Math.sin(starAngle) * starOrbitR * 0.50;
@@ -1840,6 +2238,7 @@ function drawCosmosFrame(timestamp) {
   // 배경·별 필드는 항상 전체 opacity로 (페이드 영향 없음)
   drawCosmosBackground(ctx, width, height, cosmosState.pointer.x, cosmosState.pointer.y, timestamp);
   drawCosmosStars(ctx, width, height, timestamp, cosmosState.pointer.x * 0.7, cosmosState.pointer.y * 0.7);
+  drawCosmosDust(ctx, width, height, timestamp, cosmosState.pointer.x, cosmosState.pointer.y);
 
   // 태양계 장면에만 페이드 적용
   ctx.save();
@@ -1883,6 +2282,8 @@ function drawCosmosFrame(timestamp) {
   ctx.fill();
 
   ctx.restore();
+  drawCosmosRadar(ctx, width, height, centerX + cosmosState.camera.x, centerY + cosmosState.camera.y, 1);
+  drawCosmosWarp(ctx, width, height, timestamp);
 }
 
 // Main animation loop: throttled requestAnimationFrame keeps motion very smooth
@@ -1890,7 +2291,8 @@ function drawCosmosFrame(timestamp) {
 function animateCosmos(timestamp) {
   if (!cosmosState.running) return;
 
-  if (timestamp - cosmosState.lastFrameTime >= COSMOS_CONFIG.frameInterval) {
+  const profile = cosmosRenderProfile(cosmosState.width, cosmosState.height);
+  if (timestamp - cosmosState.lastFrameTime >= profile.frameInterval) {
     cosmosState.lastFrameTime = timestamp;
     drawCosmosFrame(timestamp);
   }
