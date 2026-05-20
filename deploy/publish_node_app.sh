@@ -13,6 +13,7 @@ rsync -av --delete \
   "$ROOT_DIR/robots.txt" \
   "$ROOT_DIR/sitemap.xml" \
   "$ROOT_DIR/server.js" \
+  "$ROOT_DIR/content-store.js" \
   "$ROOT_DIR/package.json" \
   "$ROOT_DIR/package-lock.json" \
   "$ROOT_DIR/assets" \

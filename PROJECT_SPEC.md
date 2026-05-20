@@ -64,7 +64,7 @@ Updated: 2026-04-02
 
 핵심 파일:
 - `index.html`: 실제 진입 HTML
-- `site.html`: 호환용 HTML, 현재 `index.html`과 동일 상태 유지
+- `site.html`: 이전 주소 호환용 리다이렉트 페이지
 - `assets/site.js`: 전체 UI 렌더링, 상태 관리, 관리자 화면, 댓글, 레이드 로직
 - `assets/site.css`: 전체 스타일
 - `server.js`: 정적 파일 서빙 + API 서버
@@ -73,7 +73,7 @@ Updated: 2026-04-02
 콘텐츠 및 설정:
 - `data/content.json`: 로컬 개발 기본 콘텐츠
 - `data/default-content.json`: 기본 초기 콘텐츠 템플릿
-- `data/admin-auth.json`: 로컬 기본 관리자 OTP 설정 템플릿
+- `data/admin-auth.json`: 민감정보 없는 로컬 기본 관리자 OTP 정책 템플릿
 - `data/comments.json`: 로컬 개발 기본 댓글 파일
 
 운영/배포 관련:
@@ -87,6 +87,8 @@ Updated: 2026-04-02
 - `deploy/analytics_report.sh`: nginx analytics 로그 요약 스크립트
 - `docs/aws-ssm-access.md`: EC2 SSM 접속 메모
 - `docs/ec2-node-operations.md`: 실제 운영값 포함 EC2/Node 런북
+- `docs/production-data-cleanup.md`: 운영 데이터 정리 체크리스트
+- `docs/admin-auth-config.md`: 관리자 이메일과 OTP 정책 분리 설명
 - `scripts/set-admin-email.js`: 관리자 이메일 변경 스크립트
 
 ## 4. 현재 런타임 아키텍처
@@ -294,9 +296,10 @@ Updated: 2026-04-02
 - 로컬 기본값: `data/admin-auth.json`
 - 운영 권장값: `/var/lib/thecistus/admin-auth.json`
 
-민감값 위치:
+설정 분리:
 - 관리자 이메일: `.env`의 `ADMIN_EMAIL`
 - OTP 정책: `admin-auth.json`
+- `ADMIN_EMAIL`이 있으면 `admin-auth.json`의 `email`보다 우선된다.
 
 현재 기본 구조:
 - `otpExpiresInMinutes`

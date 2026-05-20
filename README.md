@@ -148,6 +148,8 @@ SMTP_FROM=no-reply@thecistus.com
 
 관리자 이메일은 `.env`에 저장되고, OTP 정책만 `data/admin-auth.json` 또는 `APP_DATA_DIR`의 `admin-auth.json`에 저장됩니다.
 
+자세한 분리 기준은 `docs/admin-auth-config.md`를 참고합니다.
+
 ## 배포
 
 Node + nginx 스택 설치:
@@ -171,6 +173,8 @@ cd /path/to/homepage
 운영 데이터 루트:
 
 - `/var/lib/thecistus`
+
+운영 데이터 정리 절차는 `docs/production-data-cleanup.md`를 참고합니다.
 
 그다음 HTTPS는 별도로:
 

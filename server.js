@@ -32,11 +32,14 @@ const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
   ".gif": "image/gif",
   ".html": "text/html; charset=utf-8",
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
   ".js": "application/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".pdf": "application/pdf",
   ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".webp": "image/webp",
   ".txt": "text/plain; charset=utf-8",
   ".xml": "application/xml; charset=utf-8"
 };
@@ -393,11 +396,16 @@ async function serveStatic(req, res, pathname) {
     }
     const ext = path.extname(filePath).toLowerCase();
     const body = await fs.readFile(filePath);
+    const cacheHeaders = ext === ".html"
+      ? {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          Pragma: "no-cache",
+          Expires: "0"
+        }
+      : { "Cache-Control": "public, max-age=300" };
     res.writeHead(200, {
       "Content-Type": MIME_TYPES[ext] || "application/octet-stream",
-      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
-      Pragma: "no-cache",
-      Expires: "0",
+      ...cacheHeaders,
       "Content-Length": body.length
     });
     res.end(body);

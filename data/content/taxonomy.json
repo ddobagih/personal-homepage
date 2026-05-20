@@ -18,26 +18,6 @@
   ],
   "categories": [
     {
-      "id": "web-5",
-      "label": "ㄹㄹㅇㄴㄹㄴㅇㄹ",
-      "group": "portfolio"
-    },
-    {
-      "id": "web-4",
-      "label": "ㄹㄴㅇㄹㄴㅇ",
-      "group": "portfolio"
-    },
-    {
-      "id": "web-3",
-      "label": "ㄹㅇㄴㄹㅇㄴㄹㄴㅇㄹ",
-      "group": "portfolio"
-    },
-    {
-      "id": "web-2",
-      "label": "ㄹㅇㄴㄹㄴ",
-      "group": "portfolio"
-    },
-    {
       "id": "web",
       "label": "Web",
       "group": "portfolio"

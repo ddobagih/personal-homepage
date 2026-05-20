@@ -9,6 +9,5 @@ tmp-*.png
 스크린샷*.png
 .env
 .env.local
-data/admin-auth.json
 data/comments.json
 data/backups/
