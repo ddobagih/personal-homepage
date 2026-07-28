@@ -1,0 +1,51 @@
+- generic [active] [ref=f9e1]:
+  - link "본문으로 건너뛰기" [ref=f9e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f9e3]:
+    - generic [ref=f9e4]:
+      - link "thecistus personal archive" [ref=f9e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f9e6]: ">_"
+        - generic [ref=f9e7]:
+          - generic [ref=f9e8]: thecistus
+          - generic [ref=f9e9]: personal archive
+      - generic [ref=f9e10]: personal page
+      - navigation "주요 섹션" [ref=f9e13]:
+        - link "Home" [ref=f9e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f9e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f9e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f9e17]: □
+          - text: Portfolio
+        - link "Study" [ref=f9e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f9e19]: ▤
+          - text: Study
+      - generic [ref=f9e20]:
+        - text: Current focus
+        - paragraph [ref=f9e21]: archive / notes / updates
+        - text: ">_"
+      - generic [ref=f9e22]:
+        - text: Find me
+        - generic [ref=f9e23]:
+          - link "EMAIL" [ref=f9e24] [cursor=pointer]:
+            - /url: mailto:ddoagi.h@gmail.com
+            - generic [ref=f9e26]: ↗
+          - link "GITHUB" [ref=f9e27] [cursor=pointer]:
+            - /url: https://github.com/ddobagi
+            - generic [ref=f9e29]: ↗
+  - main [ref=f9e30]:
+    - text: ↗ ↗
+    - generic [ref=f9e32]:
+      - heading "Study" [level=2] [ref=f9e34]
+      - generic [ref=f9e35]:
+        - button "전체" [ref=f9e36] [cursor=pointer]
+        - button "notes" [ref=f9e37] [cursor=pointer]
+      - 'button "테스트 글: 노션형 블록 에디터 확인 2026-07-15 / notes 개인 홈페이지의 작성·발행 흐름과 여러 블록이 공개 화면에서 제대로 보이는지 확인하기 위한 테스트 글입니다." [ref=f9e39] [cursor=pointer]':
+        - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=f9e40]'
+        - generic [ref=f9e41]: 2026-07-15 / notes
+        - paragraph [ref=f9e42]: 개인 홈페이지의 작성·발행 흐름과 여러 블록이 공개 화면에서 제대로 보이는지 확인하기 위한 테스트 글입니다.
+    - text: 제목 없음
+    - generic [ref=f9e43]: thecistus.com

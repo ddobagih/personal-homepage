@@ -1,0 +1,142 @@
+- generic [active] [ref=f4e1]:
+  - link "본문으로 건너뛰기" [ref=f4e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f4e3]:
+    - generic [ref=f4e4]:
+      - link "thecistus 홈" [ref=f4e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f4e6]: thecistus
+      - navigation "주요 섹션" [ref=f4e7]:
+        - link "Home" [ref=f4e8] [cursor=pointer]:
+          - /url: "#home"
+        - link "Portfolio" [ref=f4e9] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "Study" [ref=f4e10] [cursor=pointer]:
+          - /url: "#study"
+        - link "Moments" [ref=f4e11] [cursor=pointer]:
+          - /url: "#updates"
+  - main [ref=f4e12]:
+    - generic [ref=f4e15]:
+      - complementary [ref=f4e16]:
+        - generic [ref=f4e17]:
+          - generic [ref=f4e18]:
+            - button "☰ 페이지" [ref=f4e118] [cursor=pointer]
+            - button "# 스키마" [ref=f4e119] [cursor=pointer]
+            - button "⌂ 홈" [ref=f4e120] [cursor=pointer]
+            - button "↗ 연락" [ref=f4e121] [cursor=pointer]
+          - button "새 페이지" [ref=f4e23] [cursor=pointer]
+          - searchbox "페이지 검색" [ref=f4e26]
+          - generic [ref=f4e27]:
+            - heading "게시물" [level=3] [ref=f4e30]
+            - generic [ref=f4e32]:
+              - generic [ref=f4e33]: 페이지 2
+              - generic "보기 방식" [ref=f4e34]:
+                - button "목록" [ref=f4e35] [cursor=pointer]
+                - button "표" [ref=f4e36] [cursor=pointer]
+                - button "갤러리" [ref=f4e37] [cursor=pointer]
+                - button "보드" [ref=f4e38] [cursor=pointer]
+            - generic [ref=f4e40]:
+              - generic [ref=f4e41]:
+                - generic [ref=f4e42]: Title
+                - generic [ref=f4e43]: Section
+                - generic [ref=f4e44]: Category
+                - generic [ref=f4e45]: Status
+                - generic [ref=f4e46]: Date
+              - generic [ref=f4e47]:
+                - button "ㄹㅇㄹㄴㅇ 편집" [ref=f4e48] [cursor=pointer]:
+                  - generic [ref=f4e49]:
+                    - generic [ref=f4e50]: ✨
+                    - strong [ref=f4e51]: ㄹㅇㄹㄴㅇ
+                  - generic [ref=f4e52]: 게시됨
+                  - generic [ref=f4e53]: 2026.07.16 · 11:37
+                - button "페이지를 휴지통으로 이동" [ref=f4e55] [cursor=pointer]: 휴지통
+              - generic [ref=f4e56]:
+                - button "한이음 드림업 2026 편집" [ref=f4e57] [cursor=pointer]:
+                  - generic [ref=f4e58]:
+                    - generic [ref=f4e59]: ✨
+                    - strong [ref=f4e60]: 한이음 드림업 2026
+                  - generic [ref=f4e61]: 게시됨
+                  - generic [ref=f4e62]: "2026"
+                - button "페이지를 휴지통으로 이동" [ref=f4e64] [cursor=pointer]: 휴지통
+        - button "로그아웃" [ref=f4e66]
+      - generic [ref=f4e67]:
+        - text: 제목 없음
+        - generic [ref=f4e122]:
+          - heading "스키마" [level=3] [ref=f4e125]
+          - generic [ref=f4e127]:
+            - generic [ref=f4e128]:
+              - heading "카테고리 구조" [level=3] [ref=f4e131]
+              - generic [ref=f4e132]:
+                - generic [ref=f4e133]:
+                  - generic [ref=f4e134]:
+                    - heading "Portfolio" [level=4] [ref=f4e136]
+                    - button "추가" [ref=f4e137]
+                  - generic [ref=f4e138]:
+                    - generic [ref=f4e139]: Portfolio
+                    - generic [ref=f4e140]: /
+                    - generic [ref=f4e141]:
+                      - button "Web" [ref=f4e142] [cursor=pointer]
+                      - button "Game" [ref=f4e143] [cursor=pointer]
+                  - generic [ref=f4e145]:
+                    - article [ref=f4e146]:
+                      - button "Web 2개 페이지" [ref=f4e147]:
+                        - generic [ref=f4e148]:
+                          - strong [ref=f4e149]: Web
+                          - generic [ref=f4e150]: 2개 페이지
+                      - generic:
+                        - button "카테고리 삭제": 삭제
+                    - article [ref=f4e151]:
+                      - button "Game 0개 페이지" [ref=f4e152]:
+                        - generic [ref=f4e153]:
+                          - strong [ref=f4e154]: Game
+                          - generic [ref=f4e155]: 0개 페이지
+                      - generic:
+                        - button "카테고리 삭제": 삭제
+                - generic [ref=f4e156]:
+                  - generic [ref=f4e157]:
+                    - heading "Study" [level=4] [ref=f4e159]
+                    - button "추가" [ref=f4e160]
+                  - generic [ref=f4e161]:
+                    - generic [ref=f4e162]: Study
+                    - generic [ref=f4e163]: /
+                    - button "notes" [ref=f4e165] [cursor=pointer]
+                  - article [ref=f4e168]:
+                    - button "notes 1개 페이지" [ref=f4e169]:
+                      - generic [ref=f4e170]:
+                        - strong [ref=f4e171]: notes
+                        - generic [ref=f4e172]: 1개 페이지
+                    - generic:
+                      - button "카테고리 삭제": 삭제
+                - generic [ref=f4e173]:
+                  - generic [ref=f4e174]:
+                    - heading "Moments" [level=4] [ref=f4e176]
+                    - button "추가" [ref=f4e177]
+                  - generic [ref=f4e178]:
+                    - generic [ref=f4e179]: Moments
+                    - generic [ref=f4e180]: /
+                    - button "updates" [ref=f4e182] [cursor=pointer]
+                  - article [ref=f4e185]:
+                    - button "updates 0개 페이지" [ref=f4e186]:
+                      - generic [ref=f4e187]:
+                        - strong [ref=f4e188]: updates
+                        - generic [ref=f4e189]: 0개 페이지
+                    - generic:
+                      - button "카테고리 삭제": 삭제
+            - generic [ref=f4e191]:
+              - generic [ref=f4e193]:
+                - generic [ref=f4e194]: 카테고리
+                - heading "카테고리 편집" [level=3] [ref=f4e195]
+              - generic [ref=f4e196]:
+                - heading "새 카테고리" [level=3] [ref=f4e198]
+                - generic [ref=f4e199]:
+                  - generic [ref=f4e200]:
+                    - generic [ref=f4e201]: 이름
+                    - textbox "이름" [ref=f4e202]:
+                      - /placeholder: 프론트엔드
+                  - generic [ref=f4e203]:
+                    - generic [ref=f4e204]: 그룹
+                    - combobox "그룹" [ref=f4e205]:
+                      - option "Portfolio" [selected]
+                      - option "Study"
+                      - option "Moments"
+                - button "저장" [ref=f4e207] [cursor=pointer]

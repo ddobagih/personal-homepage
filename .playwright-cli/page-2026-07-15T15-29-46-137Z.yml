@@ -1,0 +1,91 @@
+- generic [ref=f8e1]:
+  - link "본문으로 건너뛰기" [ref=f8e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f8e3]:
+    - generic [ref=f8e4]:
+      - link "thecistus personal archive" [ref=f8e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f8e6]: ">_"
+        - generic [ref=f8e7]:
+          - generic [ref=f8e8]: thecistus
+          - generic [ref=f8e9]: personal archive
+      - generic [ref=f8e10]: personal page
+      - navigation "주요 섹션" [ref=f8e13]:
+        - link "Home" [ref=f8e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f8e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f8e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f8e17]: □
+          - text: Portfolio
+        - link "Study" [ref=f8e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f8e19]: ▤
+          - text: Study
+      - generic [ref=f8e20]:
+        - text: Current focus
+        - paragraph [ref=f8e21]: archive / notes / updates
+        - text: ">_"
+      - generic [ref=f8e22]:
+        - text: Find me
+        - generic [ref=f8e23]:
+          - link "EMAIL" [ref=f8e24] [cursor=pointer]:
+            - /url: mailto:ddoagi.h@gmail.com
+            - generic [ref=f8e26]: ↗
+          - link "GITHUB" [ref=f8e27] [cursor=pointer]:
+            - /url: https://github.com/ddobagi
+            - generic [ref=f8e29]: ↗
+  - main [ref=f8e30]:
+    - text: ↗ ↗
+    - generic [ref=f8e229]:
+      - button "← Study" [ref=f8e230] [cursor=pointer]
+      - generic [ref=f8e231]:
+        - generic [ref=f8e232]: 2026.07.15 · notes
+        - 'heading "테스트 글: 노션형 블록 에디터 확인" [active] [level=1] [ref=f8e233]'
+        - generic [ref=f8e234]: 1 min read
+      - generic [ref=f8e236]:
+        - paragraph [ref=f8e239]: 이 글은 관리자에서 작성한 콘텐츠가 공개 Study 화면에 정상적으로 표시되는지 확인하기 위한 테스트 글입니다.
+        - heading "무엇을 확인하나요?" [level=2] [ref=f8e241]
+        - generic [ref=f8e242]:
+          - heading "! 확인 목표" [level=3] [ref=f8e243]
+          - paragraph [ref=f8e245]: 초안과 공개 상태 분리, 블록 저장, 글 상세 라우팅, 읽기 화면의 레이아웃을 빠르게 점검합니다.
+        - heading "체크리스트" [level=3] [ref=f8e247]
+        - generic [ref=f8e248]:
+          - heading "현재 확인 상태" [level=3] [ref=f8e249]
+          - list [ref=f8e250]:
+            - listitem [ref=f8e251]: ☑ 공개 Study 목록에 글이 나타난다
+            - listitem [ref=f8e252]: ☑ 상세 화면에서 여러 블록이 렌더링된다
+            - listitem [ref=f8e253]: ☐ 관리자에서 수정 후 다시 저장해 본다
+        - generic [ref=f8e254]:
+          - heading "로컬 실행 명령" [level=3] [ref=f8e255]
+          - code [ref=f8e257]: npm run dev
+        - blockquote [ref=f8e259]:
+          - paragraph [ref=f8e260]: 기능을 더 만들기 전에 실제로 글을 쓰고 공개 흐름을 확인한다.
+        - group [ref=f8e261]:
+          - generic "› 중첩 블록도 확인하기" [ref=f8e262] [cursor=pointer]
+        - separator [ref=f8e264]
+        - paragraph [ref=f8e267]: 확인이 끝나면 관리자에서 이 글을 휴지통으로 이동하거나 실제 첫 글로 교체하면 됩니다.
+      - generic [ref=f8e269]:
+        - generic [ref=f8e271]:
+          - generic [ref=f8e272]: Comments
+          - heading "댓글 0개" [level=3] [ref=f8e273]
+        - generic [ref=f8e274]:
+          - generic [ref=f8e275]:
+            - generic [ref=f8e276]:
+              - generic [ref=f8e277]: 닉네임
+              - textbox "닉네임" [ref=f8e278]
+            - generic [ref=f8e279]:
+              - generic [ref=f8e280]: 비밀번호
+              - textbox "비밀번호" [ref=f8e281]:
+                - /placeholder: 댓글 비밀번호
+            - generic [ref=f8e282]:
+              - generic [ref=f8e283]: 내용 0/500
+              - textbox "내용 0/500" [ref=f8e284]:
+                - /placeholder: 댓글 내용을 입력하세요
+          - button "댓글 등록" [ref=f8e286] [cursor=pointer]
+      - generic [ref=f8e287]:
+        - heading "Continue Reading" [level=2] [ref=f8e289]
+        - generic [ref=f8e290]: 같은 카테고리의 다른 글이 아직 없습니다.
+    - text: 제목 없음
+    - generic [ref=f8e124]: thecistus.com

@@ -1,0 +1,128 @@
+- generic [active] [ref=f8e1]:
+  - link "본문으로 건너뛰기" [ref=f8e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f8e3]:
+    - generic [ref=f8e4]:
+      - link "thecistus personal archive" [ref=f8e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f8e6]: ">_"
+        - generic [ref=f8e7]:
+          - generic [ref=f8e8]: thecistus
+          - generic [ref=f8e9]: personal archive
+      - generic [ref=f8e10]: personal page
+      - navigation "주요 섹션" [ref=f8e13]:
+        - link "Home" [ref=f8e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f8e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f8e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f8e17]: □
+          - text: Portfolio
+        - link "Study" [ref=f8e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f8e19]: ▤
+          - text: Study
+      - generic [ref=f8e20]:
+        - text: Current focus
+        - paragraph [ref=f8e21]: archive / notes / updates
+        - text: ">_"
+      - generic [ref=f8e22]:
+        - text: Find me
+        - generic [ref=f8e23]:
+          - link "EMAIL" [ref=f8e24] [cursor=pointer]:
+            - /url: mailto:ddoagi.h@gmail.com
+            - generic [ref=f8e26]: ↗
+          - link "GITHUB" [ref=f8e27] [cursor=pointer]:
+            - /url: https://github.com/ddobagi
+            - generic [ref=f8e29]: ↗
+  - main [ref=f8e30]:
+    - generic [ref=f8e31]:
+      - region [ref=f8e32]:
+        - generic [ref=f8e33]:
+          - generic [ref=f8e34]: personal page
+          - generic [ref=f8e37]: ~/thecistus › whoami
+          - heading "개인 페이지" [level=1] [ref=f8e38]
+          - paragraph [ref=f8e39]: Portfolio 항성계에 1개의 글이 행성으로 공전하고 있습니다.
+          - generic [ref=f8e40]:
+            - link "포트폴리오 보기" [ref=f8e41] [cursor=pointer]:
+              - /url: "#portfolio"
+              - text: 포트폴리오 보기
+              - generic [ref=f8e42]: ↗
+            - link "Study 열기" [ref=f8e43] [cursor=pointer]:
+              - /url: "#study"
+        - complementary "개인 아카이브 상태" [ref=f8e44]:
+          - generic [ref=f8e45]: archive.session
+          - generic [ref=f8e51]:
+            - paragraph [ref=f8e52]: › codex inspect ./personal-archive
+            - paragraph [ref=f8e53]: archive / notes / updates
+            - generic "공개 콘텐츠 수" [ref=f8e54]:
+              - generic [ref=f8e55]:
+                - generic [ref=f8e56]: "1"
+                - text: projects
+              - generic [ref=f8e57]:
+                - generic [ref=f8e58]: "1"
+                - text: notes
+              - generic [ref=f8e59]:
+                - generic [ref=f8e60]: "0"
+                - text: moments
+            - paragraph [ref=f8e61]: index ready
+      - region [ref=f8e63]:
+        - generic [ref=f8e64]:
+          - generic [ref=f8e65]:
+            - text: Interactive index
+            - heading "Archive orbit" [level=2] [ref=f8e66]
+          - paragraph [ref=f8e67]: ← → 키로 탐색하고 Enter로 열 수 있습니다.
+        - generic [ref=f8e68]:
+          - group "인터랙티브 우주 항성계. 좌우 방향키로 항성계를 전환하고 Enter 또는 Space로 현재 카테고리를 열 수 있습니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다." [ref=f8e69]: 포트폴리오, 스터디, 근황 카테고리를 시각화한 우주형 탐색 영역입니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다.
+          - generic [ref=f8e70]:
+            - button "이전 항성계" [ref=f8e71] [cursor=pointer]: ←
+            - generic [ref=f8e72]:
+              - generic [ref=f8e73]: PORTFOLIO
+              - generic [ref=f8e74]: "1"
+            - button "다음 항성계" [ref=f8e75] [cursor=pointer]: →
+      - generic [ref=f8e76]:
+        - generic [ref=f8e77]:
+          - generic [ref=f8e78]: Selected work
+          - heading "Portfolio" [level=2] [ref=f8e79]
+        - article [ref=f8e81] [cursor=pointer]:
+          - button "Web 2026 한이음 드림업 2026 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다. 상세 보기 ↗" [ref=f8e82]:
+            - generic [ref=f8e83]:
+              - generic [ref=f8e84]: Web
+              - generic [ref=f8e85]: "2026"
+            - heading "한이음 드림업 2026" [level=3] [ref=f8e86]
+            - generic [ref=f8e87]:
+              - paragraph [ref=f8e88]: 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안
+              - paragraph [ref=f8e89]: 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.
+            - generic [ref=f8e90]: 상세 보기 ↗
+      - generic [ref=f8e92]:
+        - generic [ref=f8e93]:
+          - generic [ref=f8e94]: Latest notes
+          - heading "Study" [level=2] [ref=f8e95]
+        - 'button "notes 테스트 글: 노션형 블록 에디터 확인 2026-07-15 Study" [ref=f8e97] [cursor=pointer]':
+          - generic [ref=f8e98]:
+            - generic [ref=f8e99]:
+              - generic [ref=f8e100]: notes
+              - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=f8e101]'
+            - generic [ref=f8e102]: 2026-07-15
+          - paragraph
+          - generic [ref=f8e103]: Study
+      - generic [ref=f8e105]:
+        - generic [ref=f8e106]:
+          - generic [ref=f8e107]: Say hello
+          - heading "Contact" [level=2] [ref=f8e108]
+        - generic [ref=f8e109]:
+          - paragraph [ref=f8e110]: 프로젝트, 협업, 피드백은 아래 이메일이나 GitHub로 연락해 주세요.
+          - generic [ref=f8e111]:
+            - article [ref=f8e112] [cursor=pointer]:
+              - generic [ref=f8e113]: EMAIL
+              - heading [level=3] [ref=f8e116]:
+                - link "ddoagi.h@gmail.com" [ref=f8e117]:
+                  - /url: mailto:ddoagi.h@gmail.com
+            - article [ref=f8e118] [cursor=pointer]:
+              - generic [ref=f8e119]: GITHUB
+              - heading [level=3] [ref=f8e122]:
+                - link "github.com/ddobagi" [ref=f8e123]:
+                  - /url: https://github.com/ddobagi
+    - text: ↗ 제목 없음
+    - generic [ref=f8e124]: thecistus.com

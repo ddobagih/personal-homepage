@@ -1,0 +1,46 @@
+- generic [active] [ref=f2e1]:
+  - link "본문으로 건너뛰기" [ref=f2e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link "thecistus 홈" [ref=f2e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f2e6]: ">_"
+      - button "메뉴 열기" [ref=f2e7]
+  - main [ref=f2e10]:
+    - generic [ref=f2e11]:
+      - region [ref=f2e12]:
+        - generic [ref=f2e13]:
+          - generic [ref=f2e14]: ~/thecistus
+          - heading "thecistus" [level=1] [ref=f2e15]
+      - generic [ref=f2e16]:
+        - heading "Portfolio" [level=2] [ref=f2e18]
+        - generic [ref=f2e19]:
+          - article [ref=f2e20]:
+            - link "01 Web 2026.07.16 · 11:37 ㄹㅇㄹㄴㅇ" [ref=f2e21] [cursor=pointer]:
+              - /url: "#portfolio/item"
+              - generic [ref=f2e22]:
+                - generic [ref=f2e23]:
+                  - generic [ref=f2e24]: "01"
+                  - generic [ref=f2e25]: Web
+                  - generic [ref=f2e26]: 2026.07.16 · 11:37
+                - heading "ㄹㅇㄹㄴㅇ" [level=3] [ref=f2e27]
+          - article [ref=f2e28]:
+            - link "02 Web 2026 한이음 드림업 2026" [ref=f2e29] [cursor=pointer]:
+              - /url: "#portfolio/hanium-dreamup-2026"
+              - generic [ref=f2e30]:
+                - generic [ref=f2e31]:
+                  - generic [ref=f2e32]: "02"
+                  - generic [ref=f2e33]: Web
+                  - generic [ref=f2e34]: "2026"
+                - heading "한이음 드림업 2026" [level=3] [ref=f2e35]
+              - figure [ref=f2e36]:
+                - img "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f2e37]
+      - generic [ref=f2e38]:
+        - heading "Study" [level=2] [ref=f2e40]
+        - paragraph [ref=f2e43]: 아직 공개된 공부글이 없습니다.
+      - generic [ref=f2e44]:
+        - heading "Moments" [level=2] [ref=f2e46]
+        - paragraph [ref=f2e49]: 아직 기록이 없습니다.
+    - text: 제목 없음
+    - generic [ref=f2e50]: thecistus.com

@@ -1,0 +1,26 @@
+- generic [active] [ref=f12e1]:
+  - link "본문으로 건너뛰기" [ref=f12e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f12e3]:
+    - generic [ref=f12e4]:
+      - link "thecistus" [ref=f12e149] [cursor=pointer]:
+        - /url: "#home"
+      - navigation "주요 섹션" [ref=f12e108]:
+        - link "Home" [ref=f12e109] [cursor=pointer]:
+          - /url: "#home"
+        - link "Portfolio" [ref=f12e111] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "Study" [ref=f12e113] [cursor=pointer]:
+          - /url: "#study"
+  - main [ref=f12e10]:
+    - text: ↗ ↗
+    - generic [ref=f12e151]:
+      - generic [ref=f12e154]:
+        - generic [ref=f12e155]:
+          - generic [ref=f12e156]: 인증번호
+          - textbox "인증번호" [ref=f12e157]:
+            - /placeholder: 6자리 코드
+        - button "보내기" [ref=f12e158] [cursor=pointer]
+        - button "확인" [ref=f12e159] [cursor=pointer]
+      - text: 제목 없음
+    - generic [ref=f12e103]: thecistus.com

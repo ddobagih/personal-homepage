@@ -1,0 +1,61 @@
+- generic [active] [ref=f3e1]:
+  - link "본문으로 건너뛰기" [ref=f3e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f3e3]:
+    - generic [ref=f3e4]:
+      - link "thecistus 홈" [ref=f3e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f3e6]: ">_"
+        - generic [ref=f3e7]:
+          - generic [ref=f3e8]: thecistus
+          - generic [ref=f3e9]: personal archive
+      - navigation "주요 섹션" [ref=f3e10]:
+        - link "Home" [ref=f3e11] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f3e12]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f3e13] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f3e14]: □
+          - text: Portfolio
+        - link "Study" [ref=f3e15] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f3e16]: ▤
+          - text: Study
+        - link "Moments" [ref=f3e17] [cursor=pointer]:
+          - /url: "#updates"
+          - generic [ref=f3e18]: ○
+          - text: Moments
+      - generic [ref=f3e20]:
+        - link "EMAIL" [ref=f3e21] [cursor=pointer]:
+          - /url: mailto:ddoagi.h@gmail.com
+          - generic [ref=f3e23]: ↗
+        - link "GITHUB" [ref=f3e24] [cursor=pointer]:
+          - /url: https://github.com/ddobagi
+          - generic [ref=f3e26]: ↗
+  - main [ref=f3e27]:
+    - generic [ref=f3e29]:
+      - heading "Portfolio" [level=1] [ref=f3e31]
+      - generic [ref=f3e32]:
+        - article [ref=f3e33]:
+          - link "01 Web 2026.07.16 · 11:37 ㄹㅇㄹㄴㅇ" [ref=f3e34] [cursor=pointer]:
+            - /url: "#portfolio/item"
+            - generic [ref=f3e35]:
+              - generic [ref=f3e36]:
+                - generic [ref=f3e37]: "01"
+                - generic [ref=f3e38]: Web
+                - generic [ref=f3e39]: 2026.07.16 · 11:37
+              - heading "ㄹㅇㄹㄴㅇ" [level=2] [ref=f3e40]
+        - article [ref=f3e41]:
+          - link "02 Web 2026 한이음 드림업 2026" [ref=f3e42] [cursor=pointer]:
+            - /url: "#portfolio/hanium-dreamup-2026"
+            - generic [ref=f3e43]:
+              - generic [ref=f3e44]:
+                - generic [ref=f3e45]: "02"
+                - generic [ref=f3e46]: Web
+                - generic [ref=f3e47]: "2026"
+              - heading "한이음 드림업 2026" [level=2] [ref=f3e48]
+            - figure [ref=f3e49]:
+              - img "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f3e50]
+    - text: 제목 없음
+    - generic [ref=f3e51]: thecistus.com

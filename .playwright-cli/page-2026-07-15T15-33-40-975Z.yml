@@ -1,0 +1,29 @@
+- generic [active] [ref=f12e1]:
+  - link "본문으로 건너뛰기" [ref=f12e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f12e3]:
+    - generic [ref=f12e4]:
+      - link [ref=f12e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f12e6]: ">_"
+      - button "메뉴 열기" [ref=f12e125]
+      - text: ">_"
+  - main [ref=f12e10]:
+    - text: ↗
+    - generic [ref=f12e127]:
+      - heading "Portfolio" [level=2] [ref=f12e129]
+      - generic [ref=f12e130]:
+        - button "전체 1" [ref=f12e131] [cursor=pointer]
+        - button "Web 1" [ref=f12e132] [cursor=pointer]
+      - article [ref=f12e134] [cursor=pointer]:
+        - button "Web 2026 한이음 드림업 2026 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다. 상세 보기 ↗" [ref=f12e135]:
+          - generic [ref=f12e136]:
+            - generic [ref=f12e137]: Web
+            - generic [ref=f12e138]: "2026"
+          - heading "한이음 드림업 2026" [level=3] [ref=f12e139]
+          - generic [ref=f12e140]:
+            - paragraph [ref=f12e141]: 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안
+            - paragraph [ref=f12e142]: 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.
+          - generic [ref=f12e143]: 상세 보기 ↗
+    - text: 제목 없음
+    - generic [ref=f12e103]: thecistus.com

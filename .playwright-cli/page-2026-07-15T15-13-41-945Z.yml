@@ -1,0 +1,2111 @@
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - navigation [ref=e1215]:
+      - generic [ref=e6]:
+        - link [ref=e1216] [cursor=pointer]:
+          - /url: /community/
+          - generic [ref=e9]: Framer Community
+        - combobox [ref=e1218]
+        - generic [ref=e16]: Discover
+        - link [ref=e1219] [cursor=pointer]:
+          - /url: /community/feed/
+          - generic [ref=e21]: Feed
+        - link [ref=e1220] [cursor=pointer]:
+          - /url: /community/hype/
+          - generic [ref=e26]: Hype
+        - link [ref=e1221] [cursor=pointer]:
+          - /url: /community/activity/
+          - generic [ref=e31]: Activity
+      - generic [ref=e33]:
+        - generic [ref=e34]: Marketplace
+        - link [ref=e1222] [cursor=pointer]:
+          - /url: /community/marketplace/
+          - generic [ref=e40]: All
+        - link [ref=e1223] [cursor=pointer]:
+          - /url: /community/marketplace/templates/
+          - generic [ref=e48]: Templates
+        - link [ref=e1224] [cursor=pointer]:
+          - /url: /community/marketplace/components/
+          - generic [ref=e55]: Components
+        - link [ref=e1225] [cursor=pointer]:
+          - /url: /community/marketplace/vectors/
+          - generic [ref=e60]: Vectors
+        - link [ref=e1226] [cursor=pointer]:
+          - /url: /community/marketplace/plugins/
+          - generic [ref=e65]: Plugins
+      - generic [ref=e66]:
+        - generic [ref=e67]: Community
+        - link [ref=e1227] [cursor=pointer]:
+          - /url: /community/gallery/
+          - generic [ref=e72]: Gallery
+        - link [ref=e1228] [cursor=pointer]:
+          - /url: /community/members/
+          - generic [ref=e78]: Members
+    - generic [ref=e80]:
+      - generic [ref=e85]:
+        - button [ref=e1229] [cursor=pointer]:
+          - generic [ref=e87]: Back
+        - navigation [ref=e1230]:
+          - link [ref=e1231] [cursor=pointer]:
+            - /url: /community/marketplace/templates/
+            - text: Templates
+          - link [ref=e1232] [cursor=pointer]:
+            - /url: /community/marketplace/templates/categories/
+            - text: Categories
+          - link [ref=e1233] [cursor=pointer]:
+            - /url: /community/marketplace/templates/categories/agency/
+            - text: Agency
+      - generic [ref=e103]:
+        - generic [ref=e104]:
+          - heading [level=1] [ref=e1234]:
+            - generic [ref=e107]: Danielcross · Personal Portfolio Framer Template
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - button [ref=e1235] [cursor=pointer]
+              - button [ref=e1236] [cursor=pointer]
+              - button [ref=e1237] [cursor=pointer]
+            - button [ref=e1238] [cursor=pointer]:
+              - generic [ref=e124]: Buy for $59
+        - generic [ref=e125]:
+          - iframe [ref=e128]:
+            - generic [ref=f3e3]:
+              - link [ref=f3e5] [cursor=pointer]:
+                - /url: https://buy.polar.sh/polar_cl_Wrjobbj5yY22JYOMiMA7EMRg2uFuFIUqKQCpp4Jndmu
+                - generic [ref=f3e6]:
+                  - paragraph [ref=f3e8]: Get Template
+                  - paragraph [ref=f3e10]: Get Template
+              - generic [ref=f3e12]:
+                - navigation [ref=f3e16]:
+                  - generic [ref=f3e17]:
+                    - link "Daniel Cross ui/ux designer" [ref=f3e20] [cursor=pointer]:
+                      - /url: ./
+                      - generic [ref=f3e23]:
+                        - paragraph [ref=f3e25]: Daniel Cross
+                        - paragraph [ref=f3e27]: ui/ux designer
+                    - generic [ref=f3e29]:
+                      - link [ref=f3e31] [cursor=pointer]:
+                        - /url: ./
+                        - paragraph [ref=f3e34]: Home
+                      - link [ref=f3e36] [cursor=pointer]:
+                        - /url: ./about
+                        - paragraph [ref=f3e39]: About
+                      - link [ref=f3e41] [cursor=pointer]:
+                        - /url: ./work
+                        - paragraph [ref=f3e44]: Projects
+                      - link [ref=f3e46] [cursor=pointer]:
+                        - /url: ./contact
+                        - paragraph [ref=f3e49]: Contact
+                  - generic [ref=f3e52]:
+                    - paragraph [ref=f3e54]: Follow me
+                    - generic [ref=f3e55]:
+                      - link [ref=f3e57] [cursor=pointer]:
+                        - /url: https://www.instagram.com/
+                        - paragraph [ref=f3e59]: Instagram
+                        - paragraph [ref=f3e61]: (256K)
+                      - link [ref=f3e63] [cursor=pointer]:
+                        - /url: https://x.com
+                        - paragraph [ref=f3e65]: Twitter-X
+                        - paragraph [ref=f3e67]: (112K)
+                      - link [ref=f3e69] [cursor=pointer]:
+                        - /url: https://www.linkedin.com
+                        - paragraph [ref=f3e71]: Linkedin
+                        - paragraph [ref=f3e73]: (198K)
+                      - link [ref=f3e75] [cursor=pointer]:
+                        - /url: https://www.youtube.com/
+                        - paragraph [ref=f3e77]: Youtube
+                        - paragraph [ref=f3e79]: (320K)
+                - generic [ref=f3e80]:
+                  - banner [ref=f3e81]:
+                    - generic [ref=f3e82]:
+                      - generic [ref=f3e83]:
+                        - paragraph [ref=f3e87]: Available for work
+                        - paragraph [ref=f3e91]: Based in London-UK
+                      - generic [ref=f3e93]:
+                        - paragraph [ref=f3e97]: Welcome here ❤️
+                        - generic [ref=f3e98]:
+                          - generic [ref=f3e99]:
+                            - heading "Hey," [level=1] [ref=f3e101]
+                            - heading "daniel" [level=1] [ref=f3e103]
+                            - heading "here" [level=1] [ref=f3e105]
+                            - heading "I" [level=1] [ref=f3e114]
+                            - heading "design" [level=1] [ref=f3e116]
+                            - heading "Interfaces," [level=1] [ref=f3e118]
+                            - heading "experiences," [level=1] [ref=f3e120]
+                            - heading "&" [level=1] [ref=f3e122]
+                            - heading "brands." [level=1] [ref=f3e124]
+                          - paragraph [ref=f3e126]:
+                            - generic [ref=f3e127]:
+                              - generic [ref=f3e128]: I
+                              - generic [ref=f3e129]: ’
+                              - generic [ref=f3e130]: m
+                            - generic [ref=f3e131]: a
+                            - generic [ref=f3e133]:
+                              - generic [ref=f3e134]: U
+                              - generic [ref=f3e135]: I
+                              - generic [ref=f3e136]: /
+                              - generic [ref=f3e137]: U
+                              - generic [ref=f3e138]: X
+                            - generic [ref=f3e139]:
+                              - generic [ref=f3e140]: D
+                              - generic [ref=f3e141]: e
+                              - generic [ref=f3e142]: s
+                              - generic [ref=f3e143]: i
+                              - generic [ref=f3e144]: g
+                              - generic [ref=f3e145]: "n"
+                              - generic [ref=f3e146]: e
+                              - generic [ref=f3e147]: r
+                            - generic [ref=f3e148]:
+                              - generic [ref=f3e149]: c
+                              - generic [ref=f3e150]: r
+                              - generic [ref=f3e151]: a
+                              - generic [ref=f3e152]: f
+                              - generic [ref=f3e153]: t
+                              - generic [ref=f3e154]: i
+                              - generic [ref=f3e155]: "n"
+                              - generic [ref=f3e156]: g
+                            - generic [ref=f3e157]:
+                              - generic [ref=f3e158]: i
+                              - generic [ref=f3e159]: "n"
+                              - generic [ref=f3e160]: t
+                              - generic [ref=f3e161]: u
+                              - generic [ref=f3e162]: i
+                              - generic [ref=f3e163]: t
+                              - generic [ref=f3e164]: i
+                              - generic [ref=f3e165]: v
+                              - generic [ref=f3e166]: e
+                            - generic [ref=f3e167]:
+                              - generic [ref=f3e168]: d
+                              - generic [ref=f3e169]: i
+                              - generic [ref=f3e170]: g
+                              - generic [ref=f3e171]: i
+                              - generic [ref=f3e172]: t
+                              - generic [ref=f3e173]: a
+                              - generic [ref=f3e174]: l
+                            - generic [ref=f3e175]:
+                              - generic [ref=f3e176]: p
+                              - generic [ref=f3e177]: r
+                              - generic [ref=f3e178]: o
+                              - generic [ref=f3e179]: d
+                              - generic [ref=f3e180]: u
+                              - generic [ref=f3e181]: c
+                              - generic [ref=f3e182]: t
+                              - generic [ref=f3e183]: s
+                            - generic [ref=f3e184]:
+                              - generic [ref=f3e185]: w
+                              - generic [ref=f3e186]: i
+                              - generic [ref=f3e187]: t
+                              - generic [ref=f3e188]: h
+                            - generic [ref=f3e189]: a
+                            - generic [ref=f3e191]:
+                              - generic [ref=f3e192]: f
+                              - generic [ref=f3e193]: o
+                              - generic [ref=f3e194]: c
+                              - generic [ref=f3e195]: u
+                              - generic [ref=f3e196]: s
+                            - generic [ref=f3e197]:
+                              - generic [ref=f3e198]: o
+                              - generic [ref=f3e199]: "n"
+                            - generic [ref=f3e200]:
+                              - generic [ref=f3e201]: s
+                              - generic [ref=f3e202]: i
+                              - generic [ref=f3e203]: m
+                              - generic [ref=f3e204]: p
+                              - generic [ref=f3e205]: l
+                              - generic [ref=f3e206]: i
+                              - generic [ref=f3e207]: c
+                              - generic [ref=f3e208]: i
+                              - generic [ref=f3e209]: t
+                              - generic [ref=f3e210]: "y"
+                              - generic [ref=f3e211]: ","
+                            - generic [ref=f3e212]:
+                              - generic [ref=f3e213]: u
+                              - generic [ref=f3e214]: s
+                              - generic [ref=f3e215]: a
+                              - generic [ref=f3e216]: b
+                              - generic [ref=f3e217]: i
+                              - generic [ref=f3e218]: l
+                              - generic [ref=f3e219]: i
+                              - generic [ref=f3e220]: t
+                              - generic [ref=f3e221]: "y"
+                              - generic [ref=f3e222]: ","
+                            - generic [ref=f3e223]:
+                              - generic [ref=f3e224]: a
+                              - generic [ref=f3e225]: "n"
+                              - generic [ref=f3e226]: d
+                            - generic [ref=f3e227]:
+                              - generic [ref=f3e228]: e
+                              - generic [ref=f3e229]: "n"
+                              - generic [ref=f3e230]: g
+                              - generic [ref=f3e231]: a
+                              - generic [ref=f3e232]: g
+                              - generic [ref=f3e233]: i
+                              - generic [ref=f3e234]: "n"
+                              - generic [ref=f3e235]: g
+                            - generic [ref=f3e236]:
+                              - generic [ref=f3e237]: u
+                              - generic [ref=f3e238]: s
+                              - generic [ref=f3e239]: e
+                              - generic [ref=f3e240]: r
+                            - generic [ref=f3e241]:
+                              - generic [ref=f3e242]: e
+                              - generic [ref=f3e243]: x
+                              - generic [ref=f3e244]: p
+                              - generic [ref=f3e245]: e
+                              - generic [ref=f3e246]: r
+                              - generic [ref=f3e247]: i
+                              - generic [ref=f3e248]: e
+                              - generic [ref=f3e249]: "n"
+                              - generic [ref=f3e250]: c
+                              - generic [ref=f3e251]: e
+                              - generic [ref=f3e252]: s
+                              - generic [ref=f3e253]: .
+                        - generic [ref=f3e254]:
+                          - link [ref=f3e256] [cursor=pointer]:
+                            - /url: ./contact
+                            - generic [ref=f3e257]:
+                              - paragraph [ref=f3e259]: Book A Call
+                              - paragraph [ref=f3e261]: Book A Call
+                          - paragraph [ref=f3e270]: 4.9 / 5
+                  - generic [ref=f3e283]:
+                    - generic [ref=f3e284]:
+                      - paragraph [ref=f3e288]: What I Do
+                      - heading "Turning ideas into digital experiences" [level=2] [ref=f3e290]
+                    - generic [ref=f3e291]:
+                      - generic [ref=f3e294]:
+                        - generic [ref=f3e295]:
+                          - paragraph [ref=f3e297]: Web design
+                          - paragraph [ref=f3e300]: $1200
+                        - paragraph [ref=f3e302]: I create visually appealing, responsive websites with clean layouts, ensuring engaging user experiences and professional digital presence.
+                      - generic [ref=f3e305]:
+                        - generic [ref=f3e306]:
+                          - paragraph [ref=f3e308]: UI/UX Design
+                          - paragraph [ref=f3e311]: $1500
+                        - paragraph [ref=f3e313]: I design intuitive user interfaces and seamless experiences, focusing on usability, accessibility, and modern aesthetics to improve user satisfaction.
+                      - generic [ref=f3e316]:
+                        - generic [ref=f3e317]:
+                          - paragraph [ref=f3e319]: Framer Development
+                          - paragraph [ref=f3e322]: $1300
+                        - paragraph [ref=f3e324]: I build interactive, high-performing websites in Framer, smooth animations, & fully responsive layouts tailored to your brand.
+                      - generic [ref=f3e327]:
+                        - generic [ref=f3e328]:
+                          - paragraph [ref=f3e330]: Mobile App Design
+                          - paragraph [ref=f3e333]: $1600
+                        - paragraph [ref=f3e335]: I design user mobile applications with functional layouts, engaging visuals, & optimized experiences for both iOS & Android platforms.
+                      - generic [ref=f3e338]:
+                        - generic [ref=f3e339]:
+                          - paragraph [ref=f3e341]: Branding & Identity
+                          - paragraph [ref=f3e344]: $1000
+                        - paragraph [ref=f3e346]: I craft unique brand identities including logos, typography, & guidelines, helping businesses stand out with consistency & strong visual presence.
+                      - generic [ref=f3e347]:
+                        - generic [ref=f3e348]:
+                          - paragraph [ref=f3e350]: Book A 30 min Free Call
+                          - paragraph [ref=f3e352]: Let’s connect to discuss your design needs, explore creative ideas, and plan your project effectively together.
+                        - link [ref=f3e355] [cursor=pointer]:
+                          - /url: ./contact
+                          - generic [ref=f3e356]:
+                            - paragraph [ref=f3e358]: Book A Call
+                            - paragraph [ref=f3e360]: Book A Call
+                  - generic [ref=f3e364]:
+                    - generic [ref=f3e365]:
+                      - paragraph [ref=f3e369]: About me
+                      - paragraph [ref=f3e371]: I’m Daniel Cross, a passionate UI/UX Designer dedicated to crafting digital experiences that truly connect with people. With a focus on simplicity, usability, and creativity, I design products that not only look beautiful but also solve real problems. My approach blends strategy, design, and technology to transform ideas into meaningful solutions. Whether it’s designing intuitive interfaces, building websites, or shaping brand identities, I bring every project to life with precision and purpose.
+                    - generic [ref=f3e372]:
+                      - paragraph [ref=f3e374]: Worked with Global Brands
+                      - list [ref=f3e377]:
+                        - listitem [ref=f3e378]
+                        - listitem [ref=f3e381]
+                        - listitem [ref=f3e384]
+                        - listitem [ref=f3e387]
+                        - listitem [ref=f3e390]
+                        - listitem [ref=f3e393]
+                        - listitem [ref=f3e396]
+                        - listitem [ref=f3e399]
+                        - listitem [ref=f3e402]
+                        - listitem [ref=f3e405]
+                        - listitem [ref=f3e408]
+                        - listitem [ref=f3e411]
+                  - generic [ref=f3e420]:
+                    - generic [ref=f3e421]:
+                      - paragraph [ref=f3e425]: My Portfolio
+                      - heading "Every project built to inspire users" [level=2] [ref=f3e427]
+                    - generic [ref=f3e428]:
+                      - link "Strivon Web Design / 2024" [ref=f3e431] [cursor=pointer]:
+                        - /url: ./work/strivon
+                        - generic [ref=f3e435]:
+                          - heading "Strivon" [level=4] [ref=f3e437]
+                          - generic [ref=f3e438]:
+                            - paragraph [ref=f3e440]: Web Design
+                            - paragraph [ref=f3e442]: /
+                            - paragraph [ref=f3e444]: "2024"
+                      - link "Zyros UI/UX Design / 2024" [ref=f3e447] [cursor=pointer]:
+                        - /url: ./work/zyros
+                        - generic [ref=f3e451]:
+                          - heading "Zyros" [level=4] [ref=f3e453]
+                          - generic [ref=f3e454]:
+                            - paragraph [ref=f3e456]: UI/UX Design
+                            - paragraph [ref=f3e458]: /
+                            - paragraph [ref=f3e460]: "2024"
+                      - link "Kaelen UI/UX Design / 2023" [ref=f3e463] [cursor=pointer]:
+                        - /url: ./work/kaelen
+                        - generic [ref=f3e467]:
+                          - heading "Kaelen" [level=4] [ref=f3e469]
+                          - generic [ref=f3e470]:
+                            - paragraph [ref=f3e472]: UI/UX Design
+                            - paragraph [ref=f3e474]: /
+                            - paragraph [ref=f3e476]: "2023"
+                      - link "Orvian Mobile App Design / 2023" [ref=f3e479] [cursor=pointer]:
+                        - /url: ./work/orvian
+                        - generic [ref=f3e483]:
+                          - heading "Orvian" [level=4] [ref=f3e485]
+                          - generic [ref=f3e486]:
+                            - paragraph [ref=f3e488]: Mobile App Design
+                            - paragraph [ref=f3e490]: /
+                            - paragraph [ref=f3e492]: "2023"
+                    - link [ref=f3e494] [cursor=pointer]:
+                      - /url: ./work
+                      - generic [ref=f3e495]:
+                        - paragraph [ref=f3e497]: Explore All
+                        - paragraph [ref=f3e499]: Explore All
+                  - generic [ref=f3e502]:
+                    - generic [ref=f3e503]:
+                      - paragraph [ref=f3e507]: My Process
+                      - heading "From ideas to impactful creative results." [level=2] [ref=f3e509]
+                    - generic [ref=f3e510]:
+                      - generic [ref=f3e513]:
+                        - generic [ref=f3e514]:
+                          - paragraph [ref=f3e516]: Creative Discovery
+                          - paragraph [ref=f3e518]: /01
+                        - paragraph [ref=f3e520]: Through research and collaboration, we uncover goals, audience needs, and brand vision to build a solid creative foundation.
+                      - generic [ref=f3e523]:
+                        - generic [ref=f3e524]:
+                          - paragraph [ref=f3e526]: Design Blueprint
+                          - paragraph [ref=f3e528]: /02
+                        - paragraph [ref=f3e530]: Transforming insights into structured wireframes and prototypes that guide visuals, user experience, and brand alignment seamlessly.
+                      - generic [ref=f3e533]:
+                        - generic [ref=f3e534]:
+                          - paragraph [ref=f3e536]: Flawless Execution
+                          - paragraph [ref=f3e538]: /03
+                        - paragraph [ref=f3e540]: Final designs are crafted, developed, and refined to ensure polished, user-centered results with measurable client satisfaction.
+                  - generic [ref=f3e542]:
+                    - generic [ref=f3e543]:
+                      - paragraph [ref=f3e547]: Reviews
+                      - heading "Voices of trust from happy clients" [level=2] [ref=f3e549]
+                    - generic [ref=f3e552]:
+                      - list [ref=f3e554]:
+                        - listitem [ref=f3e555]:
+                          - generic [ref=f3e557]:
+                            - paragraph [ref=f3e559]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                            - generic [ref=f3e563]:
+                              - paragraph [ref=f3e565]: James Walker
+                              - paragraph [ref=f3e567]: Marketing Director, BrightEdge
+                        - listitem [ref=f3e568]:
+                          - generic [ref=f3e570]:
+                            - paragraph [ref=f3e572]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                            - generic [ref=f3e576]:
+                              - paragraph [ref=f3e578]: Emily Harris
+                              - paragraph [ref=f3e580]: Product Manager, Nexora
+                        - listitem [ref=f3e581]:
+                          - generic [ref=f3e583]:
+                            - paragraph [ref=f3e585]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                            - generic [ref=f3e589]:
+                              - paragraph [ref=f3e591]: Oliver Bennett
+                              - paragraph [ref=f3e593]: CEO, Innovent Solutions
+                        - listitem [ref=f3e594]:
+                          - generic [ref=f3e596]:
+                            - paragraph [ref=f3e598]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                            - generic [ref=f3e602]:
+                              - paragraph [ref=f3e604]: James Walker
+                              - paragraph [ref=f3e606]: Marketing Director, BrightEdge
+                        - listitem [ref=f3e607]:
+                          - generic [ref=f3e609]:
+                            - paragraph [ref=f3e611]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                            - generic [ref=f3e615]:
+                              - paragraph [ref=f3e617]: Emily Harris
+                              - paragraph [ref=f3e619]: Product Manager, Nexora
+                        - listitem [ref=f3e620]:
+                          - generic [ref=f3e622]:
+                            - paragraph [ref=f3e624]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                            - generic [ref=f3e628]:
+                              - paragraph [ref=f3e630]: Oliver Bennett
+                              - paragraph [ref=f3e632]: CEO, Innovent Solutions
+                        - listitem [ref=f3e633]:
+                          - generic [ref=f3e635]:
+                            - paragraph [ref=f3e637]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                            - generic [ref=f3e641]:
+                              - paragraph [ref=f3e643]: James Walker
+                              - paragraph [ref=f3e645]: Marketing Director, BrightEdge
+                        - listitem [ref=f3e646]:
+                          - generic [ref=f3e648]:
+                            - paragraph [ref=f3e650]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                            - generic [ref=f3e654]:
+                              - paragraph [ref=f3e656]: Emily Harris
+                              - paragraph [ref=f3e658]: Product Manager, Nexora
+                        - listitem [ref=f3e659]:
+                          - generic [ref=f3e661]:
+                            - paragraph [ref=f3e663]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                            - generic [ref=f3e667]:
+                              - paragraph [ref=f3e669]: Oliver Bennett
+                              - paragraph [ref=f3e671]: CEO, Innovent Solutions
+                        - listitem [ref=f3e672]:
+                          - generic [ref=f3e674]:
+                            - paragraph [ref=f3e676]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                            - generic [ref=f3e680]:
+                              - paragraph [ref=f3e682]: James Walker
+                              - paragraph [ref=f3e684]: Marketing Director, BrightEdge
+                      - group "Slideshow pagination controls":
+                        - generic:
+                          - button "Previous" [ref=f3e685] [cursor=pointer]:
+                            - img "Back Arrow" [ref=f3e686]
+                          - button "Next" [ref=f3e687] [cursor=pointer]:
+                            - img "Next Arrow" [ref=f3e688]
+                  - contentinfo [ref=f3e691]:
+                    - generic [ref=f3e692]:
+                      - generic [ref=f3e693]:
+                        - link [ref=f3e695] [cursor=pointer]:
+                          - /url: mailto:hello@gmail.com
+                          - paragraph [ref=f3e697]: hello@gmail.com
+                        - link [ref=f3e702] [cursor=pointer]:
+                          - /url: tel:+44 7700 900123
+                          - paragraph [ref=f3e704]: +44 7700 900123
+                        - link [ref=f3e709] [cursor=pointer]:
+                          - /url: https://www.google.com/maps/place/45+Westwood+Ave,+Ellenville,+NY+12428,+USA/@41.7197902,-74.4073192,17z/data=!3m1!4b1!4m6!3m5!1s0x89dcdcab387f0725:0xa47e5e118528587f!8m2!3d41.7197862!4d-74.4047443!16s%2Fg%2F11c4w_9k9y?entry=ttu&g_ep=EgoyMDI1MDUxMS4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D
+                          - paragraph [ref=f3e711]: London-UK
+                        - link [ref=f3e716] [cursor=pointer]:
+                          - /url: ./contact
+                          - paragraph [ref=f3e718]: Have a question
+                      - link [ref=f3e722] [cursor=pointer]:
+                        - /url: mailto:hello@gmail.com
+                      - generic [ref=f3e725]:
+                        - generic [ref=f3e727]:
+                          - paragraph [ref=f3e729]: Built in
+                          - paragraph [ref=f3e731]:
+                            - link "Framer" [ref=f3e732] [cursor=pointer]:
+                              - /url: https://framer.link/mudasir-hussain
+                        - generic [ref=f3e734]:
+                          - paragraph [ref=f3e736]: Template by
+                          - paragraph [ref=f3e738]:
+                            - link "Muddasir Hussain" [ref=f3e739] [cursor=pointer]:
+                              - /url: https://x.com/hussain_mu20778
+          - button [ref=e1240] [cursor=pointer]
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - article [ref=e134]:
+              - generic [ref=e137]:
+                - paragraph [ref=e138]:
+                  - text: The
+                  - strong [ref=e139]: Daniel Cross Portfolio Template
+                  - text: is a sleek and professional Framer template crafted for UI/UX designers, digital creators, and creative professionals who want to showcase their work with clarity and style. Built with a modern aesthetic, clean layouts, and smooth interactions, this template helps you present your skills, projects, and achievements in a way that feels personal yet highly polished.
+                - paragraph [ref=e140]:
+                  - text: Whether you’re a freelancer building your client base, a designer applying for new opportunities, or a creative professional growing your personal brand, Daniel Cross provides everything you need to make a strong impression online. With customizable sections for
+                  - strong [ref=e141]: About, Services, Portfolio, Experience, Awards, and Contact
+                  - text: ", it’s easy to tailor the design to match your unique identity."
+                - paragraph [ref=e142]: "Key features include:"
+                - list [ref=e143]:
+                  - listitem [ref=e144]:
+                    - paragraph [ref=e145]: Fully responsive design for all devices
+                  - listitem [ref=e146]:
+                    - paragraph [ref=e147]: Pre-built sections for bio, projects, and case studies
+                  - listitem [ref=e148]:
+                    - paragraph [ref=e149]: Clean typography and modern UI styling
+                  - listitem [ref=e150]:
+                    - paragraph [ref=e151]: Easy customization with Framer’s visual editor
+                  - listitem [ref=e152]:
+                    - paragraph [ref=e153]: SEO-friendly structure to help you get discovered
+                  - listitem [ref=e154]:
+                    - paragraph [ref=e155]: Smooth animations and interactive elements for a professional touch
+                - paragraph [ref=e156]:
+                  - text: With Daniel Cross, you can launch a
+                  - strong [ref=e157]: personal brand website
+                  - text: that not only highlights your design expertise but also builds trust with potential clients and collaborators.
+              - generic [ref=e158]:
+                - button [ref=e1241] [cursor=pointer]:
+                  - generic [ref=e164]: "65"
+                - button [ref=e1242] [cursor=pointer]:
+                  - generic [ref=e172]: "13"
+                - generic [ref=e178]:
+                  - generic [ref=e179]: Updated 2w ago
+                  - generic [ref=e180]: ·
+                  - button [ref=e1243] [cursor=pointer]: View activity
+            - generic [ref=e182]:
+              - generic [ref=e185]:
+                - textbox [ref=e1244]:
+                  - paragraph [ref=e188]: Reply…
+                - button [disabled]
+              - generic [ref=e189]:
+                - group [ref=e1245]:
+                  - generic [ref=e192]:
+                    - button [ref=e1246] [cursor=pointer]:
+                      - link [ref=e1247]:
+                        - /url: /community/creator/@jula-keso/
+                    - generic [ref=e198]:
+                      - generic [ref=e199]:
+                        - button [ref=e1249] [cursor=pointer]:
+                          - link [ref=e1250]:
+                            - /url: /community/creator/@jula-keso/
+                            - text: Jula Keso
+                        - generic [ref=e202]: 1w
+                        - button [ref=e203] [cursor=pointer]
+                      - paragraph [ref=e1251]: Great work 👏
+                      - generic [ref=e210]:
+                        - button [ref=e1252] [cursor=pointer]:
+                          - generic [ref=e216]: "1"
+                        - button [ref=e1253] [cursor=pointer]:
+                          - generic [ref=e224]: "1"
+                  - generic [ref=e226]:
+                    - button [ref=e1254] [cursor=pointer]:
+                      - link [ref=e1255]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e231]:
+                      - generic [ref=e232]:
+                        - button [ref=e1257] [cursor=pointer]:
+                          - link [ref=e1258]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e235]: 1w
+                        - button [ref=e236] [cursor=pointer]
+                      - paragraph [ref=e1259]:
+                        - strong [ref=e1260]: Thanks
+                      - generic [ref=e244]:
+                        - button [ref=e1261] [cursor=pointer]
+                        - button [ref=e1262] [cursor=pointer]
+                - group [ref=e1263]:
+                  - generic [ref=e255]:
+                    - button [ref=e1264] [cursor=pointer]:
+                      - link [ref=e1265]:
+                        - /url: /community/creator/@jesia-robia/
+                    - generic [ref=e261]:
+                      - generic [ref=e262]:
+                        - button [ref=e1267] [cursor=pointer]:
+                          - link [ref=e1268]:
+                            - /url: /community/creator/@jesia-robia/
+                            - text: Jesia Robia
+                        - generic [ref=e265]: 1w
+                        - button [ref=e266] [cursor=pointer]
+                      - paragraph [ref=e1269]: 🔥
+                      - generic [ref=e273]:
+                        - button [ref=e1270] [cursor=pointer]:
+                          - generic [ref=e279]: "1"
+                        - button [ref=e1271] [cursor=pointer]:
+                          - generic [ref=e287]: "1"
+                  - generic [ref=e289]:
+                    - button [ref=e1272] [cursor=pointer]:
+                      - link [ref=e1273]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e294]:
+                      - generic [ref=e295]:
+                        - button [ref=e1275] [cursor=pointer]:
+                          - link [ref=e1276]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e298]: 1w
+                        - button [ref=e299] [cursor=pointer]
+                      - paragraph [ref=e1277]:
+                        - strong [ref=e1278]: Thanks
+                      - generic [ref=e307]:
+                        - button [ref=e1279] [cursor=pointer]
+                        - button [ref=e1280] [cursor=pointer]
+                - group [ref=e1281]:
+                  - generic [ref=e318]:
+                    - button [ref=e1282] [cursor=pointer]:
+                      - link [ref=e1283]:
+                        - /url: /community/creator/@jery-lepo/
+                    - generic [ref=e324]:
+                      - generic [ref=e325]:
+                        - button [ref=e1285] [cursor=pointer]:
+                          - link [ref=e1286]:
+                            - /url: /community/creator/@jery-lepo/
+                            - text: Jery Lepo
+                        - generic [ref=e328]: 1w
+                        - button [ref=e329] [cursor=pointer]
+                      - paragraph [ref=e1287]: Love the sidebar design
+                      - generic [ref=e336]:
+                        - button [ref=e1288] [cursor=pointer]:
+                          - generic [ref=e342]: "1"
+                        - button [ref=e1289] [cursor=pointer]:
+                          - generic [ref=e350]: "1"
+                  - generic [ref=e352]:
+                    - button [ref=e1290] [cursor=pointer]:
+                      - link [ref=e1291]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e357]:
+                      - generic [ref=e358]:
+                        - button [ref=e1293] [cursor=pointer]:
+                          - link [ref=e1294]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e361]: 1w
+                        - button [ref=e362] [cursor=pointer]
+                      - paragraph [ref=e1295]:
+                        - strong [ref=e1296]: Thanks
+                      - generic [ref=e370]:
+                        - button [ref=e1297] [cursor=pointer]
+                        - button [ref=e1298] [cursor=pointer]
+                - group [ref=e1299]:
+                  - generic [ref=e381]:
+                    - button [ref=e1300] [cursor=pointer]:
+                      - link [ref=e1301]:
+                        - /url: /community/creator/@heria-kely/
+                    - generic [ref=e387]:
+                      - generic [ref=e388]:
+                        - button [ref=e1303] [cursor=pointer]:
+                          - link [ref=e1304]:
+                            - /url: /community/creator/@heria-kely/
+                            - text: Heria Kely
+                        - generic [ref=e391]: 1w
+                        - button [ref=e392] [cursor=pointer]
+                      - paragraph [ref=e1305]: Lovely
+                      - generic [ref=e399]:
+                        - button [ref=e1306] [cursor=pointer]:
+                          - generic [ref=e405]: "1"
+                        - button [ref=e1307] [cursor=pointer]:
+                          - generic [ref=e413]: "1"
+                  - generic [ref=e415]:
+                    - button [ref=e1308] [cursor=pointer]:
+                      - link [ref=e1309]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e420]:
+                      - generic [ref=e421]:
+                        - button [ref=e1311] [cursor=pointer]:
+                          - link [ref=e1312]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e424]: 1w
+                        - button [ref=e425] [cursor=pointer]
+                      - paragraph [ref=e1313]:
+                        - strong [ref=e1314]: Thanks
+                      - generic [ref=e433]:
+                        - button [ref=e1315] [cursor=pointer]
+                        - button [ref=e1316] [cursor=pointer]
+                - group [ref=e1317]:
+                  - generic [ref=e444]:
+                    - button [ref=e1318] [cursor=pointer]:
+                      - link [ref=e1319]:
+                        - /url: /community/creator/@hera-jei/
+                    - generic [ref=e450]:
+                      - generic [ref=e451]:
+                        - button [ref=e1321] [cursor=pointer]:
+                          - link [ref=e1322]:
+                            - /url: /community/creator/@hera-jei/
+                            - text: Hera Jei
+                        - generic [ref=e454]: 1w
+                        - button [ref=e455] [cursor=pointer]
+                      - paragraph [ref=e1323]: Amazing work
+                      - generic [ref=e462]:
+                        - button [ref=e1324] [cursor=pointer]:
+                          - generic [ref=e468]: "1"
+                        - button [ref=e1325] [cursor=pointer]:
+                          - generic [ref=e476]: "1"
+                  - generic [ref=e478]:
+                    - button [ref=e1326] [cursor=pointer]:
+                      - link [ref=e1327]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e483]:
+                      - generic [ref=e484]:
+                        - button [ref=e1329] [cursor=pointer]:
+                          - link [ref=e1330]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e487]: 1w
+                        - button [ref=e488] [cursor=pointer]
+                      - paragraph [ref=e1331]:
+                        - strong [ref=e1332]: Thanks
+                      - generic [ref=e496]:
+                        - button [ref=e1333] [cursor=pointer]
+                        - button [ref=e1334] [cursor=pointer]
+                - group [ref=e1335]:
+                  - generic [ref=e507]:
+                    - button [ref=e1336] [cursor=pointer]:
+                      - link [ref=e1337]:
+                        - /url: /community/creator/@desio-yero/
+                    - generic [ref=e513]:
+                      - generic [ref=e514]:
+                        - button [ref=e1339] [cursor=pointer]:
+                          - link [ref=e1340]:
+                            - /url: /community/creator/@desio-yero/
+                            - text: Desio Yero
+                        - generic [ref=e517]: 2w
+                        - button [ref=e518] [cursor=pointer]
+                      - paragraph [ref=e1341]: Great design
+                      - generic [ref=e525]:
+                        - button [ref=e1342] [cursor=pointer]:
+                          - generic [ref=e531]: "1"
+                        - button [ref=e1343] [cursor=pointer]:
+                          - generic [ref=e539]: "1"
+                  - generic [ref=e541]:
+                    - button [ref=e1344] [cursor=pointer]:
+                      - link [ref=e1345]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e546]:
+                      - generic [ref=e547]:
+                        - button [ref=e1347] [cursor=pointer]:
+                          - link [ref=e1348]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e550]: 2w
+                        - button [ref=e551] [cursor=pointer]
+                      - paragraph [ref=e1349]: 🙏
+                      - generic [ref=e558]:
+                        - button [ref=e1350] [cursor=pointer]
+                        - button [ref=e1351] [cursor=pointer]
+                - group [ref=e1352]:
+                  - generic [ref=e569]:
+                    - button [ref=e1353] [cursor=pointer]:
+                      - link [ref=e1354]:
+                        - /url: /community/creator/@dery-heso/
+                    - generic [ref=e575]:
+                      - generic [ref=e576]:
+                        - button [ref=e1356] [cursor=pointer]:
+                          - link [ref=e1357]:
+                            - /url: /community/creator/@dery-heso/
+                            - text: Dery Heso
+                        - generic [ref=e579]: 2w
+                        - button [ref=e580] [cursor=pointer]
+                      - paragraph [ref=e1358]: Love the simplicity
+                      - generic [ref=e587]:
+                        - button [ref=e1359] [cursor=pointer]:
+                          - generic [ref=e593]: "1"
+                        - button [ref=e1360] [cursor=pointer]:
+                          - generic [ref=e601]: "1"
+                  - generic [ref=e603]:
+                    - button [ref=e1361] [cursor=pointer]:
+                      - link [ref=e1362]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e608]:
+                      - generic [ref=e609]:
+                        - button [ref=e1364] [cursor=pointer]:
+                          - link [ref=e1365]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e612]: 2w
+                        - button [ref=e613] [cursor=pointer]
+                      - paragraph [ref=e1366]: 🙏
+                      - generic [ref=e620]:
+                        - button [ref=e1367] [cursor=pointer]
+                        - button [ref=e1368] [cursor=pointer]
+                - group [ref=e1369]:
+                  - generic [ref=e631]:
+                    - button [ref=e1370] [cursor=pointer]:
+                      - link [ref=e1371]:
+                        - /url: /community/creator/@beso-pygy/
+                    - generic [ref=e637]:
+                      - generic [ref=e638]:
+                        - button [ref=e1373] [cursor=pointer]:
+                          - link [ref=e1374]:
+                            - /url: /community/creator/@beso-pygy/
+                            - text: Beso Pygy
+                        - generic [ref=e641]: 2w
+                        - button [ref=e642] [cursor=pointer]
+                      - paragraph [ref=e1375]: Love it
+                      - generic [ref=e649]:
+                        - button [ref=e1376] [cursor=pointer]:
+                          - generic [ref=e655]: "1"
+                        - button [ref=e1377] [cursor=pointer]:
+                          - generic [ref=e663]: "1"
+                  - generic [ref=e665]:
+                    - button [ref=e1378] [cursor=pointer]:
+                      - link [ref=e1379]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e670]:
+                      - generic [ref=e671]:
+                        - button [ref=e1381] [cursor=pointer]:
+                          - link [ref=e1382]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e674]: 2w
+                        - button [ref=e675] [cursor=pointer]
+                      - paragraph [ref=e1383]: 🙏
+                      - generic [ref=e682]:
+                        - button [ref=e1384] [cursor=pointer]
+                        - button [ref=e1385] [cursor=pointer]
+                - group [ref=e1386]:
+                  - generic [ref=e693]:
+                    - button [ref=e1387] [cursor=pointer]:
+                      - link [ref=e1388]:
+                        - /url: /community/creator/@berop-luja/
+                    - generic [ref=e699]:
+                      - generic [ref=e700]:
+                        - button [ref=e1390] [cursor=pointer]:
+                          - link [ref=e1391]:
+                            - /url: /community/creator/@berop-luja/
+                            - text: Berop Luja
+                        - generic [ref=e703]: 2w
+                        - button [ref=e704] [cursor=pointer]
+                      - paragraph [ref=e1392]: Clean layout
+                      - generic [ref=e711]:
+                        - button [ref=e1393] [cursor=pointer]:
+                          - generic [ref=e717]: "1"
+                        - button [ref=e1394] [cursor=pointer]:
+                          - generic [ref=e725]: "1"
+                  - generic [ref=e727]:
+                    - button [ref=e1395] [cursor=pointer]:
+                      - link [ref=e1396]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e732]:
+                      - generic [ref=e733]:
+                        - button [ref=e1398] [cursor=pointer]:
+                          - link [ref=e1399]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e736]: 2w
+                        - button [ref=e737] [cursor=pointer]
+                      - paragraph [ref=e1400]: Thanks
+                      - generic [ref=e744]:
+                        - button [ref=e1401] [cursor=pointer]
+                        - button [ref=e1402] [cursor=pointer]
+                - group [ref=e1403]:
+                  - generic [ref=e755]:
+                    - button [ref=e1404] [cursor=pointer]:
+                      - link [ref=e1405]:
+                        - /url: /community/creator/@bero-luja/
+                    - generic [ref=e761]:
+                      - generic [ref=e762]:
+                        - button [ref=e1407] [cursor=pointer]:
+                          - link [ref=e1408]:
+                            - /url: /community/creator/@bero-luja/
+                            - text: Bero Luja
+                        - generic [ref=e765]: 2w
+                        - button [ref=e766] [cursor=pointer]
+                      - paragraph [ref=e1409]: Love the colors
+                      - generic [ref=e773]:
+                        - button [ref=e1410] [cursor=pointer]:
+                          - generic [ref=e779]: "1"
+                        - button [ref=e1411] [cursor=pointer]:
+                          - generic [ref=e787]: "1"
+                  - generic [ref=e789]:
+                    - button [ref=e1412] [cursor=pointer]:
+                      - link [ref=e1413]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e794]:
+                      - generic [ref=e795]:
+                        - button [ref=e1415] [cursor=pointer]:
+                          - link [ref=e1416]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e798]: 2w
+                        - button [ref=e799] [cursor=pointer]
+                      - paragraph [ref=e1417]: Appreciated
+                      - generic [ref=e806]:
+                        - button [ref=e1418] [cursor=pointer]
+                        - button [ref=e1419] [cursor=pointer]
+                - group [ref=e1420]:
+                  - generic [ref=e817]:
+                    - button [ref=e1421] [cursor=pointer]:
+                      - link [ref=e1422]:
+                        - /url: /community/creator/@begay-luja/
+                    - generic [ref=e823]:
+                      - generic [ref=e824]:
+                        - button [ref=e1424] [cursor=pointer]:
+                          - link [ref=e1425]:
+                            - /url: /community/creator/@begay-luja/
+                            - text: Begay Luja
+                        - generic [ref=e827]: 2w
+                        - button [ref=e828] [cursor=pointer]
+                      - paragraph [ref=e1426]: Love the visuals
+                      - generic [ref=e835]:
+                        - button [ref=e1427] [cursor=pointer]:
+                          - generic [ref=e841]: "1"
+                        - button [ref=e1428] [cursor=pointer]:
+                          - generic [ref=e849]: "1"
+                  - generic [ref=e851]:
+                    - button [ref=e1429] [cursor=pointer]:
+                      - link [ref=e1430]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e856]:
+                      - generic [ref=e857]:
+                        - button [ref=e1432] [cursor=pointer]:
+                          - link [ref=e1433]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e860]: 2w
+                        - button [ref=e861] [cursor=pointer]
+                      - paragraph [ref=e1434]: Thank you
+                      - generic [ref=e868]:
+                        - button [ref=e1435] [cursor=pointer]
+                        - button [ref=e1436] [cursor=pointer]
+                - group [ref=e1437]:
+                  - generic [ref=e879]:
+                    - button [ref=e1438] [cursor=pointer]:
+                      - link [ref=e1439]:
+                        - /url: /community/creator/@bedok-luja/
+                    - generic [ref=e885]:
+                      - generic [ref=e886]:
+                        - button [ref=e1441] [cursor=pointer]:
+                          - link [ref=e1442]:
+                            - /url: /community/creator/@bedok-luja/
+                            - text: Bedok Luja
+                        - generic [ref=e889]: 2w
+                        - button [ref=e890] [cursor=pointer]
+                      - paragraph [ref=e1443]: The whole template is super super clean
+                      - generic [ref=e897]:
+                        - button [ref=e1444] [cursor=pointer]:
+                          - generic [ref=e903]: "1"
+                        - button [ref=e1445] [cursor=pointer]:
+                          - generic [ref=e911]: "1"
+                  - generic [ref=e913]:
+                    - button [ref=e1446] [cursor=pointer]:
+                      - link [ref=e1447]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e918]:
+                      - generic [ref=e919]:
+                        - button [ref=e1449] [cursor=pointer]:
+                          - link [ref=e1450]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e922]: 2w
+                        - button [ref=e923] [cursor=pointer]
+                      - paragraph [ref=e1451]: 🙏
+                      - generic [ref=e930]:
+                        - button [ref=e1452] [cursor=pointer]
+                        - button [ref=e1453] [cursor=pointer]
+                - group [ref=e1454]:
+                  - generic [ref=e941]:
+                    - button [ref=e1455] [cursor=pointer]:
+                      - link [ref=e1456]:
+                        - /url: /community/creator/@yeso-kola/
+                    - generic [ref=e947]:
+                      - generic [ref=e948]:
+                        - button [ref=e1458] [cursor=pointer]:
+                          - link [ref=e1459]:
+                            - /url: /community/creator/@yeso-kola/
+                            - text: Yeso Kola
+                        - generic [ref=e951]: 2w
+                        - button [ref=e952] [cursor=pointer]
+                      - paragraph [ref=e1460]: Love the sidebar
+                      - generic [ref=e959]:
+                        - button [ref=e1461] [cursor=pointer]:
+                          - generic [ref=e965]: "1"
+                        - button [ref=e1462] [cursor=pointer]:
+                          - generic [ref=e973]: "1"
+                  - generic [ref=e975]:
+                    - button [ref=e1463] [cursor=pointer]:
+                      - link [ref=e1464]:
+                        - /url: /community/creator/@muddasir/
+                    - generic [ref=e980]:
+                      - generic [ref=e981]:
+                        - button [ref=e1466] [cursor=pointer]:
+                          - link [ref=e1467]:
+                            - /url: /community/creator/@muddasir/
+                            - text: Muddasir
+                        - generic [ref=e984]: 2w
+                        - button [ref=e985] [cursor=pointer]
+                      - paragraph [ref=e1468]: 🙏
+                      - generic [ref=e992]:
+                        - button [ref=e1469] [cursor=pointer]
+                        - button [ref=e1470] [cursor=pointer]
+            - generic [ref=e1001]:
+              - generic [ref=e1002]:
+                - generic [ref=e1003]:
+                  - heading [level=2] [ref=e1471]: More from Muddasir
+                  - link [ref=e1472] [cursor=pointer]:
+                    - /url: /community/creator/@muddasir/
+                    - text: See all
+                - generic [ref=e1006]:
+                  - generic [ref=e1007] [cursor=pointer]:
+                    - link [ref=e1473]:
+                      - /url: /community/marketplace/templates/estatix/
+                    - button [ref=e1474]
+                    - generic [ref=e1013]:
+                      - link [ref=e1475]:
+                        - /url: /community/marketplace/templates/estatix/
+                        - generic [ref=e1017]: Estatix
+                      - button [ref=e1476]:
+                        - generic [ref=e1024]: "35"
+                  - generic [ref=e1029] [cursor=pointer]:
+                    - link [ref=e1477]:
+                      - /url: /community/marketplace/templates/syntrix/
+                    - button [ref=e1478]
+                    - generic [ref=e1035]:
+                      - link [ref=e1479]:
+                        - /url: /community/marketplace/templates/syntrix/
+                        - generic [ref=e1039]: Syntrix
+                      - button [ref=e1480]:
+                        - generic [ref=e1046]: "29"
+                  - generic [ref=e1051] [cursor=pointer]:
+                    - link [ref=e1481]:
+                      - /url: /community/marketplace/templates/adverix/
+                    - button [ref=e1482]
+                    - generic [ref=e1057]:
+                      - link [ref=e1483]:
+                        - /url: /community/marketplace/templates/adverix/
+                        - generic [ref=e1061]: Adverix
+                      - button [ref=e1484]:
+                        - generic [ref=e1068]: "36"
+              - generic [ref=e1073]:
+                - generic [ref=e1075]:
+                  - heading [level=2] [ref=e1485]: Related Templates
+                  - link [ref=e1486] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/
+                    - text: See all
+                - generic [ref=e1078]:
+                  - generic [ref=e1079] [cursor=pointer]:
+                    - link [ref=e1487]:
+                      - /url: /community/marketplace/templates/magnet-subscription-productize-agency-template/
+                    - button [ref=e1488]
+                    - generic [ref=e1085]:
+                      - link [ref=e1489]:
+                        - /url: /community/marketplace/templates/magnet-subscription-productize-agency-template/
+                        - generic [ref=e1089]: Magnet
+                      - button [ref=e1490]:
+                        - generic [ref=e1096]: "2"
+                  - generic [ref=e1101] [cursor=pointer]:
+                    - link [ref=e1491]:
+                      - /url: /community/marketplace/templates/myfolios/
+                    - button [ref=e1492]
+                    - generic [ref=e1107]:
+                      - link [ref=e1493]:
+                        - /url: /community/marketplace/templates/myfolios/
+                        - generic [ref=e1111]: Myfolios
+                      - button [ref=e1494]:
+                        - generic [ref=e1118]: "134"
+                  - generic [ref=e1123] [cursor=pointer]:
+                    - link [ref=e1495]:
+                      - /url: /community/marketplace/templates/oblica/
+                    - button [ref=e1496]
+                    - generic [ref=e1129]:
+                      - link [ref=e1497]:
+                        - /url: /community/marketplace/templates/oblica/
+                        - generic [ref=e1133]: Oblica
+                      - button [ref=e1498]:
+                        - generic [ref=e1140]: "298"
+          - complementary [ref=e1146]:
+            - generic [ref=e1147]:
+              - heading [level=2] [ref=e1499]: Details
+              - generic [ref=e1151]:
+                - generic [ref=e1152]:
+                  - term [ref=e1153]: Creator
+                  - definition [ref=e1154]:
+                    - button [ref=e1500] [cursor=pointer]:
+                      - link [ref=e1501]:
+                        - /url: /community/creator/@muddasir/
+                        - generic [ref=e1159]: Muddasir
+                - generic [ref=e1160]:
+                  - term [ref=e1161]: Published
+                  - definition [ref=e1162]: October 2, 2025
+                - generic [ref=e1163]:
+                  - term [ref=e1164]: License
+                  - definition [ref=e1165]:
+                    - link [ref=e1503] [cursor=pointer]:
+                      - /url: https://www.framer.com/legal/community-terms/
+                      - text: Single-Use License
+            - generic [ref=e1167]:
+              - generic [ref=e1168]:
+                - heading [level=2] [ref=e1504]: Categories
+                - link [ref=e1505] [cursor=pointer]:
+                  - /url: /community/marketplace/templates/categories/
+                  - text: See all
+              - list [ref=e1506]:
+                - listitem [ref=e1173]:
+                  - link [ref=e1507] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/agency/
+                    - text: Agency
+                - listitem [ref=e1175]:
+                  - link [ref=e1508] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/personal/
+                    - text: Personal
+                - listitem [ref=e1177]:
+                  - link [ref=e1509] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/portfolio/
+                    - text: Portfolio
+                - listitem [ref=e1179]:
+                  - link [ref=e1510] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/modern/
+                    - text: Modern
+                - listitem [ref=e1181]:
+                  - link [ref=e1511] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/animated/
+                    - text: Animated
+                - listitem [ref=e1183]:
+                  - link [ref=e1512] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/minimal/
+                    - text: Minimal
+                - listitem [ref=e1185]:
+                  - link [ref=e1513] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/categories/colorful/
+                    - text: Colorful
+            - generic [ref=e1187]:
+              - heading [level=2] [ref=e1514]: Features
+              - list [ref=e1515]:
+                - listitem [ref=e1192]:
+                  - link [ref=e1516] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=appear-effects
+                    - text: Appear Effects
+                - listitem [ref=e1194]:
+                  - link [ref=e1517] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=slideshows-tickers
+                    - text: Slideshows/Tickers
+                - listitem [ref=e1196]:
+                  - link [ref=e1518] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=scroll-effects
+                    - text: Scroll Effects
+                - listitem [ref=e1198]:
+                  - link [ref=e1519] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=cms
+                    - text: CMS
+                - listitem [ref=e1200]:
+                  - link [ref=e1520] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=custom-cursors
+                    - text: Custom Cursors
+                - listitem [ref=e1202]:
+                  - link [ref=e1521] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=forms
+                    - text: Forms
+                - listitem [ref=e1204]:
+                  - link [ref=e1522] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=layout-templates
+                    - text: Layout Templates
+                - listitem [ref=e1206]:
+                  - link [ref=e1523] [cursor=pointer]:
+                    - /url: /community/marketplace/templates/all/?features=text-effects
+                    - text: Text Effects
+  - list
+  - generic [ref=e1209]:
+    - paragraph [ref=e1210]: We use cookies to personalize content, run ads, and analyze traffic.
+    - button [ref=e1524] [cursor=pointer]:
+      - generic [ref=e1213]: Okay
+  - alert [ref=e1214]
+  - dialog [ref=e1528]:
+    - iframe [ref=e1532]:
+      - generic [ref=f6e3]:
+        - link [ref=f6e5] [cursor=pointer]:
+          - /url: https://buy.polar.sh/polar_cl_Wrjobbj5yY22JYOMiMA7EMRg2uFuFIUqKQCpp4Jndmu
+          - generic [ref=f6e6]:
+            - paragraph [ref=f6e8]: Get Template
+            - paragraph [ref=f6e10]: Get Template
+        - generic [ref=f6e12]:
+          - navigation [ref=f6e16]:
+            - generic [ref=f6e17]:
+              - link "Daniel Cross ui/ux designer" [ref=f6e20] [cursor=pointer]:
+                - /url: ./
+                - generic [ref=f6e23]:
+                  - paragraph [ref=f6e25]: Daniel Cross
+                  - paragraph [ref=f6e27]: ui/ux designer
+              - generic [ref=f6e29]:
+                - link [ref=f6e31] [cursor=pointer]:
+                  - /url: ./
+                  - paragraph [ref=f6e34]: Home
+                - link [ref=f6e36] [cursor=pointer]:
+                  - /url: ./about
+                  - paragraph [ref=f6e39]: About
+                - link [ref=f6e41] [cursor=pointer]:
+                  - /url: ./work
+                  - paragraph [ref=f6e44]: Projects
+                - link [ref=f6e46] [cursor=pointer]:
+                  - /url: ./contact
+                  - paragraph [ref=f6e49]: Contact
+            - generic [ref=f6e52]:
+              - paragraph [ref=f6e54]: Follow me
+              - generic [ref=f6e55]:
+                - link [ref=f6e57] [cursor=pointer]:
+                  - /url: https://www.instagram.com/
+                  - paragraph [ref=f6e59]: Instagram
+                  - paragraph [ref=f6e61]: (256K)
+                - link [ref=f6e63] [cursor=pointer]:
+                  - /url: https://x.com
+                  - paragraph [ref=f6e65]: Twitter-X
+                  - paragraph [ref=f6e67]: (112K)
+                - link [ref=f6e69] [cursor=pointer]:
+                  - /url: https://www.linkedin.com
+                  - paragraph [ref=f6e71]: Linkedin
+                  - paragraph [ref=f6e73]: (198K)
+                - link [ref=f6e75] [cursor=pointer]:
+                  - /url: https://www.youtube.com/
+                  - paragraph [ref=f6e77]: Youtube
+                  - paragraph [ref=f6e79]: (320K)
+          - generic [ref=f6e80]:
+            - banner [ref=f6e81]:
+              - generic [ref=f6e82]:
+                - generic [ref=f6e83]:
+                  - paragraph [ref=f6e87]: Available for work
+                  - paragraph [ref=f6e91]: Based in London-UK
+                - generic [ref=f6e93]:
+                  - paragraph [ref=f6e97]: Welcome here ❤️
+                  - generic [ref=f6e98]:
+                    - generic [ref=f6e99]:
+                      - heading "Hey," [level=1] [ref=f6e101]
+                      - heading "daniel" [level=1] [ref=f6e103]
+                      - heading "here" [level=1] [ref=f6e105]
+                      - heading "I" [level=1] [ref=f6e114]
+                      - heading "design" [level=1] [ref=f6e116]
+                      - heading "Interfaces," [level=1] [ref=f6e118]
+                      - heading "experiences," [level=1] [ref=f6e120]
+                      - heading "&" [level=1] [ref=f6e122]
+                      - heading "brands." [level=1] [ref=f6e124]
+                    - paragraph [ref=f6e126]:
+                      - generic [ref=f6e127]:
+                        - generic [ref=f6e128]: I
+                        - generic [ref=f6e129]: ’
+                        - generic [ref=f6e130]: m
+                      - generic [ref=f6e131]: a
+                      - generic [ref=f6e133]:
+                        - generic [ref=f6e134]: U
+                        - generic [ref=f6e135]: I
+                        - generic [ref=f6e136]: /
+                        - generic [ref=f6e137]: U
+                        - generic [ref=f6e138]: X
+                      - generic [ref=f6e139]:
+                        - generic [ref=f6e140]: D
+                        - generic [ref=f6e141]: e
+                        - generic [ref=f6e142]: s
+                        - generic [ref=f6e143]: i
+                        - generic [ref=f6e144]: g
+                        - generic [ref=f6e145]: "n"
+                        - generic [ref=f6e146]: e
+                        - generic [ref=f6e147]: r
+                      - generic [ref=f6e148]:
+                        - generic [ref=f6e149]: c
+                        - generic [ref=f6e150]: r
+                        - generic [ref=f6e151]: a
+                        - generic [ref=f6e152]: f
+                        - generic [ref=f6e153]: t
+                        - generic [ref=f6e154]: i
+                        - generic [ref=f6e155]: "n"
+                        - generic [ref=f6e156]: g
+                      - generic [ref=f6e157]:
+                        - generic [ref=f6e158]: i
+                        - generic [ref=f6e159]: "n"
+                        - generic [ref=f6e160]: t
+                        - generic [ref=f6e161]: u
+                        - generic [ref=f6e162]: i
+                        - generic [ref=f6e163]: t
+                        - generic [ref=f6e164]: i
+                        - generic [ref=f6e165]: v
+                        - generic [ref=f6e166]: e
+                      - generic [ref=f6e167]:
+                        - generic [ref=f6e168]: d
+                        - generic [ref=f6e169]: i
+                        - generic [ref=f6e170]: g
+                        - generic [ref=f6e171]: i
+                        - generic [ref=f6e172]: t
+                        - generic [ref=f6e173]: a
+                        - generic [ref=f6e174]: l
+                      - generic [ref=f6e175]:
+                        - generic [ref=f6e176]: p
+                        - generic [ref=f6e177]: r
+                        - generic [ref=f6e178]: o
+                        - generic [ref=f6e179]: d
+                        - generic [ref=f6e180]: u
+                        - generic [ref=f6e181]: c
+                        - generic [ref=f6e182]: t
+                        - generic [ref=f6e183]: s
+                      - generic [ref=f6e184]:
+                        - generic [ref=f6e185]: w
+                        - generic [ref=f6e186]: i
+                        - generic [ref=f6e187]: t
+                        - generic [ref=f6e188]: h
+                      - generic [ref=f6e189]: a
+                      - generic [ref=f6e191]:
+                        - generic [ref=f6e192]: f
+                        - generic [ref=f6e193]: o
+                        - generic [ref=f6e194]: c
+                        - generic [ref=f6e195]: u
+                        - generic [ref=f6e196]: s
+                      - generic [ref=f6e197]:
+                        - generic [ref=f6e198]: o
+                        - generic [ref=f6e199]: "n"
+                      - generic [ref=f6e200]:
+                        - generic [ref=f6e201]: s
+                        - generic [ref=f6e202]: i
+                        - generic [ref=f6e203]: m
+                        - generic [ref=f6e204]: p
+                        - generic [ref=f6e205]: l
+                        - generic [ref=f6e206]: i
+                        - generic [ref=f6e207]: c
+                        - generic [ref=f6e208]: i
+                        - generic [ref=f6e209]: t
+                        - generic [ref=f6e210]: "y"
+                        - generic [ref=f6e211]: ","
+                      - generic [ref=f6e212]:
+                        - generic [ref=f6e213]: u
+                        - generic [ref=f6e214]: s
+                        - generic [ref=f6e215]: a
+                        - generic [ref=f6e216]: b
+                        - generic [ref=f6e217]: i
+                        - generic [ref=f6e218]: l
+                        - generic [ref=f6e219]: i
+                        - generic [ref=f6e220]: t
+                        - generic [ref=f6e221]: "y"
+                        - generic [ref=f6e222]: ","
+                      - generic [ref=f6e223]:
+                        - generic [ref=f6e224]: a
+                        - generic [ref=f6e225]: "n"
+                        - generic [ref=f6e226]: d
+                      - generic [ref=f6e227]:
+                        - generic [ref=f6e228]: e
+                        - generic [ref=f6e229]: "n"
+                        - generic [ref=f6e230]: g
+                        - generic [ref=f6e231]: a
+                        - generic [ref=f6e232]: g
+                        - generic [ref=f6e233]: i
+                        - generic [ref=f6e234]: "n"
+                        - generic [ref=f6e235]: g
+                      - generic [ref=f6e236]:
+                        - generic [ref=f6e237]: u
+                        - generic [ref=f6e238]: s
+                        - generic [ref=f6e239]: e
+                        - generic [ref=f6e240]: r
+                      - generic [ref=f6e241]:
+                        - generic [ref=f6e242]: e
+                        - generic [ref=f6e243]: x
+                        - generic [ref=f6e244]: p
+                        - generic [ref=f6e245]: e
+                        - generic [ref=f6e246]: r
+                        - generic [ref=f6e247]: i
+                        - generic [ref=f6e248]: e
+                        - generic [ref=f6e249]: "n"
+                        - generic [ref=f6e250]: c
+                        - generic [ref=f6e251]: e
+                        - generic [ref=f6e252]: s
+                        - generic [ref=f6e253]: .
+                  - generic [ref=f6e254]:
+                    - link [ref=f6e256] [cursor=pointer]:
+                      - /url: ./contact
+                      - generic [ref=f6e257]:
+                        - paragraph [ref=f6e259]: Book A Call
+                        - paragraph [ref=f6e261]: Book A Call
+                    - paragraph [ref=f6e270]: 4.9 / 5
+            - generic [ref=f6e283]:
+              - generic [ref=f6e284]:
+                - paragraph [ref=f6e288]: What I Do
+                - heading "Turning ideas into digital experiences" [level=2] [ref=f6e290]
+              - generic [ref=f6e291]:
+                - generic [ref=f6e294]:
+                  - generic [ref=f6e295]:
+                    - paragraph [ref=f6e297]: Web design
+                    - paragraph [ref=f6e300]: $1200
+                  - paragraph [ref=f6e302]: I create visually appealing, responsive websites with clean layouts, ensuring engaging user experiences and professional digital presence.
+                - generic [ref=f6e305]:
+                  - generic [ref=f6e306]:
+                    - paragraph [ref=f6e308]: UI/UX Design
+                    - paragraph [ref=f6e311]: $1500
+                  - paragraph [ref=f6e313]: I design intuitive user interfaces and seamless experiences, focusing on usability, accessibility, and modern aesthetics to improve user satisfaction.
+                - generic [ref=f6e316]:
+                  - generic [ref=f6e317]:
+                    - paragraph [ref=f6e319]: Framer Development
+                    - paragraph [ref=f6e322]: $1300
+                  - paragraph [ref=f6e324]: I build interactive, high-performing websites in Framer, smooth animations, & fully responsive layouts tailored to your brand.
+                - generic [ref=f6e327]:
+                  - generic [ref=f6e328]:
+                    - paragraph [ref=f6e330]: Mobile App Design
+                    - paragraph [ref=f6e333]: $1600
+                  - paragraph [ref=f6e335]: I design user mobile applications with functional layouts, engaging visuals, & optimized experiences for both iOS & Android platforms.
+                - generic [ref=f6e338]:
+                  - generic [ref=f6e339]:
+                    - paragraph [ref=f6e341]: Branding & Identity
+                    - paragraph [ref=f6e344]: $1000
+                  - paragraph [ref=f6e346]: I craft unique brand identities including logos, typography, & guidelines, helping businesses stand out with consistency & strong visual presence.
+                - generic [ref=f6e347]:
+                  - generic [ref=f6e348]:
+                    - paragraph [ref=f6e350]: Book A 30 min Free Call
+                    - paragraph [ref=f6e352]: Let’s connect to discuss your design needs, explore creative ideas, and plan your project effectively together.
+                  - link [ref=f6e355] [cursor=pointer]:
+                    - /url: ./contact
+                    - generic [ref=f6e356]:
+                      - paragraph [ref=f6e358]: Book A Call
+                      - paragraph [ref=f6e360]: Book A Call
+            - generic [ref=f6e364]:
+              - generic [ref=f6e365]:
+                - paragraph [ref=f6e369]: About me
+                - paragraph [ref=f6e371]: I’m Daniel Cross, a passionate UI/UX Designer dedicated to crafting digital experiences that truly connect with people. With a focus on simplicity, usability, and creativity, I design products that not only look beautiful but also solve real problems. My approach blends strategy, design, and technology to transform ideas into meaningful solutions. Whether it’s designing intuitive interfaces, building websites, or shaping brand identities, I bring every project to life with precision and purpose.
+              - generic [ref=f6e372]:
+                - paragraph [ref=f6e374]: Worked with Global Brands
+                - list [ref=f6e377]:
+                  - listitem [ref=f6e378]
+                  - listitem [ref=f6e381]
+                  - listitem [ref=f6e384]
+                  - listitem [ref=f6e387]
+                  - listitem [ref=f6e390]
+                  - listitem [ref=f6e393]
+                  - listitem [ref=f6e396]
+                  - listitem [ref=f6e399]
+                  - listitem [ref=f6e402]
+                  - listitem [ref=f6e405]
+                  - listitem [ref=f6e408]
+                  - listitem [ref=f6e411]
+            - generic [ref=f6e420]:
+              - generic [ref=f6e421]:
+                - paragraph [ref=f6e425]: My Portfolio
+                - heading "Every project built to inspire users" [level=2] [ref=f6e427]
+              - generic [ref=f6e428]:
+                - link "Strivon Web Design / 2024" [ref=f6e431] [cursor=pointer]:
+                  - /url: ./work/strivon
+                  - generic [ref=f6e435]:
+                    - heading "Strivon" [level=4] [ref=f6e437]
+                    - generic [ref=f6e438]:
+                      - paragraph [ref=f6e440]: Web Design
+                      - paragraph [ref=f6e442]: /
+                      - paragraph [ref=f6e444]: "2024"
+                - link "Zyros UI/UX Design / 2024" [ref=f6e447] [cursor=pointer]:
+                  - /url: ./work/zyros
+                  - generic [ref=f6e451]:
+                    - heading "Zyros" [level=4] [ref=f6e453]
+                    - generic [ref=f6e454]:
+                      - paragraph [ref=f6e456]: UI/UX Design
+                      - paragraph [ref=f6e458]: /
+                      - paragraph [ref=f6e460]: "2024"
+                - link "Kaelen UI/UX Design / 2023" [ref=f6e463] [cursor=pointer]:
+                  - /url: ./work/kaelen
+                  - generic [ref=f6e467]:
+                    - heading "Kaelen" [level=4] [ref=f6e469]
+                    - generic [ref=f6e470]:
+                      - paragraph [ref=f6e472]: UI/UX Design
+                      - paragraph [ref=f6e474]: /
+                      - paragraph [ref=f6e476]: "2023"
+                - link "Orvian Mobile App Design / 2023" [ref=f6e479] [cursor=pointer]:
+                  - /url: ./work/orvian
+                  - generic [ref=f6e483]:
+                    - heading "Orvian" [level=4] [ref=f6e485]
+                    - generic [ref=f6e486]:
+                      - paragraph [ref=f6e488]: Mobile App Design
+                      - paragraph [ref=f6e490]: /
+                      - paragraph [ref=f6e492]: "2023"
+              - link [ref=f6e494] [cursor=pointer]:
+                - /url: ./work
+                - generic [ref=f6e495]:
+                  - paragraph [ref=f6e497]: Explore All
+                  - paragraph [ref=f6e499]: Explore All
+            - generic [ref=f6e502]:
+              - generic [ref=f6e503]:
+                - paragraph [ref=f6e507]: My Process
+                - heading "From ideas to impactful creative results." [level=2] [ref=f6e509]
+              - generic [ref=f6e510]:
+                - generic [ref=f6e513]:
+                  - generic [ref=f6e514]:
+                    - paragraph [ref=f6e516]: Creative Discovery
+                    - paragraph [ref=f6e518]: /01
+                  - paragraph [ref=f6e520]: Through research and collaboration, we uncover goals, audience needs, and brand vision to build a solid creative foundation.
+                - generic [ref=f6e523]:
+                  - generic [ref=f6e524]:
+                    - paragraph [ref=f6e526]: Design Blueprint
+                    - paragraph [ref=f6e528]: /02
+                  - paragraph [ref=f6e530]: Transforming insights into structured wireframes and prototypes that guide visuals, user experience, and brand alignment seamlessly.
+                - generic [ref=f6e533]:
+                  - generic [ref=f6e534]:
+                    - paragraph [ref=f6e536]: Flawless Execution
+                    - paragraph [ref=f6e538]: /03
+                  - paragraph [ref=f6e540]: Final designs are crafted, developed, and refined to ensure polished, user-centered results with measurable client satisfaction.
+            - generic [ref=f6e542]:
+              - generic [ref=f6e543]:
+                - paragraph [ref=f6e547]: Reviews
+                - heading "Voices of trust from happy clients" [level=2] [ref=f6e549]
+              - generic [ref=f6e552]:
+                - list [ref=f6e554]:
+                  - listitem [ref=f6e555]:
+                    - generic [ref=f6e557]:
+                      - paragraph [ref=f6e559]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                      - generic [ref=f6e563]:
+                        - paragraph [ref=f6e565]: James Walker
+                        - paragraph [ref=f6e567]: Marketing Director, BrightEdge
+                  - listitem [ref=f6e568]:
+                    - generic [ref=f6e570]:
+                      - paragraph [ref=f6e572]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                      - generic [ref=f6e576]:
+                        - paragraph [ref=f6e578]: Emily Harris
+                        - paragraph [ref=f6e580]: Product Manager, Nexora
+                  - listitem [ref=f6e581]:
+                    - generic [ref=f6e583]:
+                      - paragraph [ref=f6e585]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                      - generic [ref=f6e589]:
+                        - paragraph [ref=f6e591]: Oliver Bennett
+                        - paragraph [ref=f6e593]: CEO, Innovent Solutions
+                  - listitem [ref=f6e594]:
+                    - generic [ref=f6e596]:
+                      - paragraph [ref=f6e598]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                      - generic [ref=f6e602]:
+                        - paragraph [ref=f6e604]: James Walker
+                        - paragraph [ref=f6e606]: Marketing Director, BrightEdge
+                  - listitem [ref=f6e607]:
+                    - generic [ref=f6e609]:
+                      - paragraph [ref=f6e611]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                      - generic [ref=f6e615]:
+                        - paragraph [ref=f6e617]: Emily Harris
+                        - paragraph [ref=f6e619]: Product Manager, Nexora
+                  - listitem [ref=f6e620]:
+                    - generic [ref=f6e622]:
+                      - paragraph [ref=f6e624]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                      - generic [ref=f6e628]:
+                        - paragraph [ref=f6e630]: Oliver Bennett
+                        - paragraph [ref=f6e632]: CEO, Innovent Solutions
+                  - listitem [ref=f6e633]:
+                    - generic [ref=f6e635]:
+                      - paragraph [ref=f6e637]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                      - generic [ref=f6e641]:
+                        - paragraph [ref=f6e643]: James Walker
+                        - paragraph [ref=f6e645]: Marketing Director, BrightEdge
+                  - listitem [ref=f6e646]:
+                    - generic [ref=f6e648]:
+                      - paragraph [ref=f6e650]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                      - generic [ref=f6e654]:
+                        - paragraph [ref=f6e656]: Emily Harris
+                        - paragraph [ref=f6e658]: Product Manager, Nexora
+                  - listitem [ref=f6e659]:
+                    - generic [ref=f6e661]:
+                      - paragraph [ref=f6e663]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                      - generic [ref=f6e667]:
+                        - paragraph [ref=f6e669]: Oliver Bennett
+                        - paragraph [ref=f6e671]: CEO, Innovent Solutions
+                  - listitem [ref=f6e672]:
+                    - generic [ref=f6e674]:
+                      - paragraph [ref=f6e676]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                      - generic [ref=f6e680]:
+                        - paragraph [ref=f6e682]: James Walker
+                        - paragraph [ref=f6e684]: Marketing Director, BrightEdge
+                - group "Slideshow pagination controls":
+                  - generic:
+                    - button "Previous" [ref=f6e685] [cursor=pointer]:
+                      - img "Back Arrow" [ref=f6e686]
+                    - button "Next" [ref=f6e687] [cursor=pointer]:
+                      - img "Next Arrow" [ref=f6e688]
+            - contentinfo [ref=f6e691]:
+              - generic [ref=f6e692]:
+                - generic [ref=f6e693]:
+                  - link [ref=f6e695] [cursor=pointer]:
+                    - /url: mailto:hello@gmail.com
+                    - paragraph [ref=f6e697]: hello@gmail.com
+                  - link [ref=f6e702] [cursor=pointer]:
+                    - /url: tel:+44 7700 900123
+                    - paragraph [ref=f6e704]: +44 7700 900123
+                  - link [ref=f6e709] [cursor=pointer]:
+                    - /url: https://www.google.com/maps/place/45+Westwood+Ave,+Ellenville,+NY+12428,+USA/@41.7197902,-74.4073192,17z/data=!3m1!4b1!4m6!3m5!1s0x89dcdcab387f0725:0xa47e5e118528587f!8m2!3d41.7197862!4d-74.4047443!16s%2Fg%2F11c4w_9k9y?entry=ttu&g_ep=EgoyMDI1MDUxMS4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D
+                    - paragraph [ref=f6e711]: London-UK
+                  - link [ref=f6e716] [cursor=pointer]:
+                    - /url: ./contact
+                    - paragraph [ref=f6e718]: Have a question
+                - link [ref=f6e722] [cursor=pointer]:
+                  - /url: mailto:hello@gmail.com
+                - generic [ref=f6e725]:
+                  - generic [ref=f6e727]:
+                    - paragraph [ref=f6e729]: Built in
+                    - paragraph [ref=f6e731]:
+                      - link "Framer" [ref=f6e732] [cursor=pointer]:
+                        - /url: https://framer.link/mudasir-hussain
+                  - generic [ref=f6e734]:
+                    - paragraph [ref=f6e736]: Template by
+                    - paragraph [ref=f6e738]:
+                      - link "Muddasir Hussain" [ref=f6e739] [cursor=pointer]:
+                        - /url: https://x.com/hussain_mu20778
+    - generic [ref=e1533]:
+      - generic [ref=e1534]:
+        - heading "Template" [level=2] [ref=e1535]
+        - button "Close" [active] [ref=e1537] [cursor=pointer]
+      - generic [ref=e1542]:
+        - generic [ref=e1543]:
+          - button [ref=e1544] [cursor=pointer]:
+            - link [ref=e1545]:
+              - /url: /community/creator/@muddasir/
+              - img "Muddasir" [ref=e1546]
+          - generic [ref=e1547]:
+            - button [ref=e1548] [cursor=pointer]:
+              - link "Muddasir" [ref=e1549]:
+                - /url: /community/creator/@muddasir/
+            - link "10mo" [ref=e1551] [cursor=pointer]:
+              - /url: /community/marketplace/templates/danielcross/
+          - button [ref=e1552] [cursor=pointer]
+        - generic [ref=e1557]:
+          - link "Danielcross" [ref=e1559] [cursor=pointer]:
+            - /url: /community/marketplace/templates/danielcross/
+          - generic [ref=e1560]:
+            - paragraph [ref=e1561]:
+              - text: The
+              - strong [ref=e1562]: Daniel Cross Portfolio Template
+              - text: is a sleek and professional Framer template crafted for UI/UX designers, digital creators, and creative professionals who want to showcase their work with clarity and style. Built with a modern aesthetic, clean layouts, and smooth interactions, this template helps you present your skills, projects, and achievements in a way that feels personal yet highly polished.
+            - paragraph [ref=e1563]:
+              - text: Whether you’re a freelancer building your client base, a designer applying for new opportunities, or a creative professional growing your personal brand, Daniel Cross provides everything you need to make a strong impression online. With customizable sections for
+              - strong [ref=e1564]: About, Services, Portfolio, Experience, Awards, and Contact
+              - text: ", it’s easy to tailor the design to match your unique identity."
+            - paragraph [ref=e1565]: "Key features include:"
+            - list:
+              - listitem:
+                - text: •
+                - paragraph: Fully responsive design for all devices
+              - listitem:
+                - text: •
+                - paragraph: Pre-built sections for bio, projects, and case studies
+              - listitem:
+                - text: •
+                - paragraph: Clean typography and modern UI styling
+              - listitem:
+                - text: •
+                - paragraph: Easy customization with Framer’s visual editor
+              - listitem:
+                - text: •
+                - paragraph: SEO-friendly structure to help you get discovered
+              - listitem:
+                - text: •
+                - paragraph: Smooth animations and interactive elements for a professional touch
+            - paragraph [ref=e1566]:
+              - text: With Daniel Cross, you can launch a
+              - strong [ref=e1567]: personal brand website
+              - text: that not only highlights your design expertise but also builds trust with potential clients and collaborators.
+          - button "Read more" [ref=e1568] [cursor=pointer]
+      - button "Buy for $59" [ref=e1570] [cursor=pointer]
+      - generic [ref=e1572]:
+        - button "Like template" [ref=e1573] [cursor=pointer]:
+          - generic [ref=e1578]: "65"
+        - button "13 comments" [ref=e1583] [cursor=pointer]:
+          - generic [ref=e1586]: "13"
+      - generic [ref=e1591]:
+        - generic [ref=e1594]:
+          - textbox "Reply…" [ref=e1596]:
+            - paragraph [ref=e1597]: Reply…
+          - button [disabled]
+        - generic [ref=e1598]:
+          - group "Thread by Jula Keso" [ref=e1600]:
+            - generic [ref=e1601]:
+              - button [ref=e1603] [cursor=pointer]:
+                - link [ref=e1604]:
+                  - /url: /community/creator/@jula-keso/
+                  - img "Jula Keso" [ref=e1605]
+              - generic [ref=e1607]:
+                - generic [ref=e1608]:
+                  - button [ref=e1609] [cursor=pointer]:
+                    - link "Jula Keso" [ref=e1610]:
+                      - /url: /community/creator/@jula-keso/
+                  - generic [ref=e1611]: 1w
+                  - button [ref=e1612] [cursor=pointer]
+                - paragraph [ref=e1618]: Great work 👏
+                - generic [ref=e1619]:
+                  - button "Like comment" [ref=e1620] [cursor=pointer]:
+                    - generic [ref=e1625]: "1"
+                  - button "Reply" [ref=e1630] [cursor=pointer]:
+                    - generic [ref=e1633]: "1"
+            - generic [ref=e1635]:
+              - button [ref=e1637] [cursor=pointer]:
+                - link [ref=e1638]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e1639]
+              - generic [ref=e1640]:
+                - generic [ref=e1641]:
+                  - button [ref=e1642] [cursor=pointer]:
+                    - link "Muddasir" [ref=e1643]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e1644]: 1w
+                  - button [ref=e1645] [cursor=pointer]
+                - paragraph [ref=e1651]:
+                  - strong [ref=e1652]: Thanks
+                - generic [ref=e1653]:
+                  - button "Like comment" [ref=e1654] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e1659] [cursor=pointer]
+          - group "Thread by Jesia Robia" [ref=e1663]:
+            - generic [ref=e1664]:
+              - button [ref=e1666] [cursor=pointer]:
+                - link [ref=e1667]:
+                  - /url: /community/creator/@jesia-robia/
+                  - img "Jesia Robia" [ref=e1668]
+              - generic [ref=e1670]:
+                - generic [ref=e1671]:
+                  - button [ref=e1672] [cursor=pointer]:
+                    - link "Jesia Robia" [ref=e1673]:
+                      - /url: /community/creator/@jesia-robia/
+                  - generic [ref=e1674]: 1w
+                  - button [ref=e1675] [cursor=pointer]
+                - paragraph [ref=e1681]: 🔥
+                - generic [ref=e1682]:
+                  - button "Like comment" [ref=e1683] [cursor=pointer]:
+                    - generic [ref=e1688]: "1"
+                  - button "Reply" [ref=e1693] [cursor=pointer]:
+                    - generic [ref=e1696]: "1"
+            - generic [ref=e1698]:
+              - button [ref=e1700] [cursor=pointer]:
+                - link [ref=e1701]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e1702]
+              - generic [ref=e1703]:
+                - generic [ref=e1704]:
+                  - button [ref=e1705] [cursor=pointer]:
+                    - link "Muddasir" [ref=e1706]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e1707]: 1w
+                  - button [ref=e1708] [cursor=pointer]
+                - paragraph [ref=e1714]:
+                  - strong [ref=e1715]: Thanks
+                - generic [ref=e1716]:
+                  - button "Like comment" [ref=e1717] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e1722] [cursor=pointer]
+          - group "Thread by Jery Lepo" [ref=e1726]:
+            - generic [ref=e1727]:
+              - button [ref=e1729] [cursor=pointer]:
+                - link [ref=e1730]:
+                  - /url: /community/creator/@jery-lepo/
+                  - img "Jery Lepo" [ref=e1731]
+              - generic [ref=e1733]:
+                - generic [ref=e1734]:
+                  - button [ref=e1735] [cursor=pointer]:
+                    - link "Jery Lepo" [ref=e1736]:
+                      - /url: /community/creator/@jery-lepo/
+                  - generic [ref=e1737]: 1w
+                  - button [ref=e1738] [cursor=pointer]
+                - paragraph [ref=e1744]: Love the sidebar design
+                - generic [ref=e1745]:
+                  - button "Like comment" [ref=e1746] [cursor=pointer]:
+                    - generic [ref=e1751]: "1"
+                  - button "Reply" [ref=e1756] [cursor=pointer]:
+                    - generic [ref=e1759]: "1"
+            - generic [ref=e1761]:
+              - button [ref=e1763] [cursor=pointer]:
+                - link [ref=e1764]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e1765]
+              - generic [ref=e1766]:
+                - generic [ref=e1767]:
+                  - button [ref=e1768] [cursor=pointer]:
+                    - link "Muddasir" [ref=e1769]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e1770]: 1w
+                  - button [ref=e1771] [cursor=pointer]
+                - paragraph [ref=e1777]:
+                  - strong [ref=e1778]: Thanks
+                - generic [ref=e1779]:
+                  - button "Like comment" [ref=e1780] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e1785] [cursor=pointer]
+          - group "Thread by Heria Kely" [ref=e1789]:
+            - generic [ref=e1790]:
+              - button [ref=e1792] [cursor=pointer]:
+                - link [ref=e1793]:
+                  - /url: /community/creator/@heria-kely/
+                  - img "Heria Kely" [ref=e1794]
+              - generic [ref=e1796]:
+                - generic [ref=e1797]:
+                  - button [ref=e1798] [cursor=pointer]:
+                    - link "Heria Kely" [ref=e1799]:
+                      - /url: /community/creator/@heria-kely/
+                  - generic [ref=e1800]: 1w
+                  - button [ref=e1801] [cursor=pointer]
+                - paragraph [ref=e1807]: Lovely
+                - generic [ref=e1808]:
+                  - button "Like comment" [ref=e1809] [cursor=pointer]:
+                    - generic [ref=e1814]: "1"
+                  - button "Reply" [ref=e1819] [cursor=pointer]:
+                    - generic [ref=e1822]: "1"
+            - generic [ref=e1824]:
+              - button [ref=e1826] [cursor=pointer]:
+                - link [ref=e1827]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e1828]
+              - generic [ref=e1829]:
+                - generic [ref=e1830]:
+                  - button [ref=e1831] [cursor=pointer]:
+                    - link "Muddasir" [ref=e1832]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e1833]: 1w
+                  - button [ref=e1834] [cursor=pointer]
+                - paragraph [ref=e1840]:
+                  - strong [ref=e1841]: Thanks
+                - generic [ref=e1842]:
+                  - button "Like comment" [ref=e1843] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e1848] [cursor=pointer]
+          - group "Thread by Hera Jei" [ref=e1852]:
+            - generic [ref=e1853]:
+              - button [ref=e1855] [cursor=pointer]:
+                - link [ref=e1856]:
+                  - /url: /community/creator/@hera-jei/
+                  - img "Hera Jei" [ref=e1857]
+              - generic [ref=e1859]:
+                - generic [ref=e1860]:
+                  - button [ref=e1861] [cursor=pointer]:
+                    - link "Hera Jei" [ref=e1862]:
+                      - /url: /community/creator/@hera-jei/
+                  - generic [ref=e1863]: 1w
+                  - button [ref=e1864] [cursor=pointer]
+                - paragraph [ref=e1870]: Amazing work
+                - generic [ref=e1871]:
+                  - button "Like comment" [ref=e1872] [cursor=pointer]:
+                    - generic [ref=e1877]: "1"
+                  - button "Reply" [ref=e1882] [cursor=pointer]:
+                    - generic [ref=e1885]: "1"
+            - generic [ref=e1887]:
+              - button [ref=e1889] [cursor=pointer]:
+                - link [ref=e1890]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e1891]
+              - generic [ref=e1892]:
+                - generic [ref=e1893]:
+                  - button [ref=e1894] [cursor=pointer]:
+                    - link "Muddasir" [ref=e1895]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e1896]: 1w
+                  - button [ref=e1897] [cursor=pointer]
+                - paragraph [ref=e1903]:
+                  - strong [ref=e1904]: Thanks
+                - generic [ref=e1905]:
+                  - button "Like comment" [ref=e1906] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e1911] [cursor=pointer]
+          - group "Thread by Desio Yero" [ref=e1915]:
+            - generic [ref=e1916]:
+              - button [ref=e1918] [cursor=pointer]:
+                - link [ref=e1919]:
+                  - /url: /community/creator/@desio-yero/
+                  - img "Desio Yero" [ref=e1920]
+              - generic [ref=e1922]:
+                - generic [ref=e1923]:
+                  - button [ref=e1924] [cursor=pointer]:
+                    - link "Desio Yero" [ref=e1925]:
+                      - /url: /community/creator/@desio-yero/
+                  - generic [ref=e1926]: 2w
+                  - button [ref=e1927] [cursor=pointer]
+                - paragraph [ref=e1933]: Great design
+                - generic [ref=e1934]:
+                  - button "Like comment" [ref=e1935] [cursor=pointer]:
+                    - generic [ref=e1940]: "1"
+                  - button "Reply" [ref=e1945] [cursor=pointer]:
+                    - generic [ref=e1948]: "1"
+            - generic [ref=e1950]:
+              - button [ref=e1952] [cursor=pointer]:
+                - link [ref=e1953]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e1954]
+              - generic [ref=e1955]:
+                - generic [ref=e1956]:
+                  - button [ref=e1957] [cursor=pointer]:
+                    - link "Muddasir" [ref=e1958]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e1959]: 2w
+                  - button [ref=e1960] [cursor=pointer]
+                - paragraph [ref=e1966]: 🙏
+                - generic [ref=e1967]:
+                  - button "Like comment" [ref=e1968] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e1973] [cursor=pointer]
+          - group "Thread by Dery Heso" [ref=e1977]:
+            - generic [ref=e1978]:
+              - button [ref=e1980] [cursor=pointer]:
+                - link [ref=e1981]:
+                  - /url: /community/creator/@dery-heso/
+                  - img "Dery Heso" [ref=e1982]
+              - generic [ref=e1984]:
+                - generic [ref=e1985]:
+                  - button [ref=e1986] [cursor=pointer]:
+                    - link "Dery Heso" [ref=e1987]:
+                      - /url: /community/creator/@dery-heso/
+                  - generic [ref=e1988]: 2w
+                  - button [ref=e1989] [cursor=pointer]
+                - paragraph [ref=e1995]: Love the simplicity
+                - generic [ref=e1996]:
+                  - button "Like comment" [ref=e1997] [cursor=pointer]:
+                    - generic [ref=e2002]: "1"
+                  - button "Reply" [ref=e2007] [cursor=pointer]:
+                    - generic [ref=e2010]: "1"
+            - generic [ref=e2012]:
+              - button [ref=e2014] [cursor=pointer]:
+                - link [ref=e2015]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2016]
+              - generic [ref=e2017]:
+                - generic [ref=e2018]:
+                  - button [ref=e2019] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2020]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2021]: 2w
+                  - button [ref=e2022] [cursor=pointer]
+                - paragraph [ref=e2028]: 🙏
+                - generic [ref=e2029]:
+                  - button "Like comment" [ref=e2030] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2035] [cursor=pointer]
+          - group "Thread by Beso Pygy" [ref=e2039]:
+            - generic [ref=e2040]:
+              - button [ref=e2042] [cursor=pointer]:
+                - link [ref=e2043]:
+                  - /url: /community/creator/@beso-pygy/
+                  - img "Beso Pygy" [ref=e2044]
+              - generic [ref=e2046]:
+                - generic [ref=e2047]:
+                  - button [ref=e2048] [cursor=pointer]:
+                    - link "Beso Pygy" [ref=e2049]:
+                      - /url: /community/creator/@beso-pygy/
+                  - generic [ref=e2050]: 2w
+                  - button [ref=e2051] [cursor=pointer]
+                - paragraph [ref=e2057]: Love it
+                - generic [ref=e2058]:
+                  - button "Like comment" [ref=e2059] [cursor=pointer]:
+                    - generic [ref=e2064]: "1"
+                  - button "Reply" [ref=e2069] [cursor=pointer]:
+                    - generic [ref=e2072]: "1"
+            - generic [ref=e2074]:
+              - button [ref=e2076] [cursor=pointer]:
+                - link [ref=e2077]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2078]
+              - generic [ref=e2079]:
+                - generic [ref=e2080]:
+                  - button [ref=e2081] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2082]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2083]: 2w
+                  - button [ref=e2084] [cursor=pointer]
+                - paragraph [ref=e2090]: 🙏
+                - generic [ref=e2091]:
+                  - button "Like comment" [ref=e2092] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2097] [cursor=pointer]
+          - group "Thread by Berop Luja" [ref=e2101]:
+            - generic [ref=e2102]:
+              - button [ref=e2104] [cursor=pointer]:
+                - link [ref=e2105]:
+                  - /url: /community/creator/@berop-luja/
+                  - img "Berop Luja" [ref=e2106]
+              - generic [ref=e2108]:
+                - generic [ref=e2109]:
+                  - button [ref=e2110] [cursor=pointer]:
+                    - link "Berop Luja" [ref=e2111]:
+                      - /url: /community/creator/@berop-luja/
+                  - generic [ref=e2112]: 2w
+                  - button [ref=e2113] [cursor=pointer]
+                - paragraph [ref=e2119]: Clean layout
+                - generic [ref=e2120]:
+                  - button "Like comment" [ref=e2121] [cursor=pointer]:
+                    - generic [ref=e2126]: "1"
+                  - button "Reply" [ref=e2131] [cursor=pointer]:
+                    - generic [ref=e2134]: "1"
+            - generic [ref=e2136]:
+              - button [ref=e2138] [cursor=pointer]:
+                - link [ref=e2139]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2140]
+              - generic [ref=e2141]:
+                - generic [ref=e2142]:
+                  - button [ref=e2143] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2144]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2145]: 2w
+                  - button [ref=e2146] [cursor=pointer]
+                - paragraph [ref=e2152]: Thanks
+                - generic [ref=e2153]:
+                  - button "Like comment" [ref=e2154] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2159] [cursor=pointer]
+          - group "Thread by Bero Luja" [ref=e2163]:
+            - generic [ref=e2164]:
+              - button [ref=e2166] [cursor=pointer]:
+                - link [ref=e2167]:
+                  - /url: /community/creator/@bero-luja/
+                  - img "Bero Luja" [ref=e2168]
+              - generic [ref=e2170]:
+                - generic [ref=e2171]:
+                  - button [ref=e2172] [cursor=pointer]:
+                    - link "Bero Luja" [ref=e2173]:
+                      - /url: /community/creator/@bero-luja/
+                  - generic [ref=e2174]: 2w
+                  - button [ref=e2175] [cursor=pointer]
+                - paragraph [ref=e2181]: Love the colors
+                - generic [ref=e2182]:
+                  - button "Like comment" [ref=e2183] [cursor=pointer]:
+                    - generic [ref=e2188]: "1"
+                  - button "Reply" [ref=e2193] [cursor=pointer]:
+                    - generic [ref=e2196]: "1"
+            - generic [ref=e2198]:
+              - button [ref=e2200] [cursor=pointer]:
+                - link [ref=e2201]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2202]
+              - generic [ref=e2203]:
+                - generic [ref=e2204]:
+                  - button [ref=e2205] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2206]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2207]: 2w
+                  - button [ref=e2208] [cursor=pointer]
+                - paragraph [ref=e2214]: Appreciated
+                - generic [ref=e2215]:
+                  - button "Like comment" [ref=e2216] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2221] [cursor=pointer]
+          - group "Thread by Begay Luja" [ref=e2225]:
+            - generic [ref=e2226]:
+              - button [ref=e2228] [cursor=pointer]:
+                - link [ref=e2229]:
+                  - /url: /community/creator/@begay-luja/
+                  - img "Begay Luja" [ref=e2230]
+              - generic [ref=e2232]:
+                - generic [ref=e2233]:
+                  - button [ref=e2234] [cursor=pointer]:
+                    - link "Begay Luja" [ref=e2235]:
+                      - /url: /community/creator/@begay-luja/
+                  - generic [ref=e2236]: 2w
+                  - button [ref=e2237] [cursor=pointer]
+                - paragraph [ref=e2243]: Love the visuals
+                - generic [ref=e2244]:
+                  - button "Like comment" [ref=e2245] [cursor=pointer]:
+                    - generic [ref=e2250]: "1"
+                  - button "Reply" [ref=e2255] [cursor=pointer]:
+                    - generic [ref=e2258]: "1"
+            - generic [ref=e2260]:
+              - button [ref=e2262] [cursor=pointer]:
+                - link [ref=e2263]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2264]
+              - generic [ref=e2265]:
+                - generic [ref=e2266]:
+                  - button [ref=e2267] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2268]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2269]: 2w
+                  - button [ref=e2270] [cursor=pointer]
+                - paragraph [ref=e2276]: Thank you
+                - generic [ref=e2277]:
+                  - button "Like comment" [ref=e2278] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2283] [cursor=pointer]
+          - group "Thread by Bedok Luja" [ref=e2287]:
+            - generic [ref=e2288]:
+              - button [ref=e2290] [cursor=pointer]:
+                - link [ref=e2291]:
+                  - /url: /community/creator/@bedok-luja/
+                  - img "Bedok Luja" [ref=e2292]
+              - generic [ref=e2294]:
+                - generic [ref=e2295]:
+                  - button [ref=e2296] [cursor=pointer]:
+                    - link "Bedok Luja" [ref=e2297]:
+                      - /url: /community/creator/@bedok-luja/
+                  - generic [ref=e2298]: 2w
+                  - button [ref=e2299] [cursor=pointer]
+                - paragraph [ref=e2305]: The whole template is super super clean
+                - generic [ref=e2306]:
+                  - button "Like comment" [ref=e2307] [cursor=pointer]:
+                    - generic [ref=e2312]: "1"
+                  - button "Reply" [ref=e2317] [cursor=pointer]:
+                    - generic [ref=e2320]: "1"
+            - generic [ref=e2322]:
+              - button [ref=e2324] [cursor=pointer]:
+                - link [ref=e2325]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2326]
+              - generic [ref=e2327]:
+                - generic [ref=e2328]:
+                  - button [ref=e2329] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2330]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2331]: 2w
+                  - button [ref=e2332] [cursor=pointer]
+                - paragraph [ref=e2338]: 🙏
+                - generic [ref=e2339]:
+                  - button "Like comment" [ref=e2340] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2345] [cursor=pointer]
+          - group "Thread by Yeso Kola" [ref=e2349]:
+            - generic [ref=e2350]:
+              - button [ref=e2352] [cursor=pointer]:
+                - link [ref=e2353]:
+                  - /url: /community/creator/@yeso-kola/
+                  - img "Yeso Kola" [ref=e2354]
+              - generic [ref=e2356]:
+                - generic [ref=e2357]:
+                  - button [ref=e2358] [cursor=pointer]:
+                    - link "Yeso Kola" [ref=e2359]:
+                      - /url: /community/creator/@yeso-kola/
+                  - generic [ref=e2360]: 2w
+                  - button [ref=e2361] [cursor=pointer]
+                - paragraph [ref=e2367]: Love the sidebar
+                - generic [ref=e2368]:
+                  - button "Like comment" [ref=e2369] [cursor=pointer]:
+                    - generic [ref=e2374]: "1"
+                  - button "Reply" [ref=e2379] [cursor=pointer]:
+                    - generic [ref=e2382]: "1"
+            - generic [ref=e2384]:
+              - button [ref=e2386] [cursor=pointer]:
+                - link [ref=e2387]:
+                  - /url: /community/creator/@muddasir/
+                  - img "Muddasir" [ref=e2388]
+              - generic [ref=e2389]:
+                - generic [ref=e2390]:
+                  - button [ref=e2391] [cursor=pointer]:
+                    - link "Muddasir" [ref=e2392]:
+                      - /url: /community/creator/@muddasir/
+                  - generic [ref=e2393]: 2w
+                  - button [ref=e2394] [cursor=pointer]
+                - paragraph [ref=e2400]: 🙏
+                - generic [ref=e2401]:
+                  - button "Like comment" [ref=e2402] [cursor=pointer]
+                  - button "Reply to Muddasir" [ref=e2407] [cursor=pointer]

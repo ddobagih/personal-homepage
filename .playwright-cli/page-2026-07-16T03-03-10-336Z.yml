@@ -1,0 +1,90 @@
+- generic [active] [ref=f4e1]:
+  - link "본문으로 건너뛰기" [ref=f4e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f4e3]:
+    - generic [ref=f4e4]:
+      - link "thecistus 홈" [ref=f4e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f4e6]: thecistus
+      - navigation "주요 섹션" [ref=f4e7]:
+        - link "Home" [ref=f4e8] [cursor=pointer]:
+          - /url: "#home"
+        - link "Portfolio" [ref=f4e9] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "Study" [ref=f4e10] [cursor=pointer]:
+          - /url: "#study"
+        - link "Moments" [ref=f4e11] [cursor=pointer]:
+          - /url: "#updates"
+  - main [ref=f4e12]:
+    - generic [ref=f4e15]:
+      - complementary [ref=f4e16]:
+        - generic [ref=f4e17]:
+          - generic [ref=f4e18]:
+            - button "☰ 페이지" [ref=f4e208] [cursor=pointer]
+            - button "# 스키마" [ref=f4e209] [cursor=pointer]
+            - button "⌂ 홈" [ref=f4e210] [cursor=pointer]
+            - button "↗ 연락" [ref=f4e211] [cursor=pointer]
+          - button "새 페이지" [ref=f4e23] [cursor=pointer]
+          - searchbox "페이지 검색" [ref=f4e26]
+          - generic [ref=f4e27]:
+            - heading "게시물" [level=3] [ref=f4e30]
+            - generic [ref=f4e32]:
+              - generic [ref=f4e33]: 페이지 2
+              - generic "보기 방식" [ref=f4e34]:
+                - button "목록" [ref=f4e35] [cursor=pointer]
+                - button "표" [ref=f4e36] [cursor=pointer]
+                - button "갤러리" [ref=f4e37] [cursor=pointer]
+                - button "보드" [ref=f4e38] [cursor=pointer]
+            - generic [ref=f4e40]:
+              - generic [ref=f4e41]:
+                - generic [ref=f4e42]: Title
+                - generic [ref=f4e43]: Section
+                - generic [ref=f4e44]: Category
+                - generic [ref=f4e45]: Status
+                - generic [ref=f4e46]: Date
+              - generic [ref=f4e47]:
+                - button "ㄹㅇㄹㄴㅇ 편집" [ref=f4e48] [cursor=pointer]:
+                  - generic [ref=f4e49]:
+                    - generic [ref=f4e50]: ✨
+                    - strong [ref=f4e51]: ㄹㅇㄹㄴㅇ
+                  - generic [ref=f4e52]: 게시됨
+                  - generic [ref=f4e53]: 2026.07.16 · 11:37
+                - button "페이지를 휴지통으로 이동" [ref=f4e55] [cursor=pointer]: 휴지통
+              - generic [ref=f4e56]:
+                - button "한이음 드림업 2026 편집" [ref=f4e57] [cursor=pointer]:
+                  - generic [ref=f4e58]:
+                    - generic [ref=f4e59]: ✨
+                    - strong [ref=f4e60]: 한이음 드림업 2026
+                  - generic [ref=f4e61]: 게시됨
+                  - generic [ref=f4e62]: "2026"
+                - button "페이지를 휴지통으로 이동" [ref=f4e64] [cursor=pointer]: 휴지통
+        - button "로그아웃" [ref=f4e66]
+      - generic [ref=f4e67]:
+        - text: 제목 없음
+        - generic [ref=f4e212]:
+          - generic [ref=f4e214]:
+            - heading "홈 화면" [level=3] [ref=f4e215]
+            - paragraph [ref=f4e216]: 메인 화면에 보이는 제목과 소개 문구를 수정합니다.
+          - generic [ref=f4e217]:
+            - generic [ref=f4e218]:
+              - generic [ref=f4e219]: Preview
+              - heading "thecistus" [level=4] [ref=f4e220]
+              - paragraph [ref=f4e221]: 홈 소개 문구를 입력하면 여기에서 바로 분위기와 줄 길이를 확인할 수 있습니다.
+              - generic [ref=f4e222]: thecistus.com
+            - generic [ref=f4e224]:
+              - generic [ref=f4e225]:
+                - generic [ref=f4e226]:
+                  - generic [ref=f4e227]: 제목
+                  - textbox "제목" [ref=f4e228]:
+                    - /placeholder: 개인 페이지
+                    - text: thecistus
+                - generic [ref=f4e229]:
+                  - generic [ref=f4e230]: 소개
+                  - textbox "소개" [ref=f4e231]:
+                    - /placeholder: 홈에 보일 짧은 소개
+                - generic [ref=f4e232]:
+                  - generic [ref=f4e233]: 푸터
+                  - textbox "푸터" [ref=f4e234]:
+                    - /placeholder: thecistus.com
+                    - text: thecistus.com
+              - button "저장" [ref=f4e236] [cursor=pointer]

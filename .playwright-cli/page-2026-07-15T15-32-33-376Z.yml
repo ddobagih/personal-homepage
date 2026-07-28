@@ -1,0 +1,98 @@
+- generic [active] [ref=f10e1]:
+  - link "본문으로 건너뛰기" [ref=f10e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f10e3]:
+    - generic [ref=f10e4]:
+      - link [ref=f10e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f10e6]: ">_"
+      - button "메뉴 열기" [ref=f10e7]
+      - text: ">_"
+  - main [ref=f10e10]:
+    - generic [ref=f10e11]:
+      - region [ref=f10e12]:
+        - generic [ref=f10e13]:
+          - generic [ref=f10e14]: personal page
+          - generic [ref=f10e17]: ~/thecistus › whoami
+          - heading "개인 페이지" [level=1] [ref=f10e18]
+          - paragraph [ref=f10e19]: Portfolio 항성계에 1개의 글이 행성으로 공전하고 있습니다.
+          - generic [ref=f10e20]:
+            - link "포트폴리오 보기" [ref=f10e21] [cursor=pointer]:
+              - /url: "#portfolio"
+              - text: 포트폴리오 보기
+              - generic [ref=f10e22]: ↗
+            - link "Study 열기" [ref=f10e23] [cursor=pointer]:
+              - /url: "#study"
+        - complementary "개인 아카이브 상태" [ref=f10e24]:
+          - generic [ref=f10e25]: archive.session
+          - generic [ref=f10e31]:
+            - paragraph [ref=f10e32]: › codex inspect ./personal-archive
+            - paragraph [ref=f10e33]: archive / notes / updates
+            - generic "공개 콘텐츠 수" [ref=f10e34]:
+              - generic [ref=f10e35]:
+                - generic [ref=f10e36]: "1"
+                - text: projects
+              - generic [ref=f10e37]:
+                - generic [ref=f10e38]: "1"
+                - text: notes
+              - generic [ref=f10e39]:
+                - generic [ref=f10e40]: "0"
+                - text: moments
+            - paragraph [ref=f10e41]: index ready
+      - region [ref=f10e43]:
+        - generic [ref=f10e45]:
+          - text: Interactive index
+          - heading "Archive orbit" [level=2] [ref=f10e46]
+        - generic [ref=f10e47]:
+          - group "인터랙티브 우주 항성계. 좌우 방향키로 항성계를 전환하고 Enter 또는 Space로 현재 카테고리를 열 수 있습니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다." [ref=f10e48]: 포트폴리오, 스터디, 근황 카테고리를 시각화한 우주형 탐색 영역입니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다.
+          - generic [ref=f10e49]:
+            - button "이전 항성계" [ref=f10e50] [cursor=pointer]: ←
+            - generic [ref=f10e51]:
+              - generic [ref=f10e52]: PORTFOLIO
+              - generic [ref=f10e53]: "1"
+            - button "다음 항성계" [ref=f10e54] [cursor=pointer]: →
+      - generic [ref=f10e55]:
+        - generic [ref=f10e56]:
+          - generic [ref=f10e57]: Selected work
+          - heading "Portfolio" [level=2] [ref=f10e58]
+        - article [ref=f10e60] [cursor=pointer]:
+          - button "Web 2026 한이음 드림업 2026 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다. 상세 보기 ↗" [ref=f10e61]:
+            - generic [ref=f10e62]:
+              - generic [ref=f10e63]: Web
+              - generic [ref=f10e64]: "2026"
+            - heading "한이음 드림업 2026" [level=3] [ref=f10e65]
+            - generic [ref=f10e66]:
+              - paragraph [ref=f10e67]: 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안
+              - paragraph [ref=f10e68]: 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.
+            - generic [ref=f10e69]: 상세 보기 ↗
+      - generic [ref=f10e71]:
+        - generic [ref=f10e72]:
+          - generic [ref=f10e73]: Latest notes
+          - heading "Study" [level=2] [ref=f10e74]
+        - 'button "notes 테스트 글: 노션형 블록 에디터 확인 2026-07-15 Study" [ref=f10e76] [cursor=pointer]':
+          - generic [ref=f10e77]:
+            - generic [ref=f10e78]:
+              - generic [ref=f10e79]: notes
+              - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=f10e80]'
+            - generic [ref=f10e81]: 2026-07-15
+          - paragraph
+          - generic [ref=f10e82]: Study
+      - generic [ref=f10e84]:
+        - generic [ref=f10e85]:
+          - generic [ref=f10e86]: Say hello
+          - heading "Contact" [level=2] [ref=f10e87]
+        - generic [ref=f10e88]:
+          - paragraph [ref=f10e89]: 프로젝트, 협업, 피드백은 아래 이메일이나 GitHub로 연락해 주세요.
+          - generic [ref=f10e90]:
+            - article [ref=f10e91] [cursor=pointer]:
+              - generic [ref=f10e92]: EMAIL
+              - heading [level=3] [ref=f10e95]:
+                - link "ddoagi.h@gmail.com" [ref=f10e96]:
+                  - /url: mailto:ddoagi.h@gmail.com
+            - article [ref=f10e97] [cursor=pointer]:
+              - generic [ref=f10e98]: GITHUB
+              - heading [level=3] [ref=f10e101]:
+                - link "github.com/ddobagi" [ref=f10e102]:
+                  - /url: https://github.com/ddobagi
+    - text: ↗ 제목 없음
+    - generic [ref=f10e103]: thecistus.com

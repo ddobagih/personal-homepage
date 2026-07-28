@@ -1,0 +1,16 @@
+- generic [active] [ref=f2e1]:
+  - link "본문으로 건너뛰기" [ref=f2e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link [ref=f2e63] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f2e6]: ">_"
+      - button "메뉴 열기" [ref=f2e169]
+  - main [ref=f2e30]:
+    - generic [ref=f2e171]:
+      - heading "Moments" [level=1] [ref=f2e173]
+      - article [ref=f2e175]:
+        - heading "아직 기록이 없습니다." [level=3] [ref=f2e176]
+    - text: 제목 없음
+    - generic [ref=f2e62]: thecistus.com

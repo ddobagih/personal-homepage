@@ -1,0 +1,81 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link [ref=e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=e6]: ">_"
+      - button "메뉴 열기" [ref=e7]
+  - main [ref=e10]:
+    - generic [ref=e11]:
+      - region [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: personal page
+          - generic [ref=e17]: ~/thecistus › whoami
+          - heading "개인 페이지" [level=1] [ref=e18]
+          - generic [ref=e19]:
+            - link "포트폴리오 보기" [ref=e20] [cursor=pointer]:
+              - /url: "#portfolio"
+              - text: 포트폴리오 보기
+              - generic [ref=e21]: ↗
+            - link "Study 열기" [ref=e22] [cursor=pointer]:
+              - /url: "#study"
+        - complementary "개인 아카이브 상태" [ref=e23]:
+          - generic [ref=e24]: archive.session
+          - generic [ref=e30]:
+            - paragraph [ref=e31]: › codex inspect ./personal-archive
+            - generic "공개 콘텐츠 수" [ref=e32]:
+              - generic [ref=e33]:
+                - generic [ref=e34]: "1"
+                - text: projects
+              - generic [ref=e35]:
+                - generic [ref=e36]: "1"
+                - text: notes
+              - generic [ref=e37]:
+                - generic [ref=e38]: "0"
+                - text: moments
+            - paragraph [ref=e39]: index ready
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]: Selected work
+          - heading "Portfolio" [level=2] [ref=e44]
+        - article [ref=e46] [cursor=pointer]:
+          - button "Web 2026 한이음 드림업 2026 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다. 상세 보기 ↗" [ref=e47]:
+            - generic [ref=e48]:
+              - generic [ref=e49]: Web
+              - generic [ref=e50]: "2026"
+            - heading "한이음 드림업 2026" [level=3] [ref=e51]
+            - generic [ref=e52]:
+              - paragraph [ref=e53]: 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안
+              - paragraph [ref=e54]: 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.
+            - generic [ref=e55]: 상세 보기 ↗
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - generic [ref=e59]: Latest notes
+          - heading "Study" [level=2] [ref=e60]
+        - 'button "notes 테스트 글: 노션형 블록 에디터 확인 2026-07-15 Study" [ref=e62] [cursor=pointer]':
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]: notes
+              - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=e66]'
+            - generic [ref=e67]: 2026-07-15
+          - paragraph
+          - generic [ref=e68]: Study
+      - generic [ref=e70]:
+        - generic [ref=e71]:
+          - generic [ref=e72]: Say hello
+          - heading "Contact" [level=2] [ref=e73]
+        - generic [ref=e75]:
+          - article [ref=e76] [cursor=pointer]:
+            - generic [ref=e77]: EMAIL
+            - heading [level=3] [ref=e80]:
+              - link "ddoagi.h@gmail.com" [ref=e81]:
+                - /url: mailto:ddoagi.h@gmail.com
+          - article [ref=e82] [cursor=pointer]:
+            - generic [ref=e83]: GITHUB
+            - heading [level=3] [ref=e86]:
+              - link "github.com/ddobagi" [ref=e87]:
+                - /url: https://github.com/ddobagi
+    - text: ↗ 제목 없음
+    - generic [ref=e88]: thecistus.com

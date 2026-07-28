@@ -1,0 +1,63 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "thecistus 홈" [ref=e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=e6]: ">_"
+        - generic [ref=e7]:
+          - generic [ref=e8]: thecistus
+          - generic [ref=e9]: personal archive
+      - generic [ref=e10]: personal page
+      - navigation "주요 섹션" [ref=e13]:
+        - link "Home" [ref=e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=e17]: □
+          - text: Portfolio
+        - link "Study" [ref=e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=e19]: ▤
+          - text: Study
+        - link "Moments" [ref=e20] [cursor=pointer]:
+          - /url: "#updates"
+          - generic [ref=e21]: ○
+          - text: Moments
+      - generic [ref=e23]:
+        - link "EMAIL" [ref=e24] [cursor=pointer]:
+          - /url: mailto:ddoagi.h@gmail.com
+          - generic [ref=e26]: ↗
+        - link "GITHUB" [ref=e27] [cursor=pointer]:
+          - /url: https://github.com/ddobagi
+          - generic [ref=e29]: ↗
+  - main [ref=e30]:
+    - generic [ref=e31]:
+      - region [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: ~/thecistus
+          - heading "thecistus" [level=1] [ref=e35]
+      - generic [ref=e36]:
+        - heading "Portfolio" [level=2] [ref=e38]
+        - article [ref=e40]:
+          - link "01 Web 2026 한이음 드림업 2026" [ref=e41] [cursor=pointer]:
+            - /url: "#portfolio/hanium-dreamup-2026"
+            - generic [ref=e42]:
+              - generic [ref=e43]:
+                - generic [ref=e44]: "01"
+                - generic [ref=e45]: Web
+                - generic [ref=e46]: "2026"
+              - heading "한이음 드림업 2026" [level=3] [ref=e47]
+            - figure [ref=e48]:
+              - img "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=e49]
+      - generic [ref=e50]:
+        - heading "Study" [level=2] [ref=e52]
+        - paragraph [ref=e55]: 아직 공개된 공부글이 없습니다.
+      - generic [ref=e56]:
+        - heading "Moments" [level=2] [ref=e58]
+        - paragraph [ref=e61]: 아직 기록이 없습니다.
+    - text: 제목 없음
+    - generic [ref=e62]: thecistus.com

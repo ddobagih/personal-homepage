@@ -1,0 +1,72 @@
+- generic [active] [ref=f1e1]:
+  - link "본문으로 건너뛰기" [ref=f1e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - link "thecistus 홈" [ref=f1e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f1e6]: ">_"
+        - generic [ref=f1e7]:
+          - generic [ref=f1e8]: thecistus
+          - generic [ref=f1e9]: personal archive
+      - navigation "주요 섹션" [ref=f1e10]:
+        - link "Home" [ref=f1e11] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f1e12]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f1e13] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f1e14]: □
+          - text: Portfolio
+        - link "Study" [ref=f1e15] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f1e16]: ▤
+          - text: Study
+        - link "Moments" [ref=f1e17] [cursor=pointer]:
+          - /url: "#updates"
+          - generic [ref=f1e18]: ○
+          - text: Moments
+      - generic [ref=f1e20]:
+        - link "EMAIL" [ref=f1e21] [cursor=pointer]:
+          - /url: mailto:ddoagi.h@gmail.com
+          - generic [ref=f1e23]: ↗
+        - link "GITHUB" [ref=f1e24] [cursor=pointer]:
+          - /url: https://github.com/ddobagi
+          - generic [ref=f1e26]: ↗
+  - main [ref=f1e27]:
+    - generic [ref=f1e28]:
+      - region [ref=f1e29]:
+        - generic [ref=f1e30]:
+          - generic [ref=f1e31]: ~/thecistus
+          - heading "thecistus" [level=1] [ref=f1e32]
+      - generic [ref=f1e33]:
+        - heading "Portfolio" [level=2] [ref=f1e35]
+        - generic [ref=f1e36]:
+          - article [ref=f1e37]:
+            - link "01 Web 2026.07.16 · 11:37 ㄹㅇㄹㄴㅇ" [ref=f1e38] [cursor=pointer]:
+              - /url: "#portfolio/item"
+              - generic [ref=f1e39]:
+                - generic [ref=f1e40]:
+                  - generic [ref=f1e41]: "01"
+                  - generic [ref=f1e42]: Web
+                  - generic [ref=f1e43]: 2026.07.16 · 11:37
+                - heading "ㄹㅇㄹㄴㅇ" [level=3] [ref=f1e44]
+          - article [ref=f1e45]:
+            - link "02 Web 2026 한이음 드림업 2026" [ref=f1e46] [cursor=pointer]:
+              - /url: "#portfolio/hanium-dreamup-2026"
+              - generic [ref=f1e47]:
+                - generic [ref=f1e48]:
+                  - generic [ref=f1e49]: "02"
+                  - generic [ref=f1e50]: Web
+                  - generic [ref=f1e51]: "2026"
+                - heading "한이음 드림업 2026" [level=3] [ref=f1e52]
+              - figure [ref=f1e53]:
+                - img "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f1e54]
+      - generic [ref=f1e55]:
+        - heading "Study" [level=2] [ref=f1e57]
+        - paragraph [ref=f1e60]: 아직 공개된 공부글이 없습니다.
+      - generic [ref=f1e61]:
+        - heading "Moments" [level=2] [ref=f1e63]
+        - paragraph [ref=f1e66]: 아직 기록이 없습니다.
+    - text: 제목 없음
+    - generic [ref=f1e67]: thecistus.com

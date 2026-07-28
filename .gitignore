@@ -4,7 +4,6 @@ docs/aws-ssm-access.md
 *.pem
 .DS_Store
 .claude/
-.playwright-cli/
 node_modules/
 tmp-*.png
 스크린샷*.png
@@ -12,5 +11,4 @@ tmp-*.png
 .env.local
 data/comments.json
 data/backups/
-daylog/
 homepage-critical-feedback.html

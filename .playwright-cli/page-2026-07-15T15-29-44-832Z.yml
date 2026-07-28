@@ -1,0 +1,51 @@
+- generic [active] [ref=f8e1]:
+  - link "본문으로 건너뛰기" [ref=f8e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f8e3]:
+    - generic [ref=f8e4]:
+      - link "thecistus personal archive" [ref=f8e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f8e6]: ">_"
+        - generic [ref=f8e7]:
+          - generic [ref=f8e8]: thecistus
+          - generic [ref=f8e9]: personal archive
+      - generic [ref=f8e10]: personal page
+      - navigation "주요 섹션" [ref=f8e13]:
+        - link "Home" [ref=f8e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f8e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f8e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f8e17]: □
+          - text: Portfolio
+        - link "Study" [ref=f8e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f8e19]: ▤
+          - text: Study
+      - generic [ref=f8e20]:
+        - text: Current focus
+        - paragraph [ref=f8e21]: archive / notes / updates
+        - text: ">_"
+      - generic [ref=f8e22]:
+        - text: Find me
+        - generic [ref=f8e23]:
+          - link "EMAIL" [ref=f8e24] [cursor=pointer]:
+            - /url: mailto:ddoagi.h@gmail.com
+            - generic [ref=f8e26]: ↗
+          - link "GITHUB" [ref=f8e27] [cursor=pointer]:
+            - /url: https://github.com/ddobagi
+            - generic [ref=f8e29]: ↗
+  - main [ref=f8e30]:
+    - text: ↗ ↗
+    - generic [ref=f8e218]:
+      - heading "Study" [level=2] [ref=f8e220]
+      - generic [ref=f8e221]:
+        - button "전체" [ref=f8e222] [cursor=pointer]
+        - button "notes" [ref=f8e223] [cursor=pointer]
+      - 'button "테스트 글: 노션형 블록 에디터 확인 2026-07-15 / notes 개인 홈페이지의 작성·발행 흐름과 여러 블록이 공개 화면에서 제대로 보이는지 확인하기 위한 테스트 글입니다." [ref=f8e225] [cursor=pointer]':
+        - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=f8e226]'
+        - generic [ref=f8e227]: 2026-07-15 / notes
+        - paragraph [ref=f8e228]: 개인 홈페이지의 작성·발행 흐름과 여러 블록이 공개 화면에서 제대로 보이는지 확인하기 위한 테스트 글입니다.
+    - text: 제목 없음
+    - generic [ref=f8e124]: thecistus.com

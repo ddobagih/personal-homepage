@@ -1,0 +1,108 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "thecistus personal archive" [ref=e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=e6]: ">_"
+        - generic [ref=e7]:
+          - generic [ref=e8]: thecistus
+          - generic [ref=e9]: personal archive
+      - generic [ref=e10]: personal page
+      - navigation "주요 섹션" [ref=e13]:
+        - link "Home" [ref=e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=e17]: □
+          - text: Portfolio
+        - link "Study" [ref=e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=e19]: ▤
+          - text: Study
+        - link "Moments" [ref=e20] [cursor=pointer]:
+          - /url: "#updates"
+          - generic [ref=e21]: ○
+          - text: Moments
+      - generic [ref=e23]:
+        - link "EMAIL" [ref=e24] [cursor=pointer]:
+          - /url: mailto:ddoagi.h@gmail.com
+          - generic [ref=e26]: ↗
+        - link "GITHUB" [ref=e27] [cursor=pointer]:
+          - /url: https://github.com/ddobagi
+          - generic [ref=e29]: ↗
+  - main [ref=e30]:
+    - generic [ref=e31]:
+      - region [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: personal page
+          - generic [ref=e37]: ~/thecistus › whoami
+          - heading "개인 페이지" [level=1] [ref=e38]
+          - generic [ref=e39]:
+            - link "포트폴리오 보기" [ref=e40] [cursor=pointer]:
+              - /url: "#portfolio"
+              - text: 포트폴리오 보기
+              - generic [ref=e41]: ↗
+            - link "Study 열기" [ref=e42] [cursor=pointer]:
+              - /url: "#study"
+        - complementary "개인 아카이브 상태" [ref=e43]:
+          - generic [ref=e44]: archive.session
+          - generic [ref=e50]:
+            - paragraph [ref=e51]: › codex inspect ./personal-archive
+            - generic "공개 콘텐츠 수" [ref=e52]:
+              - generic [ref=e53]:
+                - generic [ref=e54]: "1"
+                - text: projects
+              - generic [ref=e55]:
+                - generic [ref=e56]: "1"
+                - text: notes
+              - generic [ref=e57]:
+                - generic [ref=e58]: "0"
+                - text: moments
+            - paragraph [ref=e59]: index ready
+      - generic [ref=e61]:
+        - generic [ref=e62]:
+          - generic [ref=e63]: Selected work
+          - heading "Portfolio" [level=2] [ref=e64]
+        - article [ref=e66] [cursor=pointer]:
+          - button "Web 2026 한이음 드림업 2026 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다. 상세 보기 ↗" [ref=e67]:
+            - generic [ref=e68]:
+              - generic [ref=e69]: Web
+              - generic [ref=e70]: "2026"
+            - heading "한이음 드림업 2026" [level=3] [ref=e71]
+            - generic [ref=e72]:
+              - paragraph [ref=e73]: 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안
+              - paragraph [ref=e74]: 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.
+            - generic [ref=e75]: 상세 보기 ↗
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - generic [ref=e79]: Latest notes
+          - heading "Study" [level=2] [ref=e80]
+        - 'button "notes 테스트 글: 노션형 블록 에디터 확인 2026-07-15 Study" [ref=e82] [cursor=pointer]':
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - generic [ref=e85]: notes
+              - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=e86]'
+            - generic [ref=e87]: 2026-07-15
+          - paragraph
+          - generic [ref=e88]: Study
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - generic [ref=e92]: Say hello
+          - heading "Contact" [level=2] [ref=e93]
+        - generic [ref=e95]:
+          - article [ref=e96] [cursor=pointer]:
+            - generic [ref=e97]: EMAIL
+            - heading [level=3] [ref=e100]:
+              - link "ddoagi.h@gmail.com" [ref=e101]:
+                - /url: mailto:ddoagi.h@gmail.com
+          - article [ref=e102] [cursor=pointer]:
+            - generic [ref=e103]: GITHUB
+            - heading [level=3] [ref=e106]:
+              - link "github.com/ddobagi" [ref=e107]:
+                - /url: https://github.com/ddobagi
+    - text: ↗ 제목 없음
+    - generic [ref=e108]: thecistus.com

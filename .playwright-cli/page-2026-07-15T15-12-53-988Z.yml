@@ -1,0 +1,67 @@
+- generic [active] [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "thecistus.com" [ref=e5] [cursor=pointer]:
+        - /url: "#home"
+      - navigation "주요 섹션" [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: "#home"
+        - link "Portfolio" [ref=e9] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "Study" [ref=e10] [cursor=pointer]:
+          - /url: "#study"
+  - main [ref=e11]:
+    - generic [ref=e12]:
+      - generic [ref=e13]:
+        - group "인터랙티브 우주 항성계. 좌우 방향키로 항성계를 전환하고 Enter 또는 Space로 현재 카테고리를 열 수 있습니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다." [ref=e14]: 포트폴리오, 스터디, 근황 카테고리를 시각화한 우주형 탐색 영역입니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다.
+        - generic:
+          - generic:
+            - heading "개인 페이지" [level=1]
+            - paragraph: Portfolio 항성계에 1개의 글이 행성으로 공전하고 있습니다.
+        - generic [ref=e15]:
+          - button "이전 항성계" [ref=e16] [cursor=pointer]: ←
+          - generic [ref=e17]:
+            - generic [ref=e18]: PORTFOLIO
+            - generic [ref=e19]: "1"
+          - button "다음 항성계" [ref=e20] [cursor=pointer]: →
+      - generic [ref=e21]:
+        - heading "Portfolio" [level=2] [ref=e23]
+        - article [ref=e25] [cursor=pointer]:
+          - button "Web 2026 한이음 드림업 2026 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다. 상세 보기 ↗" [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]: Web
+              - generic [ref=e29]: "2026"
+            - heading "한이음 드림업 2026" [level=3] [ref=e30]
+            - generic [ref=e31]:
+              - paragraph [ref=e32]: 보행 지원 흐름을 모바일 웹앱 관점에서 기획한 접근성 프로젝트 제안
+              - paragraph [ref=e33]: 개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.
+            - generic [ref=e34]: 상세 보기 ↗
+      - generic [ref=e36]:
+        - heading "Study" [level=2] [ref=e38]
+        - 'button "notes 테스트 글: 노션형 블록 에디터 확인 2026-07-15 Study" [ref=e40] [cursor=pointer]':
+          - generic [ref=e41]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: notes
+              - 'heading "테스트 글: 노션형 블록 에디터 확인" [level=3] [ref=e44]'
+            - generic [ref=e45]: 2026-07-15
+          - paragraph
+          - generic [ref=e46]: Study
+      - generic [ref=e48]:
+        - heading "Contact" [level=2] [ref=e50]
+        - generic [ref=e51]:
+          - paragraph [ref=e52]: 프로젝트, 협업, 피드백은 아래 이메일이나 GitHub로 연락해 주세요.
+          - generic [ref=e53]:
+            - article [ref=e54] [cursor=pointer]:
+              - generic [ref=e55]: EMAIL
+              - heading [level=3] [ref=e58]:
+                - link "ddoagi.h@gmail.com" [ref=e59]:
+                  - /url: mailto:ddoagi.h@gmail.com
+            - article [ref=e60] [cursor=pointer]:
+              - generic [ref=e61]: GITHUB
+              - heading [level=3] [ref=e64]:
+                - link "github.com/ddobagi" [ref=e65]:
+                  - /url: https://github.com/ddobagi
+    - text: ↗ 제목 없음
+    - generic [ref=e66]: thecistus.com

@@ -1,0 +1,84 @@
+- generic [ref=f2e1]:
+  - link "본문으로 건너뛰기" [ref=f2e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link [ref=f2e63] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f2e6]: ">_"
+      - button "메뉴 열기" [ref=f2e68]
+  - main [ref=f2e30]:
+    - generic [ref=f2e84]:
+      - button "← Projects" [ref=f2e85] [cursor=pointer]
+      - generic [ref=f2e87]:
+        - heading "한이음 드림업 2026" [active] [level=1] [ref=f2e88]
+        - generic [ref=f2e89]:
+          - link "관련 문서 PDF" [ref=f2e90] [cursor=pointer]:
+            - /url: ./assets/hanium-dreamup-overview.pdf
+          - link "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f2e91] [cursor=pointer]:
+            - /url: ./assets/media/portfolio/hanium-architecture.webp
+      - generic [ref=f2e92]:
+        - generic [ref=f2e93]:
+          - heading "프로젝트 개요" [level=3] [ref=f2e94]
+          - paragraph [ref=f2e96]: 사용자가 길안내와 장애물 인지를 한 손 안에서 확인할 수 있는 시각장애인 보행 지원 PWA를 기획했습니다. 서비스 흐름, 기능 우선순위, 데이터 구조, 운영 시나리오를 포트폴리오 문서 형태로 정리한 프로젝트입니다.
+        - generic [ref=f2e97]:
+          - generic [ref=f2e98]: Problem
+          - heading "문제 정의" [level=3] [ref=f2e99]
+          - paragraph [ref=f2e101]: 보행 보조 서비스는 기능은 많아도 실제 사용 상황에서 정보가 분산되기 쉽습니다. 특히 길안내, 장애물 알림, 목적지 접근 정보가 한 흐름으로 이어지지 않으면 사용성이 빠르게 떨어집니다.
+        - generic [ref=f2e102]:
+          - generic [ref=f2e103]: Approach
+          - heading "해결 방식" [level=3] [ref=f2e104]
+          - paragraph [ref=f2e106]: 모바일 웹앱 하나에서 탐색, 음성 안내, 장애물 인지, 기록까지 연결되는 구조를 설계했습니다. 첫 화면에서 핵심 행동을 줄이고, 실제 이동 상황을 기준으로 화면 흐름을 나눴습니다.
+        - generic [ref=f2e107]:
+          - generic [ref=f2e108]: Architecture
+          - heading "아키텍처" [level=3] [ref=f2e109]
+          - paragraph [ref=f2e111]: 클라이언트는 PWA 기반으로 동작하고, 백엔드 API는 사용자 위치, 경로 정보, 음성 인터페이스, 비전 분석 결과를 연결하는 구조를 상정했습니다. 데이터 저장은 기록과 설정을 분리해 관리하는 흐름으로 설계했습니다.
+        - generic [ref=f2e112]:
+          - generic [ref=f2e113]: Outcome
+          - heading "결과와 회고" [level=3] [ref=f2e114]
+          - paragraph [ref=f2e116]: 제안 단계 프로젝트지만, 단순 소개가 아니라 실제 서비스처럼 문제 정의, 정보 구조, 주요 시나리오, 운영 관점까지 한 번에 볼 수 있도록 정리했습니다.
+        - generic [ref=f2e117]:
+          - heading "프로젝트 정보" [level=3] [ref=f2e118]
+          - generic [ref=f2e119]:
+            - article [ref=f2e120]:
+              - generic [ref=f2e121]: 역할
+              - strong [ref=f2e122]: 서비스 기획 · 프론트엔드 구조 설계
+            - article [ref=f2e123]:
+              - generic [ref=f2e124]: 팀 구성
+              - strong [ref=f2e125]: 개인 프로젝트
+            - article [ref=f2e126]:
+              - generic [ref=f2e127]: 기술 스택
+              - strong [ref=f2e128]: PWA, AI Vision, Voice UI, Accessibility
+        - generic [ref=f2e129]:
+          - heading "시연과 자료" [level=3] [ref=f2e130]
+          - generic [ref=f2e131]:
+            - link "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f2e132] [cursor=pointer]:
+              - /url: ./assets/media/portfolio/hanium-architecture.webp
+            - link "관련 문서 PDF" [ref=f2e133] [cursor=pointer]:
+              - /url: ./assets/hanium-dreamup-overview.pdf
+        - generic [ref=f2e134]:
+          - heading "핵심 포인트" [level=3] [ref=f2e135]
+          - list [ref=f2e136]:
+            - listitem [ref=f2e137]: 시각장애인 보행 지원을 위한 모바일 웹앱 형태의 서비스 제안
+            - listitem [ref=f2e138]: AI 비전, 음성 인터페이스, 백엔드 API, 데이터 저장소를 포함한 구조 설계
+            - listitem [ref=f2e139]: 문제 정의, 기능 흐름, 운영 방향을 포트폴리오 문서로 정리
+      - generic [ref=f2e141]:
+        - generic [ref=f2e143]:
+          - generic [ref=f2e144]: Comments
+          - heading "댓글 0개" [level=3] [ref=f2e145]
+        - generic [ref=f2e146]:
+          - generic [ref=f2e147]:
+            - generic [ref=f2e148]:
+              - generic [ref=f2e149]: 닉네임
+              - textbox "닉네임" [ref=f2e150]
+            - generic [ref=f2e151]:
+              - generic [ref=f2e152]: 비밀번호
+              - textbox "비밀번호" [ref=f2e153]:
+                - /placeholder: 댓글 비밀번호
+            - generic [ref=f2e154]:
+              - generic [ref=f2e155]: 내용 0/500
+              - textbox "내용 0/500" [ref=f2e156]:
+                - /placeholder: 댓글 내용을 입력하세요
+          - button "댓글 등록" [ref=f2e158] [cursor=pointer]
+    - text: 제목 없음
+    - generic [ref=f2e62]: thecistus.com

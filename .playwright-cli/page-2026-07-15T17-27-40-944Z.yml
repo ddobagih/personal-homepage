@@ -1,0 +1,24 @@
+- generic [active] [ref=f2e1]:
+  - link "본문으로 건너뛰기" [ref=f2e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link [ref=f2e63] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f2e6]: ">_"
+      - button "메뉴 열기" [ref=f2e68]
+  - main [ref=f2e30]:
+    - generic [ref=f2e70]:
+      - heading "Portfolio" [level=1] [ref=f2e72]
+      - article [ref=f2e74]:
+        - button "01 Web 2026 한이음 드림업 2026" [ref=f2e75]:
+          - generic [ref=f2e76]:
+            - generic [ref=f2e77]:
+              - generic [ref=f2e78]: "01"
+              - generic [ref=f2e79]: Web
+              - generic [ref=f2e80]: "2026"
+            - heading "한이음 드림업 2026" [level=3] [ref=f2e81]
+          - figure [ref=f2e82]:
+            - img "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f2e83]
+    - text: 제목 없음
+    - generic [ref=f2e62]: thecistus.com

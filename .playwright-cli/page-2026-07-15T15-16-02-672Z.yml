@@ -1,0 +1,422 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link [ref=e5] [cursor=pointer]:
+      - /url: https://buy.polar.sh/polar_cl_Wrjobbj5yY22JYOMiMA7EMRg2uFuFIUqKQCpp4Jndmu
+      - generic [ref=e6]:
+        - paragraph [ref=e8]: Get Template
+        - paragraph [ref=e10]: Get Template
+    - generic [ref=e12]:
+      - navigation [ref=e16]:
+        - generic [ref=e17]:
+          - link "Daniel Cross ui/ux designer" [ref=e20] [cursor=pointer]:
+            - /url: ./
+            - generic [ref=e23]:
+              - paragraph [ref=e25]: Daniel Cross
+              - paragraph [ref=e27]: ui/ux designer
+          - generic [ref=e29]:
+            - link [ref=e31] [cursor=pointer]:
+              - /url: ./
+              - paragraph [ref=e34]: Home
+            - link [ref=e36] [cursor=pointer]:
+              - /url: ./about
+              - paragraph [ref=e39]: About
+            - link [ref=e41] [cursor=pointer]:
+              - /url: ./work
+              - paragraph [ref=e44]: Projects
+            - link [ref=e46] [cursor=pointer]:
+              - /url: ./contact
+              - paragraph [ref=e49]: Contact
+        - generic [ref=e52]:
+          - paragraph [ref=e54]: Follow me
+          - generic [ref=e55]:
+            - link [ref=e57] [cursor=pointer]:
+              - /url: https://www.instagram.com/
+              - paragraph [ref=e59]: Instagram
+              - paragraph [ref=e61]: (256K)
+            - link [ref=e63] [cursor=pointer]:
+              - /url: https://x.com
+              - paragraph [ref=e65]: Twitter-X
+              - paragraph [ref=e67]: (112K)
+            - link [ref=e69] [cursor=pointer]:
+              - /url: https://www.linkedin.com
+              - paragraph [ref=e71]: Linkedin
+              - paragraph [ref=e73]: (198K)
+            - link [ref=e75] [cursor=pointer]:
+              - /url: https://www.youtube.com/
+              - paragraph [ref=e77]: Youtube
+              - paragraph [ref=e79]: (320K)
+      - generic [ref=e80]:
+        - banner [ref=e81]:
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - paragraph [ref=e87]: Available for work
+              - paragraph [ref=e91]: Based in London-UK
+            - generic [ref=e93]:
+              - paragraph [ref=e97]: Welcome here ❤️
+              - generic [ref=e98]:
+                - generic [ref=e99]:
+                  - heading "Hey," [level=1] [ref=e101]
+                  - heading "daniel" [level=1] [ref=e103]
+                  - heading "here" [level=1] [ref=e105]
+                  - heading "I" [level=1] [ref=e114]
+                  - heading "design" [level=1] [ref=e116]
+                  - heading "Interfaces," [level=1] [ref=e118]
+                  - heading "experiences," [level=1] [ref=e120]
+                  - heading "&" [level=1] [ref=e122]
+                  - heading "brands." [level=1] [ref=e124]
+                - paragraph [ref=e126]:
+                  - generic [ref=e127]:
+                    - generic [ref=e128]: I
+                    - generic [ref=e129]: ’
+                    - generic [ref=e130]: m
+                  - generic [ref=e131]: a
+                  - generic [ref=e133]:
+                    - generic [ref=e134]: U
+                    - generic [ref=e135]: I
+                    - generic [ref=e136]: /
+                    - generic [ref=e137]: U
+                    - generic [ref=e138]: X
+                  - generic [ref=e139]:
+                    - generic [ref=e140]: D
+                    - generic [ref=e141]: e
+                    - generic [ref=e142]: s
+                    - generic [ref=e143]: i
+                    - generic [ref=e144]: g
+                    - generic [ref=e145]: "n"
+                    - generic [ref=e146]: e
+                    - generic [ref=e147]: r
+                  - generic [ref=e148]:
+                    - generic [ref=e149]: c
+                    - generic [ref=e150]: r
+                    - generic [ref=e151]: a
+                    - generic [ref=e152]: f
+                    - generic [ref=e153]: t
+                    - generic [ref=e154]: i
+                    - generic [ref=e155]: "n"
+                    - generic [ref=e156]: g
+                  - generic [ref=e157]:
+                    - generic [ref=e158]: i
+                    - generic [ref=e159]: "n"
+                    - generic [ref=e160]: t
+                    - generic [ref=e161]: u
+                    - generic [ref=e162]: i
+                    - generic [ref=e163]: t
+                    - generic [ref=e164]: i
+                    - generic [ref=e165]: v
+                    - generic [ref=e166]: e
+                  - generic [ref=e167]:
+                    - generic [ref=e168]: d
+                    - generic [ref=e169]: i
+                    - generic [ref=e170]: g
+                    - generic [ref=e171]: i
+                    - generic [ref=e172]: t
+                    - generic [ref=e173]: a
+                    - generic [ref=e174]: l
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: p
+                    - generic [ref=e177]: r
+                    - generic [ref=e178]: o
+                    - generic [ref=e179]: d
+                    - generic [ref=e180]: u
+                    - generic [ref=e181]: c
+                    - generic [ref=e182]: t
+                    - generic [ref=e183]: s
+                  - generic [ref=e184]:
+                    - generic [ref=e185]: w
+                    - generic [ref=e186]: i
+                    - generic [ref=e187]: t
+                    - generic [ref=e188]: h
+                  - generic [ref=e189]: a
+                  - generic [ref=e191]:
+                    - generic [ref=e192]: f
+                    - generic [ref=e193]: o
+                    - generic [ref=e194]: c
+                    - generic [ref=e195]: u
+                    - generic [ref=e196]: s
+                  - generic [ref=e197]:
+                    - generic [ref=e198]: o
+                    - generic [ref=e199]: "n"
+                  - generic [ref=e200]:
+                    - generic [ref=e201]: s
+                    - generic [ref=e202]: i
+                    - generic [ref=e203]: m
+                    - generic [ref=e204]: p
+                    - generic [ref=e205]: l
+                    - generic [ref=e206]: i
+                    - generic [ref=e207]: c
+                    - generic [ref=e208]: i
+                    - generic [ref=e209]: t
+                    - generic [ref=e210]: "y"
+                    - generic [ref=e211]: ","
+                  - generic [ref=e212]:
+                    - generic [ref=e213]: u
+                    - generic [ref=e214]: s
+                    - generic [ref=e215]: a
+                    - generic [ref=e216]: b
+                    - generic [ref=e217]: i
+                    - generic [ref=e218]: l
+                    - generic [ref=e219]: i
+                    - generic [ref=e220]: t
+                    - generic [ref=e221]: "y"
+                    - generic [ref=e222]: ","
+                  - generic [ref=e223]:
+                    - generic [ref=e224]: a
+                    - generic [ref=e225]: "n"
+                    - generic [ref=e226]: d
+                  - generic [ref=e227]:
+                    - generic [ref=e228]: e
+                    - generic [ref=e229]: "n"
+                    - generic [ref=e230]: g
+                    - generic [ref=e231]: a
+                    - generic [ref=e232]: g
+                    - generic [ref=e233]: i
+                    - generic [ref=e234]: "n"
+                    - generic [ref=e235]: g
+                  - generic [ref=e236]:
+                    - generic [ref=e237]: u
+                    - generic [ref=e238]: s
+                    - generic [ref=e239]: e
+                    - generic [ref=e240]: r
+                  - generic [ref=e241]:
+                    - generic [ref=e242]: e
+                    - generic [ref=e243]: x
+                    - generic [ref=e244]: p
+                    - generic [ref=e245]: e
+                    - generic [ref=e246]: r
+                    - generic [ref=e247]: i
+                    - generic [ref=e248]: e
+                    - generic [ref=e249]: "n"
+                    - generic [ref=e250]: c
+                    - generic [ref=e251]: e
+                    - generic [ref=e252]: s
+                    - generic [ref=e253]: .
+              - generic [ref=e254]:
+                - link [ref=e256] [cursor=pointer]:
+                  - /url: ./contact
+                  - generic [ref=e257]:
+                    - paragraph [ref=e259]: Book A Call
+                    - paragraph [ref=e261]: Book A Call
+                - paragraph [ref=e270]: 4.9 / 5
+        - generic [ref=e283]:
+          - generic [ref=e284]:
+            - paragraph [ref=e288]: What I Do
+            - heading "Turning ideas into digital experiences" [level=2] [ref=e290]
+          - generic [ref=e291]:
+            - generic [ref=e294]:
+              - generic [ref=e295]:
+                - paragraph [ref=e297]: Web design
+                - paragraph [ref=e300]: $1200
+              - paragraph [ref=e302]: I create visually appealing, responsive websites with clean layouts, ensuring engaging user experiences and professional digital presence.
+            - generic [ref=e305]:
+              - generic [ref=e306]:
+                - paragraph [ref=e308]: UI/UX Design
+                - paragraph [ref=e311]: $1500
+              - paragraph [ref=e313]: I design intuitive user interfaces and seamless experiences, focusing on usability, accessibility, and modern aesthetics to improve user satisfaction.
+            - generic [ref=e316]:
+              - generic [ref=e317]:
+                - paragraph [ref=e319]: Framer Development
+                - paragraph [ref=e322]: $1300
+              - paragraph [ref=e324]: I build interactive, high-performing websites in Framer, smooth animations, & fully responsive layouts tailored to your brand.
+            - generic [ref=e327]:
+              - generic [ref=e328]:
+                - paragraph [ref=e330]: Mobile App Design
+                - paragraph [ref=e333]: $1600
+              - paragraph [ref=e335]: I design user mobile applications with functional layouts, engaging visuals, & optimized experiences for both iOS & Android platforms.
+            - generic [ref=e338]:
+              - generic [ref=e339]:
+                - paragraph [ref=e341]: Branding & Identity
+                - paragraph [ref=e344]: $1000
+              - paragraph [ref=e346]: I craft unique brand identities including logos, typography, & guidelines, helping businesses stand out with consistency & strong visual presence.
+            - generic [ref=e347]:
+              - generic [ref=e348]:
+                - paragraph [ref=e350]: Book A 30 min Free Call
+                - paragraph [ref=e352]: Let’s connect to discuss your design needs, explore creative ideas, and plan your project effectively together.
+              - link [ref=e355] [cursor=pointer]:
+                - /url: ./contact
+                - generic [ref=e356]:
+                  - paragraph [ref=e358]: Book A Call
+                  - paragraph [ref=e360]: Book A Call
+        - generic [ref=e364]:
+          - generic [ref=e365]:
+            - paragraph [ref=e369]: About me
+            - paragraph [ref=e371]: I’m Daniel Cross, a passionate UI/UX Designer dedicated to crafting digital experiences that truly connect with people. With a focus on simplicity, usability, and creativity, I design products that not only look beautiful but also solve real problems. My approach blends strategy, design, and technology to transform ideas into meaningful solutions. Whether it’s designing intuitive interfaces, building websites, or shaping brand identities, I bring every project to life with precision and purpose.
+          - generic [ref=e372]:
+            - paragraph [ref=e374]: Worked with Global Brands
+            - list [ref=e377]:
+              - listitem [ref=e378]
+              - listitem [ref=e381]
+              - listitem [ref=e384]
+              - listitem [ref=e387]
+              - listitem [ref=e390]
+              - listitem [ref=e393]
+              - listitem [ref=e396]
+              - listitem [ref=e399]
+              - listitem [ref=e402]
+              - listitem [ref=e405]
+              - listitem [ref=e408]
+              - listitem [ref=e411]
+        - generic [ref=e420]:
+          - generic [ref=e421]:
+            - paragraph [ref=e425]: My Portfolio
+            - heading "Every project built to inspire users" [level=2] [ref=e427]
+          - generic [ref=e428]:
+            - link "Strivon Web Design / 2024" [ref=e431] [cursor=pointer]:
+              - /url: ./work/strivon
+              - generic [ref=e435]:
+                - heading "Strivon" [level=4] [ref=e437]
+                - generic [ref=e438]:
+                  - paragraph [ref=e440]: Web Design
+                  - paragraph [ref=e442]: /
+                  - paragraph [ref=e444]: "2024"
+            - link "Zyros UI/UX Design / 2024" [ref=e447] [cursor=pointer]:
+              - /url: ./work/zyros
+              - generic [ref=e451]:
+                - heading "Zyros" [level=4] [ref=e453]
+                - generic [ref=e454]:
+                  - paragraph [ref=e456]: UI/UX Design
+                  - paragraph [ref=e458]: /
+                  - paragraph [ref=e460]: "2024"
+            - link "Kaelen UI/UX Design / 2023" [ref=e463] [cursor=pointer]:
+              - /url: ./work/kaelen
+              - generic [ref=e467]:
+                - heading "Kaelen" [level=4] [ref=e469]
+                - generic [ref=e470]:
+                  - paragraph [ref=e472]: UI/UX Design
+                  - paragraph [ref=e474]: /
+                  - paragraph [ref=e476]: "2023"
+            - link "Orvian Mobile App Design / 2023" [ref=e479] [cursor=pointer]:
+              - /url: ./work/orvian
+              - generic [ref=e483]:
+                - heading "Orvian" [level=4] [ref=e485]
+                - generic [ref=e486]:
+                  - paragraph [ref=e488]: Mobile App Design
+                  - paragraph [ref=e490]: /
+                  - paragraph [ref=e492]: "2023"
+          - link [ref=e494] [cursor=pointer]:
+            - /url: ./work
+            - generic [ref=e495]:
+              - paragraph [ref=e497]: Explore All
+              - paragraph [ref=e499]: Explore All
+        - generic [ref=e502]:
+          - generic [ref=e503]:
+            - paragraph [ref=e507]: My Process
+            - heading "From ideas to impactful creative results." [level=2] [ref=e509]
+          - generic [ref=e510]:
+            - generic [ref=e513]:
+              - generic [ref=e514]:
+                - paragraph [ref=e516]: Creative Discovery
+                - paragraph [ref=e518]: /01
+              - paragraph [ref=e520]: Through research and collaboration, we uncover goals, audience needs, and brand vision to build a solid creative foundation.
+            - generic [ref=e523]:
+              - generic [ref=e524]:
+                - paragraph [ref=e526]: Design Blueprint
+                - paragraph [ref=e528]: /02
+              - paragraph [ref=e530]: Transforming insights into structured wireframes and prototypes that guide visuals, user experience, and brand alignment seamlessly.
+            - generic [ref=e533]:
+              - generic [ref=e534]:
+                - paragraph [ref=e536]: Flawless Execution
+                - paragraph [ref=e538]: /03
+              - paragraph [ref=e540]: Final designs are crafted, developed, and refined to ensure polished, user-centered results with measurable client satisfaction.
+        - generic [ref=e542]:
+          - generic [ref=e543]:
+            - paragraph [ref=e547]: Reviews
+            - heading "Voices of trust from happy clients" [level=2] [ref=e549]
+          - generic [ref=e552]:
+            - list [ref=e554]:
+              - listitem [ref=e555]:
+                - generic [ref=e557]:
+                  - paragraph [ref=e559]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                  - generic [ref=e563]:
+                    - paragraph [ref=e565]: James Walker
+                    - paragraph [ref=e567]: Marketing Director, BrightEdge
+              - listitem [ref=e568]:
+                - generic [ref=e570]:
+                  - paragraph [ref=e572]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                  - generic [ref=e576]:
+                    - paragraph [ref=e578]: Emily Harris
+                    - paragraph [ref=e580]: Product Manager, Nexora
+              - listitem [ref=e581]:
+                - generic [ref=e583]:
+                  - paragraph [ref=e585]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                  - generic [ref=e589]:
+                    - paragraph [ref=e591]: Oliver Bennett
+                    - paragraph [ref=e593]: CEO, Innovent Solutions
+              - listitem [ref=e594]:
+                - generic [ref=e596]:
+                  - paragraph [ref=e598]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                  - generic [ref=e602]:
+                    - paragraph [ref=e604]: James Walker
+                    - paragraph [ref=e606]: Marketing Director, BrightEdge
+              - listitem [ref=e607]:
+                - generic [ref=e609]:
+                  - paragraph [ref=e611]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                  - generic [ref=e615]:
+                    - paragraph [ref=e617]: Emily Harris
+                    - paragraph [ref=e619]: Product Manager, Nexora
+              - listitem [ref=e620]:
+                - generic [ref=e622]:
+                  - paragraph [ref=e624]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                  - generic [ref=e628]:
+                    - paragraph [ref=e630]: Oliver Bennett
+                    - paragraph [ref=e632]: CEO, Innovent Solutions
+              - listitem [ref=e633]:
+                - generic [ref=e635]:
+                  - paragraph [ref=e637]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                  - generic [ref=e641]:
+                    - paragraph [ref=e643]: James Walker
+                    - paragraph [ref=e645]: Marketing Director, BrightEdge
+              - listitem [ref=e646]:
+                - generic [ref=e648]:
+                  - paragraph [ref=e650]: "\"Professional, creative, & highly reliable. he delivered designs that exceeded expectations & strengthened our brand identity across platforms.\""
+                  - generic [ref=e654]:
+                    - paragraph [ref=e656]: Emily Harris
+                    - paragraph [ref=e658]: Product Manager, Nexora
+              - listitem [ref=e659]:
+                - generic [ref=e661]:
+                  - paragraph [ref=e663]: "\"His attention to detail and ability to capture our vision in design made the entire process effortless, inspiring, and memorable.\""
+                  - generic [ref=e667]:
+                    - paragraph [ref=e669]: Oliver Bennett
+                    - paragraph [ref=e671]: CEO, Innovent Solutions
+              - listitem [ref=e672]:
+                - generic [ref=e674]:
+                  - paragraph [ref=e676]: "\"Daniel transformed our digital presence with stunning design and seamless usability. Working with him was a complete delight.\""
+                  - generic [ref=e680]:
+                    - paragraph [ref=e682]: James Walker
+                    - paragraph [ref=e684]: Marketing Director, BrightEdge
+            - group "Slideshow pagination controls":
+              - generic:
+                - button "Previous" [ref=e685] [cursor=pointer]:
+                  - img "Back Arrow" [ref=e686]
+                - button "Next" [ref=e687] [cursor=pointer]:
+                  - img "Next Arrow" [ref=e688]
+        - contentinfo [ref=e691]:
+          - generic [ref=e692]:
+            - generic [ref=e693]:
+              - link [ref=e695] [cursor=pointer]:
+                - /url: mailto:hello@gmail.com
+                - paragraph [ref=e697]: hello@gmail.com
+              - link [ref=e702] [cursor=pointer]:
+                - /url: tel:+44 7700 900123
+                - paragraph [ref=e704]: +44 7700 900123
+              - link [ref=e709] [cursor=pointer]:
+                - /url: https://www.google.com/maps/place/45+Westwood+Ave,+Ellenville,+NY+12428,+USA/@41.7197902,-74.4073192,17z/data=!3m1!4b1!4m6!3m5!1s0x89dcdcab387f0725:0xa47e5e118528587f!8m2!3d41.7197862!4d-74.4047443!16s%2Fg%2F11c4w_9k9y?entry=ttu&g_ep=EgoyMDI1MDUxMS4wIKXMDSoJLDEwMjExNDU1SAFQAw%3D%3D
+                - paragraph [ref=e711]: London-UK
+              - link [ref=e716] [cursor=pointer]:
+                - /url: ./contact
+                - paragraph [ref=e718]: Have a question
+            - link [ref=e722] [cursor=pointer]:
+              - /url: mailto:hello@gmail.com
+            - generic [ref=e725]:
+              - generic [ref=e727]:
+                - paragraph [ref=e729]: Built in
+                - paragraph [ref=e731]:
+                  - link "Framer" [ref=e732] [cursor=pointer]:
+                    - /url: https://framer.link/mudasir-hussain
+              - generic [ref=e734]:
+                - paragraph [ref=e736]: Template by
+                - paragraph [ref=e738]:
+                  - link "Muddasir Hussain" [ref=e739] [cursor=pointer]:
+                    - /url: https://x.com/hussain_mu20778
+  - link [ref=e740] [cursor=pointer]:
+    - /url: https://www.framer.com
+    - paragraph [ref=e745]: Create a free website with Framer, the website builder loved by startups, designers and agencies.

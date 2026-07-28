@@ -1,0 +1,114 @@
+- generic [ref=e1]:
+  - link "본문으로 건너뛰기" [ref=e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "thecistus 홈" [ref=e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=e7]: thecistus
+      - navigation "주요 섹션" [ref=e13]:
+        - link "Home" [ref=e14] [cursor=pointer]:
+          - /url: "#home"
+        - link "Portfolio" [ref=e16] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "Study" [ref=e18] [cursor=pointer]:
+          - /url: "#study"
+        - link "Moments" [ref=e20] [cursor=pointer]:
+          - /url: "#updates"
+  - main [ref=e30]:
+    - generic [ref=e82]:
+      - complementary [ref=e83]:
+        - generic [ref=e84]:
+          - generic [ref=e85]:
+            - button "☰ 페이지" [ref=e203] [cursor=pointer]
+            - button "# 스키마" [ref=e204] [cursor=pointer]
+            - button "⌂ 홈" [ref=e205] [cursor=pointer]
+            - button "↗ 연락" [ref=e206] [cursor=pointer]
+          - button "새 페이지" [ref=e90] [cursor=pointer]
+          - searchbox "페이지 검색" [ref=e93]
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - generic [ref=e96]:
+                - generic [ref=e97]: Pages
+                - heading "게시물" [level=3] [ref=e98]
+              - button "필터 열기" [ref=e99]
+            - generic [ref=e100]:
+              - generic [ref=e207]: 페이지 2
+              - generic "보기 방식" [ref=e208]:
+                - button "List" [ref=e209] [cursor=pointer]
+                - button "Table" [ref=e210] [cursor=pointer]
+                - button "Gallery" [ref=e211] [cursor=pointer]
+                - button "Board" [ref=e212] [cursor=pointer]
+            - generic [ref=e213]:
+              - button "✨ ㄹㅇㄹㄴㅇ Portfolio Web 게시됨 2026.07.16 · 11:37 페이지를 휴지통으로 이동" [ref=e214]:
+                - generic [ref=e215] [cursor=pointer]:
+                  - generic [ref=e216]: ✨
+                  - strong [ref=e217]: ㄹㅇㄹㄴㅇ
+                - generic: Portfolio
+                - generic: Web
+                - generic [ref=e218]: 게시됨
+                - generic: 2026.07.16 · 11:37
+                - button "페이지를 휴지통으로 이동" [ref=e219] [cursor=pointer]: 휴지통
+              - button "✨ 한이음 드림업 2026 Portfolio Web 게시됨 2026 페이지를 휴지통으로 이동" [ref=e220]:
+                - generic [ref=e221] [cursor=pointer]:
+                  - generic [ref=e222]: ✨
+                  - strong [ref=e223]: 한이음 드림업 2026
+                - generic: Portfolio
+                - generic: Web
+                - generic [ref=e224]: 게시됨
+                - generic: "2026"
+                - button "페이지를 휴지통으로 이동" [ref=e225] [cursor=pointer]: 휴지통
+        - button "로그아웃" [ref=e124]
+      - generic [ref=e129]:
+        - generic [ref=e130]:
+          - generic [ref=e132]:
+            - generic [ref=e133]: 제목 없음
+            - generic [ref=e134]:
+              - generic [ref=e226]:
+                - generic [ref=e227]: 아이콘
+                - textbox "아이콘" [ref=e228]: ✨
+              - generic [ref=e229]:
+                - generic [ref=e230]: 커버
+                - combobox "커버" [ref=e231]:
+                  - option "sky" [selected]
+                  - option "mint"
+                  - option "rose"
+                  - option "amber"
+                  - option "violet"
+              - generic [ref=e232]:
+                - generic [ref=e233]: 그룹
+                - combobox "그룹" [ref=e234]:
+                  - option "Portfolio" [selected]
+                  - option "Study"
+                  - option "Moments"
+              - generic [ref=e235]:
+                - generic [ref=e236]: 카테고리
+                - combobox "카테고리" [ref=e237]:
+                  - option "Web" [selected]
+                  - option "Game"
+              - generic [ref=e238]:
+                - generic [ref=e239]: 상태
+                - combobox "상태" [ref=e240]:
+                  - option "게시됨"
+                  - option "임시저장" [selected]
+                  - option "휴지통"
+              - generic [ref=e241]:
+                - generic [ref=e242]: 날짜
+                - textbox "날짜" [ref=e243]: 2026-07-16T11:42
+          - generic [ref=e153]:
+            - button "페이지" [expanded] [active] [ref=e177]
+            - button "Preview" [ref=e154]
+            - button "History" [ref=e155]
+            - button "Undo" [ref=e156]
+            - button "Redo" [ref=e157]
+            - generic [ref=e158]: 이메일 인증으로 로그인했습니다.
+            - button "임시저장 ⌘S" [ref=e159]:
+              - generic [ref=e160]: 임시저장
+              - generic [ref=e161]: ⌘S
+            - button "게시 ⇧⌘S" [ref=e162] [cursor=pointer]:
+              - generic [ref=e163]: 게시
+              - generic [ref=e164]: ⇧⌘S
+        - article [ref=e244]:
+          - button "아래에 블록 추가" [ref=e245] [cursor=pointer]: +
+          - button "블록 이동 및 메뉴" [ref=e248]: ⋮⋮
+    - generic [ref=e70]: thecistus.com

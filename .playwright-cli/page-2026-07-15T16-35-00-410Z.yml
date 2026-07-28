@@ -1,0 +1,44 @@
+- generic [active] [ref=f2e1]:
+  - link "본문으로 건너뛰기" [ref=f2e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - link "thecistus personal archive" [ref=f2e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f2e6]: ">_"
+        - generic [ref=f2e7]:
+          - generic [ref=f2e8]: thecistus
+          - generic [ref=f2e9]: personal archive
+      - generic [ref=f2e10]: personal page
+      - navigation "주요 섹션" [ref=f2e13]:
+        - link "Home" [ref=f2e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f2e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f2e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f2e17]: □
+          - text: Portfolio
+        - link "Study" [ref=f2e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f2e19]: ▤
+          - text: Study
+        - link "Moments" [ref=f2e20] [cursor=pointer]:
+          - /url: "#updates"
+          - generic [ref=f2e21]: ○
+          - text: Moments
+      - generic [ref=f2e23]:
+        - link "EMAIL" [ref=f2e24] [cursor=pointer]:
+          - /url: mailto:ddoagi.h@gmail.com
+          - generic [ref=f2e26]: ↗
+        - link "GITHUB" [ref=f2e27] [cursor=pointer]:
+          - /url: https://github.com/ddobagi
+          - generic [ref=f2e29]: ↗
+  - main [ref=f2e30]:
+    - text: ↗ ↗
+    - generic [ref=f2e32]:
+      - heading "Moments" [level=1] [ref=f2e34]
+      - article [ref=f2e36]:
+        - heading "아직 기록이 없습니다." [level=3] [ref=f2e37]
+    - text: 제목 없음
+    - generic [ref=f2e38]: thecistus.com

@@ -1,0 +1,81 @@
+- generic [ref=f3e1]:
+  - link "본문으로 건너뛰기" [ref=f3e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f3e3]:
+    - generic [ref=f3e4]:
+      - link [ref=f3e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f3e6]: ">_"
+      - button "메뉴 열기" [ref=f3e7]
+  - main [ref=f3e10]:
+    - generic [ref=f3e27]:
+      - button "← Projects" [ref=f3e28] [cursor=pointer]
+      - generic [ref=f3e29]:
+        - generic [ref=f3e30]:
+          - heading "한이음 드림업 2026" [active] [level=1] [ref=f3e31]
+          - link "관련 문서 PDF" [ref=f3e33] [cursor=pointer]:
+            - /url: ./assets/hanium-dreamup-overview.pdf
+        - figure [ref=f3e34]:
+          - img "한이음 드림업 보행자 지원 시스템 아키텍처" [ref=f3e35]
+      - generic [ref=f3e36]:
+        - generic [ref=f3e37]:
+          - heading "프로젝트 개요" [level=3] [ref=f3e38]
+          - paragraph [ref=f3e40]: 사용자가 길안내와 장애물 인지를 한 손 안에서 확인할 수 있는 시각장애인 보행 지원 PWA를 기획했습니다. 서비스 흐름, 기능 우선순위, 데이터 구조, 운영 시나리오를 포트폴리오 문서 형태로 정리한 프로젝트입니다.
+        - generic [ref=f3e41]:
+          - generic [ref=f3e42]: Problem
+          - heading "문제 정의" [level=3] [ref=f3e43]
+          - paragraph [ref=f3e45]: 보행 보조 서비스는 기능은 많아도 실제 사용 상황에서 정보가 분산되기 쉽습니다. 특히 길안내, 장애물 알림, 목적지 접근 정보가 한 흐름으로 이어지지 않으면 사용성이 빠르게 떨어집니다.
+        - generic [ref=f3e46]:
+          - generic [ref=f3e47]: Approach
+          - heading "해결 방식" [level=3] [ref=f3e48]
+          - paragraph [ref=f3e50]: 모바일 웹앱 하나에서 탐색, 음성 안내, 장애물 인지, 기록까지 연결되는 구조를 설계했습니다. 첫 화면에서 핵심 행동을 줄이고, 실제 이동 상황을 기준으로 화면 흐름을 나눴습니다.
+        - generic [ref=f3e51]:
+          - generic [ref=f3e52]: Architecture
+          - heading "아키텍처" [level=3] [ref=f3e53]
+          - paragraph [ref=f3e55]: 클라이언트는 PWA 기반으로 동작하고, 백엔드 API는 사용자 위치, 경로 정보, 음성 인터페이스, 비전 분석 결과를 연결하는 구조를 상정했습니다. 데이터 저장은 기록과 설정을 분리해 관리하는 흐름으로 설계했습니다.
+        - generic [ref=f3e56]:
+          - generic [ref=f3e57]: Outcome
+          - heading "결과와 회고" [level=3] [ref=f3e58]
+          - paragraph [ref=f3e60]: 제안 단계 프로젝트지만, 단순 소개가 아니라 실제 서비스처럼 문제 정의, 정보 구조, 주요 시나리오, 운영 관점까지 한 번에 볼 수 있도록 정리했습니다.
+        - generic [ref=f3e61]:
+          - heading "프로젝트 정보" [level=3] [ref=f3e62]
+          - generic [ref=f3e63]:
+            - article [ref=f3e64]:
+              - generic [ref=f3e65]: 역할
+              - strong [ref=f3e66]: 서비스 기획 · 프론트엔드 구조 설계
+            - article [ref=f3e67]:
+              - generic [ref=f3e68]: 팀 구성
+              - strong [ref=f3e69]: 개인 프로젝트
+            - article [ref=f3e70]:
+              - generic [ref=f3e71]: 기술 스택
+              - strong [ref=f3e72]: PWA, AI Vision, Voice UI, Accessibility
+        - generic [ref=f3e73]:
+          - heading "시연과 자료" [level=3] [ref=f3e74]
+          - link "관련 문서 PDF" [ref=f3e76] [cursor=pointer]:
+            - /url: ./assets/hanium-dreamup-overview.pdf
+        - generic [ref=f3e77]:
+          - heading "핵심 포인트" [level=3] [ref=f3e78]
+          - list [ref=f3e79]:
+            - listitem [ref=f3e80]: 시각장애인 보행 지원을 위한 모바일 웹앱 형태의 서비스 제안
+            - listitem [ref=f3e81]: AI 비전, 음성 인터페이스, 백엔드 API, 데이터 저장소를 포함한 구조 설계
+            - listitem [ref=f3e82]: 문제 정의, 기능 흐름, 운영 방향을 포트폴리오 문서로 정리
+      - generic [ref=f3e84]:
+        - generic [ref=f3e86]:
+          - generic [ref=f3e87]: Comments
+          - heading "댓글 0개" [level=3] [ref=f3e88]
+        - generic [ref=f3e89]:
+          - generic [ref=f3e90]:
+            - generic [ref=f3e91]:
+              - generic [ref=f3e92]: 닉네임
+              - textbox "닉네임" [ref=f3e93]
+            - generic [ref=f3e94]:
+              - generic [ref=f3e95]: 비밀번호
+              - textbox "비밀번호" [ref=f3e96]:
+                - /placeholder: 댓글 비밀번호
+            - generic [ref=f3e97]:
+              - generic [ref=f3e98]: 내용 0/500
+              - textbox "내용 0/500" [ref=f3e99]:
+                - /placeholder: 댓글 내용을 입력하세요
+          - button "댓글 등록" [ref=f3e101] [cursor=pointer]
+    - text: 제목 없음
+    - generic [ref=f3e26]: thecistus.com

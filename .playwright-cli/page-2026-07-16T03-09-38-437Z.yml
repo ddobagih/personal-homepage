@@ -1,0 +1,122 @@
+- generic [ref=f5e1]:
+  - link "본문으로 건너뛰기" [ref=f5e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f5e3]:
+    - generic [ref=f5e4]:
+      - link "thecistus 홈" [ref=f5e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f5e6]: thecistus
+      - navigation "주요 섹션" [ref=f5e7]:
+        - link "Home" [ref=f5e8] [cursor=pointer]:
+          - /url: "#home"
+        - link "Portfolio" [ref=f5e9] [cursor=pointer]:
+          - /url: "#portfolio"
+        - link "Study" [ref=f5e10] [cursor=pointer]:
+          - /url: "#study"
+        - link "Moments" [ref=f5e11] [cursor=pointer]:
+          - /url: "#updates"
+  - main [ref=f5e12]:
+    - generic [ref=f5e15]:
+      - complementary [ref=f5e16]:
+        - generic [ref=f5e17]:
+          - generic [ref=f5e18]:
+            - button "☰ 페이지" [active] [ref=f5e111] [cursor=pointer]
+            - button "# 스키마" [ref=f5e112] [cursor=pointer]
+            - button "⌂ 홈" [ref=f5e113] [cursor=pointer]
+            - button "↗ 연락" [ref=f5e114] [cursor=pointer]
+          - button "새 페이지" [ref=f5e23] [cursor=pointer]
+          - searchbox "페이지 검색" [ref=f5e26]
+          - generic [ref=f5e27]:
+            - generic [ref=f5e28]:
+              - heading "게시물" [level=3] [ref=f5e30]
+              - button "필터 열기" [ref=f5e31]
+            - generic [ref=f5e32]:
+              - generic [ref=f5e115]: 페이지 2
+              - generic "보기 방식" [ref=f5e116]:
+                - button "목록" [ref=f5e117] [cursor=pointer]
+                - button "표" [ref=f5e118] [cursor=pointer]
+                - button "갤러리" [ref=f5e119] [cursor=pointer]
+                - button "보드" [ref=f5e120] [cursor=pointer]
+            - generic [ref=f5e121]:
+              - generic [ref=f5e122]:
+                - button "ㄹㅇㄹㄴㅇ 편집" [ref=f5e123] [cursor=pointer]:
+                  - generic [ref=f5e124]:
+                    - generic [ref=f5e125]: ✨
+                    - strong [ref=f5e126]: ㄹㅇㄹㄴㅇ
+                  - generic [ref=f5e127]: 게시됨
+                  - generic [ref=f5e128]: 2026.07.16 · 11:37
+                - button "페이지를 휴지통으로 이동" [ref=f5e130] [cursor=pointer]: 휴지통
+              - generic [ref=f5e131]:
+                - button "한이음 드림업 2026 편집" [ref=f5e132] [cursor=pointer]:
+                  - generic [ref=f5e133]:
+                    - generic [ref=f5e134]: ✨
+                    - strong [ref=f5e135]: 한이음 드림업 2026
+                  - generic [ref=f5e136]: 게시됨
+                  - generic [ref=f5e137]: "2026"
+                - button "페이지를 휴지통으로 이동" [ref=f5e139] [cursor=pointer]: 휴지통
+        - button "로그아웃" [ref=f5e60]
+      - generic [ref=f5e65]:
+        - generic [ref=f5e66]:
+          - generic [ref=f5e68]:
+            - textbox "페이지 제목" [ref=f5e69]
+            - generic [ref=f5e70]:
+              - generic [ref=f5e140]:
+                - generic [ref=f5e141]: 아이콘
+                - textbox "아이콘" [ref=f5e142]: ✨
+              - generic [ref=f5e143]:
+                - generic [ref=f5e144]: 커버
+                - combobox "커버" [ref=f5e145]:
+                  - option "sky" [selected]
+                  - option "mint"
+                  - option "rose"
+                  - option "amber"
+                  - option "violet"
+              - generic [ref=f5e146]:
+                - generic [ref=f5e147]: 그룹
+                - combobox "그룹" [ref=f5e148]:
+                  - option "Portfolio" [selected]
+                  - option "Study"
+                  - option "Moments"
+              - generic [ref=f5e149]:
+                - generic [ref=f5e150]: 카테고리
+                - combobox "카테고리" [ref=f5e151]:
+                  - option "Web" [selected]
+                  - option "Game"
+              - generic [ref=f5e152]:
+                - generic [ref=f5e153]: 상태
+                - combobox "상태" [ref=f5e154]:
+                  - option "게시됨" [selected]
+                  - option "임시저장"
+                  - option "휴지통"
+              - generic [ref=f5e155]:
+                - generic [ref=f5e156]: 날짜
+                - textbox "날짜" [ref=f5e157]: 2026-07-16T11:37
+          - generic [ref=f5e89]:
+            - button "페이지" [expanded] [ref=f5e90]
+            - button "미리보기" [ref=f5e91]
+            - button "기록" [ref=f5e92]
+            - button "실행 취소" [disabled] [ref=f5e93]
+            - button "다시 실행" [disabled] [ref=f5e94]
+            - button "임시저장" [ref=f5e95]
+            - button "게시" [ref=f5e97] [cursor=pointer]
+        - generic [ref=f5e100]:
+          - article [ref=f5e158]:
+            - button "아래에 블록 추가" [ref=f5e159] [cursor=pointer]: +
+            - button "블록 이동 및 메뉴" [ref=f5e162]: ⋮⋮
+            - textbox "Type '/' for commands" [ref=f5e165]
+          - article [ref=f5e166]:
+            - button "아래에 블록 추가" [ref=f5e167] [cursor=pointer]: +
+            - button "블록 이동 및 메뉴" [ref=f5e170]: ⋮⋮
+            - textbox "Type '/' for commands" [ref=f5e173]
+          - article [ref=f5e174]:
+            - button "아래에 블록 추가" [ref=f5e175] [cursor=pointer]: +
+            - button "블록 이동 및 메뉴" [ref=f5e178]: ⋮⋮
+            - textbox "Type '/' for commands" [ref=f5e181]
+          - article [ref=f5e182]:
+            - button "아래에 블록 추가" [ref=f5e183] [cursor=pointer]: +
+            - button "블록 이동 및 메뉴" [ref=f5e186]: ⋮⋮
+            - textbox "Type '/' for commands" [ref=f5e189]
+          - article [ref=f5e190]:
+            - button "아래에 블록 추가" [ref=f5e191] [cursor=pointer]: +
+            - button "블록 이동 및 메뉴" [ref=f5e194]: ⋮⋮
+            - textbox "Type '/' for commands" [ref=f5e197]

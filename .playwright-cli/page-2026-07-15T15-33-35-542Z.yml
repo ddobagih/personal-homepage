@@ -1,0 +1,92 @@
+- generic [active] [ref=f11e1]:
+  - link "본문으로 건너뛰기" [ref=f11e2] [cursor=pointer]:
+    - /url: "#content-start"
+  - banner [ref=f11e3]:
+    - generic [ref=f11e4]:
+      - link "thecistus personal archive" [ref=f11e5] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=f11e6]: ">_"
+        - generic [ref=f11e7]:
+          - generic [ref=f11e8]: thecistus
+          - generic [ref=f11e9]: personal archive
+      - generic [ref=f11e10]: personal page
+      - navigation "주요 섹션" [ref=f11e13]:
+        - link "Home" [ref=f11e14] [cursor=pointer]:
+          - /url: "#home"
+          - generic [ref=f11e15]: ⌂
+          - text: Home
+        - link "Portfolio" [ref=f11e16] [cursor=pointer]:
+          - /url: "#portfolio"
+          - generic [ref=f11e17]: □
+          - text: Portfolio
+        - link "Study" [ref=f11e18] [cursor=pointer]:
+          - /url: "#study"
+          - generic [ref=f11e19]: ▤
+          - text: Study
+        - link "Moments" [ref=f11e20] [cursor=pointer]:
+          - /url: "#updates"
+          - generic [ref=f11e21]: ○
+          - text: Moments
+      - generic [ref=f11e22]:
+        - text: Current focus
+        - paragraph [ref=f11e23]: archive / notes / updates
+        - text: ">_"
+      - generic [ref=f11e24]: Find me
+  - main [ref=f11e25]:
+    - generic [ref=f11e26]:
+      - region [ref=f11e27]:
+        - generic [ref=f11e28]:
+          - generic [ref=f11e29]: personal page
+          - generic [ref=f11e32]: ~/thecistus › whoami
+          - heading "개인 페이지" [level=1] [ref=f11e33]
+          - paragraph [ref=f11e34]: 포트폴리오, 공부글, 근황을 정리하는 개인 홈페이지입니다.
+          - generic [ref=f11e35]:
+            - link "포트폴리오 보기" [ref=f11e36] [cursor=pointer]:
+              - /url: "#portfolio"
+              - text: 포트폴리오 보기
+              - generic [ref=f11e37]: ↗
+            - link "Study 열기" [ref=f11e38] [cursor=pointer]:
+              - /url: "#study"
+        - complementary "개인 아카이브 상태" [ref=f11e39]:
+          - generic [ref=f11e40]: archive.session
+          - generic [ref=f11e46]:
+            - paragraph [ref=f11e47]: › codex inspect ./personal-archive
+            - paragraph [ref=f11e48]: archive / notes / updates
+            - generic "공개 콘텐츠 수" [ref=f11e49]:
+              - generic [ref=f11e50]:
+                - generic [ref=f11e51]: "0"
+                - text: projects
+              - generic [ref=f11e52]:
+                - generic [ref=f11e53]: "0"
+                - text: notes
+              - generic [ref=f11e54]:
+                - generic [ref=f11e55]: "0"
+                - text: moments
+            - paragraph [ref=f11e56]: index ready
+      - region [ref=f11e58]:
+        - generic [ref=f11e59]:
+          - generic [ref=f11e60]:
+            - text: Interactive index
+            - heading "Archive orbit" [level=2] [ref=f11e61]
+          - paragraph [ref=f11e62]: ← → 키로 탐색하고 Enter로 열 수 있습니다.
+        - generic [ref=f11e63]:
+          - generic [ref=f11e64]: 포트폴리오, 스터디, 근황 카테고리를 시각화한 우주형 탐색 영역입니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다.
+          - generic [ref=f11e65]:
+            - button "이전 항성계" [ref=f11e66] [cursor=pointer]: ←
+            - generic [ref=f11e67]:
+              - generic [ref=f11e68]: Portfolio
+              - generic [ref=f11e69]: "0"
+            - button "다음 항성계" [ref=f11e70] [cursor=pointer]: →
+      - generic [ref=f11e72]:
+        - generic [ref=f11e73]: Selected work
+        - heading "Portfolio" [level=2] [ref=f11e74]
+      - generic [ref=f11e76]:
+        - generic [ref=f11e77]: Latest notes
+        - heading "Study" [level=2] [ref=f11e78]
+      - generic [ref=f11e80]:
+        - generic [ref=f11e81]: Small log
+        - heading "Moments" [level=2] [ref=f11e82]
+      - generic [ref=f11e84]:
+        - generic [ref=f11e85]: Say hello
+        - heading "Contact" [level=2] [ref=f11e86]
+    - text: 제목 없음
