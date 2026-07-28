@@ -2,7 +2,7 @@
 const defaultContent = {
   site: {
     eyebrow: "thecistus.com / personal",
-    title: "개인 페이지",
+    title: "thecistus",
     lead: "",
     status: "personal page",
     focus: "archive / notes / updates"
@@ -65,8 +65,9 @@ const defaultContent = {
 
 const CONTENT_GROUPS = ["portfolio", "study", "update"];
 
-const CONTENT_API_URL = "/api/content";
-const CONTENT_RESET_API_URL = "/api/content/reset";
+const PUBLIC_CONTENT_API_URL = "/api/content";
+const ADMIN_CONTENT_API_URL = "/api/admin/content";
+const ADMIN_CONTENT_RESET_API_URL = "/api/admin/content/reset";
 const AUTH_SESSION_API_URL = "/api/auth/session";
 const AUTH_REQUEST_CODE_API_URL = "/api/auth/request-code";
 const AUTH_VERIFY_CODE_API_URL = "/api/auth/verify-code";
@@ -235,6 +236,7 @@ class AuthSessionState {
       checked: false,
       deliveryMode: "console",
       smtpConfigured: false,
+      csrfToken: "",
       otpRequestState: "idle"
     }, initial);
   }
@@ -243,6 +245,7 @@ class AuthSessionState {
     this.authenticated = Boolean(payload.authenticated);
     this.username = payload.username || "";
     this.checked = true;
+    this.csrfToken = payload.csrfToken || "";
     this.deliveryMode = payload.deliveryMode || this.deliveryMode;
     this.smtpConfigured = Boolean(payload.smtpConfigured);
     this.otpRequestState = "idle";
@@ -251,6 +254,7 @@ class AuthSessionState {
   clear(otpRequestState = "idle") {
     this.authenticated = false;
     this.username = "";
+    this.csrfToken = "";
     this.checked = true;
     this.otpRequestState = otpRequestState;
   }
@@ -618,6 +622,10 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function jsStringLiteral(value) {
+  return escapeHtml(JSON.stringify(String(value ?? "")));
 }
 
 function supportsRichBody(kind) {
@@ -1276,7 +1284,7 @@ const COSMOS_SYSTEM_CONFIG = [
     sectionLabel: "Moments",
     page: "updates",
     starColor: "190, 140, 255",
-    emptyCopy: "Empty"
+    emptyCopy: "근황이 추가되면 이 항성계에 행성이 늘어납니다."
   }
 ];
 
@@ -1287,8 +1295,76 @@ const analytics = {
   endpoint: document.documentElement.dataset.analyticsEndpoint || "/__analytics.gif"
 };
 
+function contentTypeMeta(type) {
+  return {
+    portfolio: {
+      label: "Portfolio",
+      dateLabel: "작성 날짜",
+      datePlaceholder: "2026-04-13T11:30",
+      categoryPlaceholder: "web",
+      summaryLabel: "설명",
+      summaryPlaceholder: "프로젝트 요약",
+      bodyVisible: false,
+      pointsVisible: true,
+      tagsVisible: true,
+      linksVisible: true,
+      detailVisible: true
+    },
+    study: {
+      label: "Study",
+      dateLabel: "날짜",
+      datePlaceholder: "2026-04-02",
+      categoryPlaceholder: "notes",
+      summaryLabel: "요약",
+      summaryPlaceholder: "목록에 보일 요약",
+      bodyVisible: true,
+      pointsVisible: false,
+      tagsVisible: false,
+      linksVisible: false,
+      detailVisible: false
+    },
+    update: {
+      label: "Moments",
+      dateLabel: "날짜",
+      datePlaceholder: "2026-04-02",
+      categoryPlaceholder: "updates",
+      summaryLabel: "내용",
+      summaryPlaceholder: "일상 기록",
+      bodyVisible: false,
+      pointsVisible: false,
+      tagsVisible: false,
+      linksVisible: false,
+      detailVisible: false
+    }
+  }[type] || {
+    label: "콘텐츠",
+    dateLabel: "날짜",
+    datePlaceholder: "미정",
+    categoryPlaceholder: "general",
+    summaryLabel: "설명",
+    summaryPlaceholder: "내용",
+    bodyVisible: false,
+    pointsVisible: false,
+    tagsVisible: false,
+    linksVisible: false,
+    detailVisible: false
+  };
+}
+
+function publishedPortfolio() {
+  return content.portfolio.filter((item) => !item.status || item.status === "published");
+}
+
+function publishedStudyPosts() {
+  return content.studyPosts.filter((item) => !item.status || item.status === "published");
+}
+
+function publishedUpdates() {
+  return content.updates.filter((item) => !item.status || item.status === "published");
+}
+
 function portfolioCategories() {
-  const dynamic = [...new Set(publishedPortfolio().map((project) => project.category))].map((id) => ({
+  const dynamic = [...new Set(publishedPortfolio().map((project) => project.category).filter(Boolean))].map((id) => ({
     id,
     label: resolveCategoryLabel("portfolio", id)
   }));

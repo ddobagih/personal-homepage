@@ -4,12 +4,14 @@
   "private": true,
   "dependencies": {
     "dotenv": "^16.6.1",
-    "nodemailer": "^8.0.7"
+    "nodemailer": "^9.0.1"
   },
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
     "set-admin-email": "node scripts/set-admin-email.js",
-    "restore-content-backup": "node scripts/restore-content-backup.js"
+    "restore-content-backup": "node scripts/restore-content-backup.js",
+    "test": "node --test",
+    "preflight": "bash deploy/preflight.sh"
   }
 }

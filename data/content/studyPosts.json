@@ -1,1 +1,196 @@
-[]
+[
+  {
+    "id": "notion-editor-test-2026-07-15",
+    "status": "draft",
+    "date": "2026-07-15",
+    "typeId": "study",
+    "category": "notes",
+    "title": "테스트 글: 노션형 블록 에디터 확인",
+    "icon": "🧪",
+    "cover": "mint",
+    "excerpt": "개인 홈페이지의 작성·발행 흐름과 여러 블록이 공개 화면에서 제대로 보이는지 확인하기 위한 테스트 글입니다.",
+    "body": "개인 홈페이지의 작성·발행 흐름을 확인합니다. 문단, 제목, 콜아웃, 목록, 코드, 인용문과 중첩 블록을 한 글에서 테스트합니다.",
+    "blocks": [
+      {
+        "id": "test-intro",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "이 글은 관리자에서 작성한 콘텐츠가 공개 Study 화면에 정상적으로 표시되는지 확인하기 위한 테스트 글입니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-purpose-heading",
+        "kind": "heading1",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "무엇을 확인하나요?",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-purpose-callout",
+        "kind": "callout",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "확인 목표",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "초안과 공개 상태 분리, 블록 저장, 글 상세 라우팅, 읽기 화면의 레이아웃을 빠르게 점검합니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-checklist-heading",
+        "kind": "heading2",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "체크리스트",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-checklist",
+        "kind": "todo",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "현재 확인 상태",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": [
+          {
+            "checked": true,
+            "text": "공개 Study 목록에 글이 나타난다"
+          },
+          {
+            "checked": true,
+            "text": "상세 화면에서 여러 블록이 렌더링된다"
+          },
+          {
+            "checked": false,
+            "text": "관리자에서 수정 후 다시 저장해 본다"
+          }
+        ]
+      },
+      {
+        "id": "test-code",
+        "kind": "code",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "로컬 실행 명령",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "npm run dev",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-quote",
+        "kind": "quote",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "기능을 더 만들기 전에 실제로 글을 쓰고 공개 흐름을 확인한다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-toggle",
+        "kind": "toggle",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "중첩 블록도 확인하기",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-toggle-child",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 1,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "이 문단은 토글 아래에 들여쓴 자식 블록입니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-divider",
+        "kind": "divider",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "test-outro",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "확인이 끝나면 관리자에서 이 글을 휴지통으로 이동하거나 실제 첫 글로 교체하면 됩니다.",
+        "tone": "default",
+        "items": []
+      }
+    ],
+    "previousStatus": null,
+    "deletedAt": null
+  }
+]

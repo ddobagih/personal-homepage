@@ -1,11 +1,124 @@
 [
   {
-    "id": "hanium-dreamup-2026",
+    "id": "item",
+    "status": "published",
     "year": "2026",
+    "date": "2026-07-16T11:37",
+    "typeId": "portfolio",
+    "category": "web",
+    "title": "ㄹㅇㄹㄴㅇ",
+    "icon": "✨",
+    "cover": "sky",
+    "desc": "ㄹㄴㅇㄴㅇㄹ\n\nㄹ\n\nㄴㅇㄹ\n\nㄴㅇ\n\nㄹㄴ",
+    "body": "ㄹㄴㅇㄴㅇㄹ\n\nㄹ\n\nㄴㅇㄹ\n\nㄴㅇ\n\nㄹㄴ",
+    "points": [],
+    "tags": [],
+    "detail": {
+      "headline": "",
+      "overview": "ㄹㄴㅇㄴㅇㄹ\n\nㄹ\n\nㄴㅇㄹ\n\nㄴㅇ\n\nㄹㄴ",
+      "role": "",
+      "team": "",
+      "duration": "2026",
+      "stack": [],
+      "problem": "",
+      "solution": "",
+      "architecture": "",
+      "outcome": "",
+      "media": []
+    },
+    "blocks": [
+      {
+        "id": "admin-portfolio-block-paragraph-1",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "ㄹㄴㅇㄴㅇㄹ",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "admin-portfolio-block-paragraph-2",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "ㄹ",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "admin-portfolio-block-paragraph-3",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "ㄴㅇㄹ",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "admin-portfolio-block-paragraph-4",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "ㄴㅇ",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "admin-portfolio-block-paragraph-5",
+        "kind": "paragraph",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "ㄹㄴ",
+        "tone": "default",
+        "items": []
+      }
+    ],
+    "links": [],
+    "previousStatus": null,
+    "deletedAt": null
+  },
+  {
+    "id": "hanium-dreamup-2026",
+    "status": "published",
+    "year": "2026",
+    "date": "",
     "typeId": "portfolio",
     "category": "web",
     "title": "한이음 드림업 2026",
+    "icon": "✨",
+    "cover": "sky",
     "desc": "개인 페이지에 정리한 포트폴리오 항목입니다. AI 기반 시각장애인 보행 지원 PWA를 제안한 한이음 드림업 프로젝트입니다.",
+    "body": "",
     "points": [
       "시각장애인 보행 지원을 위한 모바일 웹앱 형태의 서비스 제안",
       "AI 비전, 음성 인터페이스, 백엔드 API, 데이터 저장소를 포함한 구조 설계",
@@ -35,18 +148,206 @@
       "outcome": "제안 단계 프로젝트지만, 단순 소개가 아니라 실제 서비스처럼 문제 정의, 정보 구조, 주요 시나리오, 운영 관점까지 한 번에 볼 수 있도록 정리했습니다.",
       "media": [
         {
+          "id": "hanium-architecture-preview",
+          "label": "한이음 드림업 보행자 지원 시스템 아키텍처",
+          "href": "./assets/media/portfolio/hanium-architecture.webp"
+        },
+        {
           "id": "hanium-overview-pdf",
           "label": "관련 문서 PDF",
           "href": "./assets/hanium-dreamup-overview.pdf"
         }
       ]
     },
+    "blocks": [
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-text-1",
+        "kind": "text",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "프로젝트 개요",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "사용자가 길안내와 장애물 인지를 한 손 안에서 확인할 수 있는 시각장애인 보행 지원 PWA를 기획했습니다. 서비스 흐름, 기능 우선순위, 데이터 구조, 운영 시나리오를 포트폴리오 문서 형태로 정리한 프로젝트입니다.",
+        "tone": "accent",
+        "items": []
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-text-2",
+        "kind": "text",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "Problem",
+        "title": "문제 정의",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "보행 보조 서비스는 기능은 많아도 실제 사용 상황에서 정보가 분산되기 쉽습니다. 특히 길안내, 장애물 알림, 목적지 접근 정보가 한 흐름으로 이어지지 않으면 사용성이 빠르게 떨어집니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-text-3",
+        "kind": "text",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "Approach",
+        "title": "해결 방식",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "모바일 웹앱 하나에서 탐색, 음성 안내, 장애물 인지, 기록까지 연결되는 구조를 설계했습니다. 첫 화면에서 핵심 행동을 줄이고, 실제 이동 상황을 기준으로 화면 흐름을 나눴습니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-text-4",
+        "kind": "text",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "Architecture",
+        "title": "아키텍처",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "클라이언트는 PWA 기반으로 동작하고, 백엔드 API는 사용자 위치, 경로 정보, 음성 인터페이스, 비전 분석 결과를 연결하는 구조를 상정했습니다. 데이터 저장은 기록과 설정을 분리해 관리하는 흐름으로 설계했습니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-text-5",
+        "kind": "text",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "Outcome",
+        "title": "결과와 회고",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "제안 단계 프로젝트지만, 단순 소개가 아니라 실제 서비스처럼 문제 정의, 정보 구조, 주요 시나리오, 운영 관점까지 한 번에 볼 수 있도록 정리했습니다.",
+        "tone": "default",
+        "items": []
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-facts-6",
+        "kind": "facts",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "프로젝트 정보",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": [
+          {
+            "label": "역할",
+            "value": "서비스 기획 · 프론트엔드 구조 설계"
+          },
+          {
+            "label": "팀 구성",
+            "value": "개인 프로젝트"
+          },
+          {
+            "label": "진행 기간",
+            "value": "2026"
+          },
+          {
+            "label": "기술 스택",
+            "value": "PWA, AI Vision, Voice UI, Accessibility"
+          }
+        ]
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-links-7",
+        "kind": "links",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "대표 링크",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": [
+          {
+            "id": "hanium-overview-pdf",
+            "label": "관련 문서 PDF",
+            "href": "./assets/hanium-dreamup-overview.pdf"
+          }
+        ]
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-showcase-8",
+        "kind": "showcase",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "시연과 자료",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": [
+          {
+            "id": "hanium-architecture-preview",
+            "label": "한이음 드림업 보행자 지원 시스템 아키텍처",
+            "href": "./assets/media/portfolio/hanium-architecture.webp"
+          },
+          {
+            "id": "hanium-overview-pdf",
+            "label": "관련 문서 PDF",
+            "href": "./assets/hanium-dreamup-overview.pdf"
+          }
+        ]
+      },
+      {
+        "id": "hanium-dreamup-2026-portfolio-block-bullets-9",
+        "kind": "bullets",
+        "collapsed": false,
+        "indent": 0,
+        "kicker": "",
+        "title": "핵심 포인트",
+        "href": "",
+        "url": "",
+        "caption": "",
+        "description": "",
+        "body": "",
+        "tone": "default",
+        "items": [
+          {
+            "text": "시각장애인 보행 지원을 위한 모바일 웹앱 형태의 서비스 제안"
+          },
+          {
+            "text": "AI 비전, 음성 인터페이스, 백엔드 API, 데이터 저장소를 포함한 구조 설계"
+          },
+          {
+            "text": "문제 정의, 기능 흐름, 운영 방향을 포트폴리오 문서로 정리"
+          }
+        ]
+      }
+    ],
     "links": [
       {
         "id": "hanium-overview-pdf",
         "label": "관련 문서 PDF",
         "href": "./assets/hanium-dreamup-overview.pdf"
       }
-    ]
+    ],
+    "previousStatus": null,
+    "deletedAt": null
   }
 ]

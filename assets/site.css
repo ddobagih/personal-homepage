@@ -7186,3 +7186,141 @@ body .page:not([hidden]) .section-head .section-title {
     scroll-behavior: auto !important;
   }
 }
+
+/* Feedback pass: accessibility, mobile, and reduced-motion hardening. */
+html {
+  color-scheme: dark;
+}
+
+#page-admin {
+  color-scheme: light;
+}
+
+.skip-link {
+  z-index: 1000 !important;
+  background: rgba(6, 9, 20, 0.96) !important;
+  color: #e8f0ff !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0) !important;
+}
+
+.footer:empty,
+.project-card-foot:empty {
+  display: none !important;
+}
+
+.project-card-cta {
+  margin-left: auto;
+  color: rgba(199, 219, 255, 0.86);
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+}
+
+#page-admin :is(input, textarea)::placeholder,
+#page-admin :is(.admin-input, .admin-textarea)::placeholder,
+#page-admin .admin-page-title-editable::placeholder {
+  color: #7b756b !important;
+  opacity: 0.62 !important;
+}
+
+@media (max-width: 720px) {
+  .topbar-inner {
+    min-height: 3rem !important;
+    padding: 0.55rem 0 !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    gap: 0.55rem !important;
+  }
+
+  .brand-name {
+    max-width: 34vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .nav {
+    max-width: 100%;
+    gap: 0.1rem !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-link {
+    padding: 0.32rem 0.48rem !important;
+    font-size: 0.7rem !important;
+    white-space: nowrap;
+  }
+
+  .cosmos-nav {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    transform: none;
+    gap: 0.45rem;
+    justify-content: center;
+  }
+
+  .cosmos-nav-info {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .cosmos-nav-info-name,
+  .cosmos-nav-info-meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  #contact #contact-list,
+  .contact-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .contact-card {
+    padding: 0.95rem 1rem !important;
+  }
+
+  .project-card-date {
+    margin-left: 0;
+  }
+
+  .project-card-foot {
+    justify-content: space-between;
+  }
+
+  .quick-grid,
+  .home-feed {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    animation: none !important;
+  }
+
+  .card:hover,
+  .feed-item:hover,
+  .cosmos-focus-card:hover,
+  .project-card:hover {
+    transform: none !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .cosmos-hover-hud {
+    display: none !important;
+  }
+}

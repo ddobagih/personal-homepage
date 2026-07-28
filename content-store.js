@@ -19,7 +19,9 @@ async function readJson(filePath) {
 
 async function writeJson(filePath, payload) {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  const tmpPath = `${filePath}.${process.pid}.${Date.now()}.tmp`;
+  await fs.writeFile(tmpPath, `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+  await fs.rename(tmpPath, filePath);
 }
 
 async function ensureLegacyContentFile(contentPath, defaultContentPath) {
@@ -67,6 +69,7 @@ async function readSectionContent(sectionDir, fallbackContent) {
 function createContentStore({ appDataDir, contentPath, defaultContentPath }) {
   const sectionDir = path.join(appDataDir, "content");
   const backupDir = path.join(appDataDir, "backups");
+  let writeQueue = Promise.resolve();
 
   return {
     async ensureCurrent() {
@@ -86,15 +89,19 @@ function createContentStore({ appDataDir, contentPath, defaultContentPath }) {
     },
 
     async writeCurrent(payload) {
-      if (await fileExists(contentPath)) {
-        const previous = await readJson(contentPath);
-        await writeJson(buildBackupPath(backupDir), previous);
-      }
-      await bootstrapSectionFiles(sectionDir, payload);
-      await Promise.all(
-        CONTENT_SECTION_KEYS.map((key) => writeJson(buildSectionPath(sectionDir, key), payload?.[key]))
-      );
-      await writeJson(contentPath, payload);
+      const task = writeQueue.then(async () => {
+        if (await fileExists(contentPath)) {
+          const previous = await readJson(contentPath);
+          await writeJson(buildBackupPath(backupDir), previous);
+        }
+        await bootstrapSectionFiles(sectionDir, payload);
+        await Promise.all(
+          CONTENT_SECTION_KEYS.map((key) => writeJson(buildSectionPath(sectionDir, key), payload?.[key]))
+        );
+        await writeJson(contentPath, payload);
+      });
+      writeQueue = task.catch(() => {});
+      return task;
     },
 
     backupDir,

@@ -9,13 +9,33 @@ Group=www-data
 WorkingDirectory=/var/www/thecistus.com/current
 Environment=NODE_ENV=production
 Environment=PORT=4173
+Environment=HOST=127.0.0.1
 Environment=APP_DATA_DIR=/var/lib/thecistus
-EnvironmentFile=/var/www/thecistus.com/current/.env
-ExecStart=/usr/bin/env node server.js
+Environment=SKIP_DOTENV=1
+EnvironmentFile=/etc/thecistus-homepage.env
+ExecStart=/usr/bin/node /var/www/thecistus.com/current/server.js
 Restart=always
 RestartSec=3
 TimeoutStopSec=10
 KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ReadOnlyPaths=/var/www/thecistus.com/current
+ReadWritePaths=/var/lib/thecistus
+RestrictSUIDSGID=true
+LockPersonality=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 
 [Install]
 WantedBy=multi-user.target

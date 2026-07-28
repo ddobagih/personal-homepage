@@ -4,13 +4,13 @@
 
 ## 1. 관리자 이메일
 
-실제 OTP 수신 이메일은 `.env`의 `ADMIN_EMAIL`에 둔다.
+실제 OTP 수신 이메일은 운영 환경파일의 `ADMIN_EMAIL`에 둔다.
 
 ```env
 ADMIN_EMAIL=admin@example.com
 ```
 
-이 값은 민감한 운영 설정이므로 커밋하지 않는다.
+이 값은 민감한 운영 설정이므로 커밋하지 않는다. 운영에서는 웹 루트 아래가 아니라 `/etc/thecistus-homepage.env` 같은 외부 경로에 둔다.
 
 ## 2. OTP 정책 템플릿
 
@@ -34,4 +34,4 @@ ADMIN_EMAIL=admin@example.com
 /var/lib/thecistus/admin-auth.json
 ```
 
-SMTP가 설정되지 않으면 OTP는 서버 로그에 출력된다. 운영에서는 SMTP 환경변수도 함께 설정한다.
+SMTP가 설정되지 않으면 운영(`NODE_ENV=production`)에서는 OTP 발송 요청이 실패한다. 로컬 개발 환경에서만 콘솔 OTP fallback을 사용할 수 있다.

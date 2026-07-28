@@ -318,7 +318,12 @@ function contentItemsForCosmos(group) {
     : group === "study"
       ? content.studyPosts
       : content.updates;
-  return source.filter((item) => (item?.status || "published") !== "trash");
+  return source.filter((item) => !item?.status || item.status === "published");
+}
+
+function cssAttributeValue(value) {
+  if (window.CSS?.escape) return CSS.escape(String(value ?? ""));
+  return String(value ?? "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
 
 const COSMOS_GROUP_THEMES = {
@@ -544,9 +549,14 @@ class CosmosController {
     const leadNode = $("#hero-lead");
     if (!titleNode || !leadNode) return;
     const hero = this.heroContent();
-    titleNode.innerHTML = "";
-    leadNode.textContent = "";
-    leadNode.hidden = true;
+    const siteTitle = normalizeText(content.site?.title, defaultContent.site.title);
+    const siteLead = normalizeText(
+      content.site?.lead,
+      hero.lead || "포트폴리오, 공부글, 근황을 정리하는 개인 홈페이지입니다."
+    );
+    titleNode.textContent = siteTitle;
+    leadNode.textContent = siteLead;
+    leadNode.hidden = !siteLead;
   }
 
   selectOrbit(itemKey) {
@@ -783,13 +793,13 @@ function setupCosmosAnimation() {
     if (oldKey) {
       const oldItem = cosmosState.items.find((i) => i.key === oldKey);
       if (oldItem?.targetType === "portfolio" && oldItem?.targetId) {
-        document.querySelector(`[data-project-id="${oldItem.targetId}"]`)?.classList.remove("cosmos-hover");
+        document.querySelector(`[data-project-id="${cssAttributeValue(oldItem.targetId)}"]`)?.classList.remove("cosmos-hover");
       }
     }
     if (newKey) {
       const newItem = cosmosState.items.find((i) => i.key === newKey);
       if (newItem?.targetType === "portfolio" && newItem?.targetId) {
-        document.querySelector(`[data-project-id="${newItem.targetId}"]`)?.classList.add("cosmos-hover");
+        document.querySelector(`[data-project-id="${cssAttributeValue(newItem.targetId)}"]`)?.classList.add("cosmos-hover");
       }
     }
   };
@@ -833,8 +843,8 @@ function setupCosmosAnimation() {
   };
 
   // 접근성
-  canvas.setAttribute("role", "img");
-  canvas.setAttribute("aria-label", "인터랙티브 우주 항성계. 포트폴리오, 스터디, 업데이트 시스템을 전환하고 행성을 클릭해 해당 글로 이동할 수 있습니다.");
+  canvas.setAttribute("role", "group");
+  canvas.setAttribute("aria-label", "인터랙티브 우주 항성계. 좌우 방향키로 항성계를 전환하고 Enter 또는 Space로 현재 카테고리를 열 수 있습니다. 아래 섹션 목록으로도 같은 콘텐츠를 확인할 수 있습니다.");
   canvas.setAttribute("tabindex", "0");
 
   // 모바일 스와이프
@@ -853,6 +863,30 @@ function setupCosmosAnimation() {
   canvas.addEventListener("pointermove", handlePointerMove, { passive: true });
   canvas.addEventListener("pointerleave", handlePointerLeave, { passive: true });
   canvas.addEventListener("click", handleCanvasClick);
+  canvas.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      event.stopPropagation();
+      prevCosmosSystem();
+      return;
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      event.stopPropagation();
+      nextCosmosSystem();
+      return;
+    }
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      event.stopPropagation();
+      const item = currentCosmosItem();
+      if (item) {
+        openCosmosPlanet(item.key);
+      } else {
+        openCosmosSun();
+      }
+    }
+  });
   window.addEventListener("resize", () => {
     resizeCosmosCanvas();
     rebuildCosmosScene();
@@ -1164,7 +1198,11 @@ function syncCosmosScene(items) {
 }
 
 function shouldAnimateCosmos() {
-  return currentPage === "home" && !document.hidden && !cosmosState.userPaused && Boolean(cosmosState.canvas);
+  return currentPage === "home"
+    && !document.hidden
+    && !cosmosState.userPaused
+    && !cosmosPrefersReducedMotion()
+    && Boolean(cosmosState.canvas);
 }
 
 function updateCosmosPlayback() {

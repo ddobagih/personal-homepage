@@ -17,62 +17,6 @@ function portfolioShowcaseKind(label) {
   return "Asset";
 }
 
-function contentTypeMeta(type) {
-  return {
-    portfolio: {
-      label: "Portfolio",
-      dateLabel: "작성 날짜",
-      datePlaceholder: "2026-04-13T11:30",
-      categoryPlaceholder: "web",
-      summaryLabel: "설명",
-      summaryPlaceholder: "프로젝트 요약",
-      bodyVisible: false,
-      pointsVisible: true,
-      tagsVisible: true,
-      linksVisible: true,
-      detailVisible: true
-    },
-    study: {
-      label: "Study",
-      dateLabel: "날짜",
-      datePlaceholder: "2026-04-02",
-      categoryPlaceholder: "notes",
-      summaryLabel: "요약",
-      summaryPlaceholder: "목록에 보일 요약",
-      bodyVisible: true,
-      pointsVisible: false,
-      tagsVisible: false,
-      linksVisible: false,
-      detailVisible: false
-    },
-    update: {
-      label: "Moments",
-      dateLabel: "날짜",
-      datePlaceholder: "2026-04-02",
-      categoryPlaceholder: "updates",
-      summaryLabel: "내용",
-      summaryPlaceholder: "일상 기록",
-      bodyVisible: false,
-      pointsVisible: false,
-      tagsVisible: false,
-      linksVisible: false,
-      detailVisible: false
-    }
-  }[type] || {
-    label: "콘텐츠",
-    dateLabel: "날짜",
-    datePlaceholder: "미정",
-    categoryPlaceholder: "general",
-    summaryLabel: "설명",
-    summaryPlaceholder: "내용",
-    bodyVisible: false,
-    pointsVisible: false,
-    tagsVisible: false,
-    linksVisible: false,
-    detailVisible: false
-  };
-}
-
 function collectionForType(type) {
   if (type === "portfolio") return content.portfolio;
   if (type === "study") return content.studyPosts;
@@ -81,6 +25,7 @@ function collectionForType(type) {
 }
 
 const ADMIN_PAGE_ICON_OPTIONS = ["✨", "🧩", "🚀", "📘", "📝", "🎯", "🛠", "🌿", "📎", "💡"];
+const ADMIN_DRAWER_MEDIA = window.matchMedia("(max-width: 980px)");
 
 function defaultAdminTypeId(group = "portfolio") {
   return group;
@@ -132,18 +77,6 @@ function setCollectionForType(type, items) {
   if (type === "update") {
     content.updates = items;
   }
-}
-
-function publishedPortfolio() {
-  return content.portfolio.filter((item) => !item.status || item.status === "published");
-}
-
-function publishedStudyPosts() {
-  return content.studyPosts.filter((item) => !item.status || item.status === "published");
-}
-
-function publishedUpdates() {
-  return content.updates.filter((item) => !item.status || item.status === "published");
 }
 
 function flattenContentItems() {
@@ -221,6 +154,16 @@ function commentCount(targetType, targetId) {
   return commentState.count(targetType, targetId);
 }
 
+function commentCountSuffix(targetType, targetId) {
+  const count = commentCount(targetType, targetId);
+  return count > 0 ? ` / 댓글 ${count}` : "";
+}
+
+function commentBadgeMarkup(targetType, targetId, className = "project-card-stats") {
+  const count = commentCount(targetType, targetId);
+  return count > 0 ? `<span class="${className}">댓글 ${count}</span>` : "";
+}
+
 function currentLocalDateTimeValue() {
   const now = new Date();
   const pad = (value) => String(value).padStart(2, "0");
@@ -254,20 +197,50 @@ function portfolioCardTimestamp(project) {
   return formatContentTimestamp(project?.date || project?.year, project?.year || "미정");
 }
 
-function portfolioCardPreview(project) {
-  const detail = portfolioDetail(project);
-  const candidates = [detail.headline, project?.desc, detail.overview]
-    .map((value) => normalizeText(value, ""))
-    .map((value) => value.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-  const unique = [];
-  candidates.forEach((value) => {
-    if (!unique.includes(value)) unique.push(value);
-  });
+function isImageAssetHref(value) {
+  return /\.(?:avif|webp|png|jpe?g)$/i.test(String(value || "").split(/[?#]/)[0]);
+}
+
+function portfolioCardVisual(project) {
+  const media = Array.isArray(portfolioDetail(project).media)
+    ? portfolioDetail(project).media
+    : [];
+  const item = media.find((entry) => isImageAssetHref(entry?.href));
+  const src = safeHref(item?.href);
+  if (!item || !src || src === "#") return null;
   return {
-    lead: unique[0] || "",
-    body: unique[1] || ""
+    src,
+    alt: normalizeText(item.label, `${project.title} 프로젝트 화면`)
   };
+}
+
+function portfolioIndexMarkup(project, index, source, selected = false) {
+  const visual = portfolioCardVisual(project);
+  const projectId = escapeHtml(project.id);
+  const projectHref = `#portfolio/${encodeURIComponent(String(project.id))}`;
+  const category = resolveCategoryLabel("portfolio", project.category);
+  const titleMarkup = source === "portfolio"
+    ? `<h2 class="project-index-title">${escapeHtml(project.title)}</h2>`
+    : `<h3 class="project-index-title">${escapeHtml(project.title)}</h3>`;
+  return `
+    <article class="project-index-item ${selected ? "selected" : ""}" data-project-id="${projectId}">
+      <a class="project-index-button ${visual ? "has-media" : ""}" href="${escapeHtml(projectHref)}" data-open-project-id="${projectId}" data-open-project-source="${escapeHtml(source)}">
+        <div class="project-index-copy">
+          <div class="project-index-meta">
+            <span>${String(index + 1).padStart(2, "0")}</span>
+            <span>${escapeHtml(category)}</span>
+            <span>${escapeHtml(portfolioCardTimestamp(project))}</span>
+          </div>
+          ${titleMarkup}
+        </div>
+        ${visual ? `
+          <figure class="project-index-visual">
+            <img src="${escapeHtml(visual.src)}" alt="${escapeHtml(visual.alt)}" width="1024" height="508" decoding="async" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
+          </figure>
+        ` : ""}
+      </a>
+    </article>
+  `;
 }
 
 function formatCommentTimestamp(value) {
@@ -297,28 +270,28 @@ function renderCommentCard(comment) {
             ${edited ? '<span class="pill">수정됨</span>' : ""}
           </div>
         </div>
-        <button class="action-btn" type="button" onclick="toggleCommentEditor('${comment.id}')">${open ? "닫기" : "수정/삭제"}</button>
+        <button class="action-btn" type="button" data-action="toggle-comment-editor" data-comment-id="${escapeHtml(comment.id)}">${open ? "닫기" : "수정/삭제"}</button>
       </div>
       <p class="comment-body">${escapeHtml(comment.body).replace(/\n/g, "<br>")}</p>
       ${open ? `
-        <form class="comment-manage" onsubmit="updateComment(event, '${comment.id}')">
+        <form class="comment-manage" data-submit-action="update-comment" data-comment-id="${escapeHtml(comment.id)}">
           <div class="comment-grid">
             <label class="comment-field">
               <span>닉네임</span>
-              <input id="comment-edit-nickname-${comment.id}" type="text" value="${escapeHtml(comment.nickname)}" maxlength="40">
+              <input id="comment-edit-nickname-${escapeHtml(comment.id)}" name="nickname" type="text" value="${escapeHtml(comment.nickname)}" maxlength="40" autocomplete="nickname">
             </label>
             <label class="comment-field">
               <span>비밀번호</span>
-              <input id="comment-edit-password-${comment.id}" type="password" placeholder="댓글 비밀번호">
+              <input id="comment-edit-password-${escapeHtml(comment.id)}" name="password" type="password" placeholder="댓글 비밀번호…" autocomplete="current-password">
             </label>
             <label class="comment-field comment-field-full">
               <span>내용</span>
-              <textarea id="comment-edit-body-${comment.id}" rows="4">${escapeHtml(comment.body)}</textarea>
+              <textarea id="comment-edit-body-${escapeHtml(comment.id)}" name="body" rows="4" autocomplete="off">${escapeHtml(comment.body)}</textarea>
             </label>
           </div>
           <div class="comment-actions">
             <button class="action-btn primary" type="submit">수정 저장</button>
-            <button class="action-btn" type="button" onclick="deleteComment('${comment.id}')">삭제</button>
+            <button class="action-btn" type="button" data-action="delete-comment" data-comment-id="${escapeHtml(comment.id)}">삭제</button>
           </div>
         </form>
       ` : ""}
@@ -343,19 +316,19 @@ function commentSectionMarkup(targetType, targetId) {
           <details class="comments-toggle">
             <summary class="comments-toggle-summary">댓글 ${comments.length}개 열기</summary>
             <div class="comments-toggle-body">
-              <form class="comment-form" onsubmit="submitComment(event, '${targetType}', '${targetId}')">
+              <form class="comment-form" data-submit-action="submit-comment" data-target-type="${escapeHtml(targetType)}" data-target-id="${escapeHtml(targetId)}">
                 <div class="comment-grid">
                   <label class="comment-field">
                     <span>닉네임</span>
-                    <input id="comment-nickname-${commentTargetKey(targetType, targetId)}" type="text" maxlength="40" placeholder="닉네임">
+                    <input id="comment-nickname-${commentTargetKey(targetType, targetId)}" name="nickname" type="text" maxlength="40" placeholder="닉네임…" autocomplete="nickname">
                   </label>
                   <label class="comment-field">
                     <span>비밀번호</span>
-                    <input id="comment-password-${commentTargetKey(targetType, targetId)}" type="password" placeholder="댓글 비밀번호">
+                    <input id="comment-password-${commentTargetKey(targetType, targetId)}" name="password" type="password" placeholder="댓글 비밀번호…" autocomplete="new-password">
                   </label>
                   <label class="comment-field comment-field-full">
                     <span>내용 <span class="comment-char-count" id="comment-count-${commentTargetKey(targetType, targetId)}">0/500</span></span>
-                    <textarea id="comment-body-${commentTargetKey(targetType, targetId)}" rows="4" maxlength="500" placeholder="댓글 내용을 입력하세요" oninput="updateCommentCount('${commentTargetKey(targetType, targetId)}')"></textarea>
+                    <textarea id="comment-body-${commentTargetKey(targetType, targetId)}" name="body" rows="4" maxlength="500" placeholder="댓글 내용을 입력하세요…" autocomplete="off" data-input-action="update-comment-count" data-comment-key="${escapeHtml(commentTargetKey(targetType, targetId))}"></textarea>
                   </label>
                 </div>
                 <div class="comment-actions">
@@ -371,19 +344,19 @@ function commentSectionMarkup(targetType, targetId) {
           </details>
         `
         : `
-          <form class="comment-form" onsubmit="submitComment(event, '${targetType}', '${targetId}')">
+          <form class="comment-form" data-submit-action="submit-comment" data-target-type="${escapeHtml(targetType)}" data-target-id="${escapeHtml(targetId)}">
             <div class="comment-grid">
               <label class="comment-field">
                 <span>닉네임</span>
-                <input id="comment-nickname-${commentTargetKey(targetType, targetId)}" type="text" maxlength="40" placeholder="닉네임">
+                <input id="comment-nickname-${commentTargetKey(targetType, targetId)}" name="nickname" type="text" maxlength="40" placeholder="닉네임…" autocomplete="nickname">
               </label>
               <label class="comment-field">
                 <span>비밀번호</span>
-                <input id="comment-password-${commentTargetKey(targetType, targetId)}" type="password" placeholder="댓글 비밀번호">
+                <input id="comment-password-${commentTargetKey(targetType, targetId)}" name="password" type="password" placeholder="댓글 비밀번호…" autocomplete="new-password">
               </label>
               <label class="comment-field comment-field-full">
                 <span>내용 <span class="comment-char-count" id="comment-count-${commentTargetKey(targetType, targetId)}">0/500</span></span>
-                <textarea id="comment-body-${commentTargetKey(targetType, targetId)}" rows="4" maxlength="500" placeholder="댓글 내용을 입력하세요" oninput="updateCommentCount('${commentTargetKey(targetType, targetId)}')"></textarea>
+                <textarea id="comment-body-${commentTargetKey(targetType, targetId)}" name="body" rows="4" maxlength="500" placeholder="댓글 내용을 입력하세요…" autocomplete="off" data-input-action="update-comment-count" data-comment-key="${escapeHtml(commentTargetKey(targetType, targetId))}"></textarea>
               </label>
             </div>
             <div class="comment-actions">
@@ -427,13 +400,20 @@ function loadMobileRaidCollapsed() {
 
 function trackAnalytics(type, name, details = {}) {
   if (!analytics.enabled || !analytics.endpoint) return;
+  let refOrigin = "";
+  if (document.referrer) {
+    try {
+      refOrigin = new URL(document.referrer).origin;
+    } catch {
+      refOrigin = "";
+    }
+  }
 
   const payload = {
     type,
     name,
     path: window.location.pathname,
-    hash: window.location.hash || "",
-    ref: document.referrer || "",
+    ref: refOrigin,
     ts: Date.now(),
     ...details
   };
@@ -483,8 +463,8 @@ function markAdminContentDirty() {
   if (!authState.authenticated || adminState.activePanel !== "content") return;
   scheduleAdminHistorySnapshot();
   renderAdminPreviewPane();
-  if (adminState.status === "Edited") return;
-  setAdminStatus("Edited");
+  if (adminState.status === "변경사항 있음") return;
+  setAdminStatus("변경사항 있음");
 }
 
 const ADMIN_RECENT_BLOCKS_KEY = "thecistus-admin-recent-blocks-v1";
@@ -539,8 +519,22 @@ function renderAdminShellState() {
   const shell = $("#admin-auth-shell");
   if (!shell) return;
   const isContentPanel = adminState.activePanel === "content";
+  const isMobileAdmin = document.body.dataset.currentPage === "admin" && ADMIN_DRAWER_MEDIA.matches;
+  const mobileDrawerOpen = isMobileAdmin && adminState.sidebarOpen;
   shell.dataset.sidebarOpen = adminState.sidebarOpen ? "true" : "false";
   shell.dataset.filtersCollapsed = adminState.filterPanelCollapsed ? "true" : "false";
+  document.body.classList.toggle("admin-sidebar-open", mobileDrawerOpen);
+  const sidebar = shell.querySelector(".admin-notion-sidebar");
+  if (sidebar) {
+    sidebar.inert = isMobileAdmin && !adminState.sidebarOpen;
+    if (sidebar.inert) {
+      sidebar.setAttribute("aria-hidden", "true");
+    } else {
+      sidebar.removeAttribute("aria-hidden");
+    }
+  }
+  const adminMain = shell.querySelector(".admin-notion-main");
+  if (adminMain) adminMain.inert = mobileDrawerOpen;
   const filterPanel = $("#admin-filter-panel");
   if (filterPanel) filterPanel.hidden = !isContentPanel || adminState.filterPanelCollapsed;
   const filterToggle = $("#admin-filter-toggle");
@@ -559,12 +553,21 @@ function renderAdminShellState() {
 function toggleAdminSidebar() {
   adminState.sidebarOpen = !adminState.sidebarOpen;
   renderAdminShellState();
+  requestAnimationFrame(() => {
+    const focusTarget = adminState.sidebarOpen
+      ? $("#admin-notion-sidebar button:not([hidden]), #admin-notion-sidebar input:not([hidden])")
+      : $("#admin-sidebar-toggle");
+    focusTarget?.focus();
+  });
 }
 
-function closeAdminSidebar() {
+function closeAdminSidebar(options = {}) {
   if (!adminState.sidebarOpen) return;
   adminState.sidebarOpen = false;
   renderAdminShellState();
+  if (options.restoreFocus) {
+    requestAnimationFrame(() => $("#admin-sidebar-toggle")?.focus());
+  }
 }
 
 function toggleAdminFilterPanel() {
@@ -573,13 +576,21 @@ function toggleAdminFilterPanel() {
 }
 
 async function requestJson(url, options = {}) {
+  const { headers: optionHeaders = {}, method = "GET", ...restOptions } = options;
+  const headers = {
+    "Content-Type": "application/json",
+    ...optionHeaders
+  };
+  const unsafeMethod = !["GET", "HEAD", "OPTIONS"].includes(String(method).toUpperCase());
+  if (unsafeMethod && authState.csrfToken && !headers["X-CSRF-Token"]) {
+    headers["X-CSRF-Token"] = authState.csrfToken;
+  }
+
   const response = await fetch(url, {
     credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    },
-    ...options
+    ...restOptions,
+    method,
+    headers
   });
   if (!response.ok) {
     const errorText = await response.text();
@@ -592,15 +603,18 @@ async function requestJson(url, options = {}) {
 
 class ContentService {
   async hydrate() {
-    const payload = await requestJson(CONTENT_API_URL, { method: "GET", cache: "no-store" });
+    const url = authState.authenticated ? ADMIN_CONTENT_API_URL : PUBLIC_CONTENT_API_URL;
+    const payload = await requestJson(url, { method: "GET", cache: "no-store" });
+    if (payload.csrfToken) authState.csrfToken = payload.csrfToken;
     replaceContentData(payload.content || payload);
   }
 
   async save(copy = "콘텐츠를 저장했습니다.") {
-    const payload = await requestJson(CONTENT_API_URL, {
+    const payload = await requestJson(ADMIN_CONTENT_API_URL, {
       method: "PUT",
       body: JSON.stringify({ content })
     });
+    if (payload.csrfToken) authState.csrfToken = payload.csrfToken;
     replaceContentData(payload.content || content);
     setAdminStatus(copy);
   }
@@ -610,20 +624,20 @@ class ContentService {
     if (error?.status === 401) {
       authState.clear();
       renderAdmin();
-      setAdminStatus("Session expired. Please sign in again.");
-      showToast("Session expired", "Please sign in again.");
+      setAdminStatus("세션이 만료되었습니다. 다시 로그인해 주세요.");
+      showToast("세션 만료", "관리자 로그인 후 다시 시도해 주세요.");
       return;
     }
-    setAdminStatus("Save failed.");
+    setAdminStatus("저장에 실패했습니다.");
     showSaveErrorModal(action, error);
   }
 
   async retrySave() {
     dismissSaveError();
     try {
-      await this.save("Retried save successfully.");
+      await this.save("재시도 저장을 완료했습니다.");
       renderAllContent();
-      showToast("Saved", "Content saved to server.", "success");
+      showToast("저장 완료", "콘텐츠를 서버에 저장했습니다.", "success");
     } catch (error) {
       showSaveErrorModal(adminState.pendingSaveAction || "content", error);
     }
@@ -667,11 +681,14 @@ function showSaveErrorModal(action, error) {
   const copy = $("#save-error-copy");
   if (!modal) return;
   if (copy) {
-    const detail = error?.message || String(error || "Unknown error");
-    copy.textContent = `Could not save "${action}" to server. ${detail}`;
+    const detail = error?.message || String(error || "알 수 없는 오류");
+    copy.textContent = `"${action}" 저장 중 문제가 발생했습니다. ${detail}`;
   }
   adminState.setPendingSaveAction(action);
   modal.hidden = false;
+  requestAnimationFrame(() => {
+    modal.querySelector("button")?.focus();
+  });
 }
 
 function dismissSaveError() {
@@ -733,11 +750,11 @@ function renderAllPublicPages() {
   sanitizeStateAgainstContent();
   renderHome();
   renderPortfolio();
-  syncCosmosItems();
   renderStudyPosts(currentStudyCategory);
   renderUpdates();
   renderContact();
   renderFooter();
+  updatePublicNavVisibility();
   if ($("#page-admin")) {
     renderAdmin();
   }
@@ -798,23 +815,61 @@ function setPageVisibility(page) {
 }
 
 function updateDocumentTitle(page) {
-  document.title = page === "home" ? "thecistus.com" : `thecistus.com | ${pageLabels[page]}`;
+  document.title = page === "home" ? "thecistus.com | 포트폴리오와 기록" : `thecistus.com | ${pageLabels[page]}`;
 }
 
 const ogMeta = {
   portfolio: { title: "thecistus.com | 포트폴리오", desc: "프로젝트 포트폴리오를 정리한 페이지입니다." },
   study: { title: "thecistus.com | 공부글", desc: "공부하며 정리한 글을 모아둔 페이지입니다." },
   updates: { title: "thecistus.com | Moments", desc: "일상 기록 페이지입니다." },
-  home: { title: "thecistus.com | 개인 포트폴리오와 기록", desc: "개인 페이지입니다. 포트폴리오, 공부글, 근황을 정리합니다." }
+  home: { title: "thecistus.com | 개인 포트폴리오와 기록", desc: "포트폴리오, 공부글, 근황을 정리하는 개인 홈페이지입니다." }
 };
 
 function updateOgMeta(page) {
   const meta = ogMeta[page] || ogMeta.home;
   const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
+  set('meta[name="description"]', meta.desc);
   set('meta[property="og:title"]', meta.title);
   set('meta[property="og:description"]', meta.desc);
   set('meta[name="twitter:title"]', meta.title);
   set('meta[name="twitter:description"]', meta.desc);
+}
+
+function updatePublicNavVisibility() {
+  const visibility = {
+    study: true,
+    updates: true,
+    admin: false
+  };
+  Object.entries(visibility).forEach(([page, visible]) => {
+    $$(`.nav-link[data-page="${page}"], [data-action="show-public-page"][data-page="${page}"]`).forEach((node) => {
+      node.hidden = !visible;
+    });
+  });
+}
+
+function setPublicMenuOpen(open) {
+  const topbar = $(".topbar");
+  const toggle = $(".public-menu-toggle");
+  const nextOpen = Boolean(open);
+  if (topbar) topbar.dataset.menuOpen = String(nextOpen);
+  if (toggle) {
+    toggle.setAttribute("aria-expanded", String(nextOpen));
+    toggle.setAttribute("aria-label", nextOpen ? "메뉴 닫기" : "메뉴 열기");
+  }
+  document.body.classList.toggle("public-menu-open", nextOpen);
+  [$("main"), $(".footer")].forEach((node) => node?.toggleAttribute("inert", nextOpen));
+}
+
+function togglePublicMenu() {
+  const nextOpen = $(".topbar")?.dataset.menuOpen !== "true";
+  setPublicMenuOpen(nextOpen);
+  requestAnimationFrame(() => {
+    const focusTarget = nextOpen
+      ? $("#public-nav .nav-link:not([hidden])")
+      : $(".public-menu-toggle");
+    focusTarget?.focus();
+  });
 }
 
 function showPage(page, options = {}) {
@@ -826,6 +881,12 @@ function showPage(page, options = {}) {
   }
 
   currentPage = page;
+  document.body.dataset.currentPage = page;
+  if (page !== "admin" && adminState.sidebarOpen) {
+    adminState.sidebarOpen = false;
+    renderAdminShellState();
+  }
+  setPublicMenuOpen(false);
   setPageVisibility(page);
   updateDocumentTitle(page);
   updateOgMeta(page);
@@ -870,7 +931,6 @@ function showPage(page, options = {}) {
     renderAdmin();
   }
 
-  updateCosmosPlayback();
 }
 
 function parseContentSortValue(type, item) {
@@ -914,6 +974,7 @@ function highlightScrollTarget(node) {
 }
 
 function openPortfolioProject(projectId, source = "portfolio") {
+  if (!publishedPortfolio().some((project) => project.id === projectId)) return;
   state.selectedProjectId = projectId;
   activePortfolioProjectId = projectId;
   addUnique(state.viewedProjects, projectId);
@@ -927,14 +988,13 @@ function openPortfolioProject(projectId, source = "portfolio") {
     setPageVisibility("portfolio");
     updateDocumentTitle("portfolio");
     updateOgMeta("portfolio");
-    updateCosmosPlayback();
   }
 
   // 카드 목록 재렌더 (selected 상태 반영)
   renderPortfolio();
 
   // 항상 명시적으로 상세 페이지 표시 (renderPortfolio 결과와 무관하게)
-  renderPortfolioProjectDetail(projectId, { focus: false });
+  renderPortfolioProjectDetail(projectId, { focus: true });
   window.scrollTo(0, 0);
 
   trackEvent("inspect_project", { project: projectId, source });
@@ -958,21 +1018,6 @@ function openHomeFeedItem(type, id) {
   });
 }
 
-function selectSignalProject(projectId) {
-  const project = content.portfolio.find((item) => item.id === projectId);
-  if (!project) return;
-  state.selectedProjectId = project.id;
-  addUnique(state.viewedProjects, project.id);
-  saveState();
-  syncCosmosItems();
-}
-
-function openSignalProject() {
-  const project = currentSignalProject();
-  if (!project) return;
-  openPortfolioProject(project.id, "signal-panel");
-}
-
 function openPortfolioSection(projectId, sectionId, source = "signal-card") {
   openPortfolioProject(projectId, source);
   requestAnimationFrame(() => {
@@ -982,92 +1027,62 @@ function openPortfolioSection(projectId, sectionId, source = "signal-card") {
   });
 }
 
-function renderHome() {
-  updateCosmosHeroCopy();
+function updateHomeIntroCopy() {
+  const titleNode = $("#hero-title");
+  const leadNode = $("#hero-lead");
+  const title = normalizeText(content.site?.title, defaultContent.site.title);
+  const lead = normalizeText(content.site?.lead, "");
+  if (titleNode) titleNode.textContent = title;
+  if (leadNode) {
+    leadNode.textContent = lead;
+    leadNode.hidden = !lead;
+  }
+}
 
-  const pubPortfolio = publishedPortfolio().slice(0, 4);
+function renderHome() {
+  updateHomeIntroCopy();
+
+  const allPortfolio = publishedPortfolio();
+  const allStudyPosts = publishedStudyPosts();
+
+  const pubPortfolio = allPortfolio.slice(0, 4);
   $("#home-grid").innerHTML = pubPortfolio.length
-      ? pubPortfolio.map((project) => {
-        const comments = commentCount("portfolio", project.id);
-        const preview = portfolioCardPreview(project);
-        return `
-        <article class="card project-card project-card-home" data-project-id="${project.id}">
-          <button class="card-button project-card-button" type="button" data-open-project-id="${project.id}" data-open-project-source="home-grid">
-            <div class="project-card-topline">
-              <span class="mini-label project-card-category">${escapeHtml(resolveCategoryLabel("portfolio", project.category))}</span>
-              <span class="project-card-date">${escapeHtml(portfolioCardTimestamp(project))}</span>
-            </div>
-            <h3 class="card-title project-card-title">${escapeHtml(project.title)}</h3>
-            <div class="project-card-copy">
-              ${preview.lead ? `<p class="project-card-headline">${escapeHtml(preview.lead)}</p>` : ""}
-              ${preview.body ? `<p class="card-desc project-card-desc">${escapeHtml(preview.body)}</p>` : ""}
-              ${!preview.lead && !preview.body ? '<p class="project-card-placeholder">Empty</p>' : ""}
-            </div>
-            <div class="project-card-foot">
-              <span class="project-card-stats">댓글 ${comments}</span>
-            </div>
-          </button>
-        </article>
-      `;
-      }).join("")
+      ? pubPortfolio.map((project, index) => portfolioIndexMarkup(project, index, "home-grid")).join("")
     : `
-      <article class="card">
-        <h3 class="card-title">미정</h3>
+      <article class="empty-state">
+        <p class="empty-state-title">아직 공개된 포트폴리오가 없습니다.</p>
       </article>
     `;
 
   const studyEl = $("#home-study");
   if (studyEl) {
-    const studyItems = content.studyPosts
-      .filter((item) => !item.status || item.status === "published")
-      .slice(0, 4);
+    const studyItems = allStudyPosts.slice(0, 4);
+    const studySection = studyEl.closest(".section");
+    if (studySection) studySection.hidden = false;
     studyEl.innerHTML = studyItems.length
-      ? studyItems.map((item) => `
-          <button class="feed-item list-button" type="button" onclick="openStudyPost('${item.id}')">
-            <div class="feed-head">
-              <div>
-                <div class="mini-label">${escapeHtml(resolveCategoryLabel("study", item.category) || "Study")}</div>
-                <h3 class="list-title">${escapeHtml(item.title)}</h3>
-              </div>
-              <div class="feed-date">${escapeHtml(item.date || "미정")}</div>
-            </div>
-            <p class="list-desc">${escapeHtml(item.desc || item.summary || "")}</p>
-            <div class="feed-foot">
-              <span class="pill">Study</span>
-            </div>
-          </button>
+      ? studyItems.map((item, index) => `
+          <a class="archive-row list-button" href="#study/${escapeHtml(encodeURIComponent(String(item.id)))}" data-action="open-home-feed-item" data-type="study" data-id="${escapeHtml(item.id)}">
+            <span class="archive-row-index">${String(index + 1).padStart(2, "0")}</span>
+            <h3 class="archive-row-title">${escapeHtml(item.title)}</h3>
+            <span class="archive-row-meta">${escapeHtml(resolveCategoryLabel("study", item.category) || "Study")} · ${escapeHtml(item.date || "미정")}</span>
+          </a>
         `).join("")
-      : `
-        <article class="empty-state">
-          <div class="empty-state-icon">◎</div>
-          <h3 class="empty-state-title">Empty</h3>
-        </article>
-      `;
+      : '<div class="empty-state"><p class="empty-state-title">아직 공개된 공부글이 없습니다.</p></div>';
   }
 
   const feedItems = recentHomeFeedItems();
-  $("#home-feed").innerHTML = feedItems.length
-    ? feedItems.map((item) => `
-        <button class="feed-item list-button" type="button" onclick="openHomeFeedItem('${item.type}', '${item.id}')">
-          <div class="feed-head">
-            <div>
-              <div class="mini-label">${escapeHtml(item.typeLabel)} / ${escapeHtml(item.categoryLabel || "미정")}</div>
-              <h3 class="list-title">${escapeHtml(item.title)}</h3>
-            </div>
-            <div class="feed-date">${escapeHtml(item.date || "미정")}</div>
-          </div>
-          <p class="list-desc">${escapeHtml(item.summary || "미정")}</p>
-          <div class="feed-foot">
-            <span class="pill">${escapeHtml(item.cta)}</span>
-          </div>
-        </button>
+  const homeFeedEl = $("#home-feed");
+  const feedSection = $("#home-feed")?.closest(".section");
+  if (feedSection) feedSection.hidden = false;
+  if (homeFeedEl) homeFeedEl.innerHTML = feedItems.length
+    ? feedItems.map((item, index) => `
+        <a class="archive-row list-button" href="#updates" data-action="open-home-feed-item" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+          <span class="archive-row-index">${String(index + 1).padStart(2, "0")}</span>
+          <h3 class="archive-row-title">${escapeHtml(item.title)}</h3>
+          <span class="archive-row-meta">${escapeHtml(item.categoryLabel || item.typeLabel)} · ${escapeHtml(item.date || "미정")}</span>
+        </a>
       `).join("")
-    : `
-      <article class="empty-state">
-        <div class="empty-state-icon">◎</div>
-        <h3 class="empty-state-title">Empty</h3>
-      </article>
-    `;
+    : '<div class="empty-state"><p class="empty-state-title">아직 기록이 없습니다.</p></div>';
 }
 
 function handleRewardAction(actionType, actionValue) {
@@ -1104,20 +1119,22 @@ function closePortfolioProject(track = true) {
 }
 
 function renderPortfolioProjectDetail(projectId, options = {}) {
-  const project = content.portfolio.find((item) => item.id === projectId);
+  const project = publishedPortfolio().find((item) => item.id === projectId);
   if (!project) {
     closePortfolioProject(false);
     return;
   }
 
   const blocks = contentBlocks("portfolio", project).map((block) => {
-    if (block.kind !== "facts") return block;
-    return {
-      ...block,
-      items: (block.items || []).filter((item) => !/(진행\s*기간|기간|duration)/i.test(String(item.label || "")))
-    };
+    if (block.kind === "facts") {
+      return {
+        ...block,
+        items: (block.items || []).filter((item) => !/(진행\s*기간|기간|duration)/i.test(String(item.label || "")))
+      };
+    }
+    return block;
   }).filter((block) => {
-    if (block.kind === "links") return false;
+    if (block.kind === "links" || block.kind === "showcase") return false;
     if (["facts", "links", "showcase", "bullets", "todo", "numbered"].includes(block.kind)) {
       return Array.isArray(block.items) ? block.items.length > 0 : true;
     }
@@ -1130,32 +1147,69 @@ function renderPortfolioProjectDetail(projectId, options = {}) {
   const sidePanel = factsNode?.closest(".project-side-panel");
   const linksNode = $("#portfolio-project-links");
   const heroNode = $("#portfolio-project-hero");
+  const detail = portfolioDetail(project);
+  const visual = portfolioCardVisual(project);
+  const projectLinks = normalizeProjectLinks(
+    [
+      ...(Array.isArray(project.links) ? project.links : []),
+      ...(Array.isArray(detail.media) ? detail.media.filter((item) => !isImageAssetHref(item.href)) : [])
+    ],
+    project.id
+  );
 
   $("#portfolio-list-wrap").hidden = true;
   $("#portfolio-list-wrap").setAttribute("aria-hidden", "true");
   $("#portfolio-project-view").hidden = false;
   $("#portfolio-project-view").setAttribute("aria-hidden", "false");
   $("#portfolio-project-view").dataset.projectId = project.id;
-  $("#portfolio-project-meta").textContent = `${portfolioCardTimestamp(project)} · ${resolveCategoryLabel("portfolio", project.category)} · 댓글 ${commentCount("portfolio", project.id)}`;
-  $("#portfolio-project-meta").hidden = true;
+  const projectCommentCount = commentCount("portfolio", project.id);
+  $("#portfolio-project-meta").textContent = [
+    portfolioCardTimestamp(project),
+    resolveCategoryLabel("portfolio", project.category),
+    projectCommentCount > 0 ? `댓글 ${projectCommentCount}` : ""
+  ].filter(Boolean).join(" · ");
+  $("#portfolio-project-meta").hidden = false;
   $("#portfolio-project-title").textContent = project.title;
-  $("#portfolio-project-headline").textContent = "";
-  $("#portfolio-project-headline").hidden = true;
-  $("#portfolio-project-summary").textContent = "";
-  $("#portfolio-project-summary").hidden = true;
+  $("#portfolio-project-headline").textContent = detail.headline || project.desc || "";
+  $("#portfolio-project-headline").hidden = !$("#portfolio-project-headline").textContent;
+  $("#portfolio-project-summary").textContent = detail.overview || "";
+  $("#portfolio-project-summary").hidden = !$("#portfolio-project-summary").textContent;
   if (linksNode) {
-    linksNode.innerHTML = "";
-    linksNode.hidden = true;
+    const uniqueLinks = [];
+    const seenLinks = new Set();
+    projectLinks.forEach((link) => {
+      const key = `${link.label}:${link.href}`;
+      if (seenLinks.has(key)) return;
+      seenLinks.add(key);
+      uniqueLinks.push(link);
+    });
+    linksNode.innerHTML = uniqueLinks.map((link) => {
+      const href = safeHref(link.href);
+      return `<a class="action-btn" href="${href}" ${safeExternalAttrs(href)}>${escapeHtml(link.label)}</a>`;
+    }).join("");
+    linksNode.hidden = !uniqueLinks.length;
   }
   if (factsNode) {
     factsNode.innerHTML = "";
   }
   if (sidePanel) sidePanel.hidden = true;
   if (heroNode) heroNode.classList.add("single-column", "notion-flow");
+  const visualNode = $("#portfolio-project-visual");
+  const visualImage = $("#portfolio-project-visual-image");
+  if (visualNode && visualImage) {
+    visualNode.hidden = !visual;
+    if (visual) {
+      visualImage.src = visual.src;
+      visualImage.alt = visual.alt;
+    } else {
+      visualImage.removeAttribute("src");
+      visualImage.alt = "";
+    }
+  }
   $("#portfolio-project-showcase-wrap").hidden = true;
   $("#portfolio-project-showcase").innerHTML = "";
   $("#portfolio-project-sections").innerHTML = blocks.length
-    ? renderSiteNarrativeBlocks(blocks)
+    ? renderSiteNarrativeBlocks(blocks, { rootSectionHeadingLevel: 2 })
     : `
       <section class="project-section-card accent">
         <h2 class="project-section-title">상세 페이지 준비 중</h2>
@@ -1191,13 +1245,17 @@ function openProjectLink(projectId, linkId) {
 
 function renderPortfolioFilters() {
   const pub = publishedPortfolio();
+  const filterNode = $("#portfolio-filters");
   if (!pub.length) {
-    $("#portfolio-filters").innerHTML = "";
+    filterNode.innerHTML = "";
+    filterNode.hidden = true;
     if ($("#portfolio-filter-summary")) $("#portfolio-filter-summary").textContent = "";
     return;
   }
 
   const categories = portfolioCategories();
+  const showFilters = categories.filter((category) => category.id !== "all").length > 1;
+  filterNode.hidden = !showFilters;
   if (!categories.some((category) => category.id === currentPortfolioCategory)) {
     currentPortfolioCategory = "all";
   }
@@ -1208,15 +1266,15 @@ function renderPortfolioFilters() {
     return acc;
   }, {});
 
-  $("#portfolio-filters").innerHTML = categories.map((category) => `
+  filterNode.innerHTML = showFilters ? categories.map((category) => `
     <button
       class="tab-btn ${category.id === currentPortfolioCategory ? "active" : ""}"
       type="button"
-      onclick="setPortfolioCategory('${category.id}')"
+      data-action="set-portfolio-category" data-category="${escapeHtml(category.id)}"
     >
       ${escapeHtml(category.label)} ${counts[category.id]}
     </button>
-  `).join("");
+  `).join("") : "";
 
   if ($("#portfolio-filter-summary")) $("#portfolio-filter-summary").textContent = "";
 }
@@ -1231,42 +1289,19 @@ function renderPortfolio() {
   if (!projects.length) {
     $("#portfolio-list").innerHTML = `
       <article class="empty-state">
-        <div class="empty-state-icon">◎</div>
-        <h3 class="empty-state-title">Empty</h3>
+        <p class="empty-state-title">아직 공개된 포트폴리오가 없습니다.</p>
       </article>
     `;
     closePortfolioProject(false);
     return;
   }
 
-  $("#portfolio-list").innerHTML = projects.map((project) => {
+  $("#portfolio-list").innerHTML = projects.map((project, index) => {
     const selected = state.selectedProjectId === project.id;
-    const comments = commentCount("portfolio", project.id);
-    const showCategory = currentPortfolioCategory === "all";
-    const preview = portfolioCardPreview(project);
-
-    return `
-      <article class="card project-card ${selected ? "selected" : ""} ${showCategory ? "" : "category-hidden"}">
-        <button class="card-button project-card-button" type="button" data-open-project-id="${project.id}" data-open-project-source="portfolio">
-          <div class="project-card-topline ${showCategory ? "" : "single"}">
-            ${showCategory ? `<span class="mini-label project-card-category">${escapeHtml(resolveCategoryLabel("portfolio", project.category))}</span>` : ""}
-            <span class="project-card-date">${escapeHtml(portfolioCardTimestamp(project))}</span>
-          </div>
-          <h3 class="card-title project-card-title">${escapeHtml(project.title)}</h3>
-          <div class="project-card-copy">
-            ${preview.lead ? `<p class="project-card-headline">${escapeHtml(preview.lead)}</p>` : ""}
-            ${preview.body ? `<p class="card-desc project-card-desc">${escapeHtml(preview.body)}</p>` : ""}
-            ${!preview.lead && !preview.body ? '<p class="project-card-placeholder">Empty</p>' : ""}
-          </div>
-          <div class="project-card-foot">
-            <span class="project-card-stats">댓글 ${comments}</span>
-          </div>
-        </button>
-      </article>
-    `;
+    return portfolioIndexMarkup(project, index, "portfolio", selected);
   }).join("");
 
-  if (activePortfolioProjectId && content.portfolio.some((project) => project.id === activePortfolioProjectId)) {
+  if (activePortfolioProjectId && publishedPortfolio().some((project) => project.id === activePortfolioProjectId)) {
     renderPortfolioProjectDetail(activePortfolioProjectId, { focus: false });
   } else {
     closePortfolioProject(false);
@@ -1286,10 +1321,6 @@ function setPortfolioCategory(category) {
     renderPortfolio();
   }
   trackEvent("set_portfolio_category", { category });
-}
-
-function syncCosmosItems() {
-  cosmosController.syncItems();
 }
 
 function updateCommentCount(key) {
@@ -1330,37 +1361,41 @@ function resetProgress() {
 }
 
 function renderStudyFilters() {
+  const visiblePosts = publishedStudyPosts();
+  const filterNode = $("#study-filters");
   const categories = [
     { id: "all", label: "전체" },
-    ...[...new Set(content.studyPosts.map((post) => post.category))].map((category) => ({
+    ...[...new Set(visiblePosts.map((post) => post.category).filter(Boolean))].map((category) => ({
       id: category,
       label: resolveCategoryLabel("study", category)
     }))
   ];
+  const showFilters = categories.filter((category) => category.id !== "all").length > 1;
+  filterNode.hidden = !showFilters;
 
   if (!categories.some((category) => category.id === currentStudyCategory)) {
     currentStudyCategory = "all";
   }
 
-  $("#study-filters").innerHTML = categories.map((category) => `
+  filterNode.innerHTML = showFilters ? categories.map((category) => `
     <button
       class="tab-btn ${category.id === currentStudyCategory ? "active" : ""}"
       type="button"
-      onclick="setStudyCategory('${category.id}')"
+      data-action="set-study-category" data-category="${escapeHtml(category.id)}"
     >
       ${escapeHtml(category.label)}
     </button>
-  `).join("");
+  `).join("") : "";
 }
 
 function renderStudyPosts(category = "all") {
   const visiblePosts = publishedStudyPosts();
   if (!visiblePosts.length) {
     $("#study-filters").innerHTML = "";
+    $("#study-filters").hidden = true;
     $("#study-list").innerHTML = `
       <article class="empty-state">
-        <div class="empty-state-icon">✦</div>
-        <h3 class="empty-state-title">Empty</h3>
+        <p class="empty-state-title">아직 공개된 공부글이 없습니다.</p>
       </article>
     `;
     return;
@@ -1372,12 +1407,21 @@ function renderStudyPosts(category = "all") {
 
   renderStudyFilters();
 
-  $("#study-list").innerHTML = posts.map((post) => `
-    <button class="list-item list-button" type="button" onclick="openStudyPost('${post.id}')">
-      <h3 class="list-title">${escapeHtml(post.title)}</h3>
-      <div class="list-meta">${escapeHtml(post.date)} / ${escapeHtml(resolveCategoryLabel("study", post.category))} / 댓글 ${commentCount("study", post.id)}</div>
-      <p class="list-desc">${escapeHtml(post.excerpt)}</p>
-    </button>
+  if (!posts.length) {
+    $("#study-list").innerHTML = `
+      <article class="empty-state">
+        <p class="empty-state-title">이 카테고리에는 공개된 공부글이 없습니다.</p>
+      </article>
+    `;
+    return;
+  }
+
+  $("#study-list").innerHTML = posts.map((post, index) => `
+    <a class="archive-row list-button" href="#study/${escapeHtml(encodeURIComponent(String(post.id)))}" data-action="open-study-post" data-id="${escapeHtml(post.id)}">
+      <span class="archive-row-index">${String(index + 1).padStart(2, "0")}</span>
+      <h2 class="archive-row-title">${escapeHtml(post.title)}</h2>
+      <span class="archive-row-meta">${escapeHtml(resolveCategoryLabel("study", post.category))} · ${escapeHtml(post.date)}${commentCountSuffix("study", post.id)}</span>
+    </a>
   `).join("");
 }
 
@@ -1402,15 +1446,16 @@ function estimateReadingMinutes(text) {
 
 function openStudyPost(id, options = {}) {
   const { pushHistory = true } = options;
-  const post = content.studyPosts.find((item) => item.id === id);
+  const visiblePosts = publishedStudyPosts();
+  const post = visiblePosts.find((item) => item.id === id);
   if (!post) return;
   const blocks = contentBlocks("study", post);
-  const postIndex = content.studyPosts.findIndex((item) => item.id === id);
-  const related = content.studyPosts
+  const postIndex = visiblePosts.findIndex((item) => item.id === id);
+  const related = visiblePosts
     .filter((item) => item.id !== id && item.category === post.category)
     .slice(0, 2);
-  const previousPost = content.studyPosts[postIndex - 1] || null;
-  const nextPost = content.studyPosts[postIndex + 1] || null;
+  const previousPost = visiblePosts[postIndex - 1] || null;
+  const nextPost = visiblePosts[postIndex + 1] || null;
 
   $("#study-list-wrap").hidden = true;
   $("#study-list-wrap").setAttribute("aria-hidden", "true");
@@ -1419,20 +1464,21 @@ function openStudyPost(id, options = {}) {
   $("#study-post-view").dataset.postId = id;
   $("#study-post-meta").textContent = `${formatContentTimestamp(post.date, post.date)} · ${resolveCategoryLabel("study", post.category)}`;
   $("#study-post-title").textContent = post.title;
+  const studyCommentCount = commentCount("study", post.id);
   $("#study-post-submeta").innerHTML = `
     <span class="pill active">${estimateReadingMinutes(blocksToPlainText(blocks) || post.body)} min read</span>
-    <span class="pill">댓글 ${commentCount("study", post.id)}</span>
+    ${studyCommentCount > 0 ? `<span class="pill">댓글 ${studyCommentCount}</span>` : ""}
   `;
   $("#study-post-body").innerHTML = renderSiteNarrativeBlocks(blocks);
   $("#study-comments").innerHTML = commentSectionMarkup("study", post.id);
   $("#study-related-links").innerHTML = related.length
     ? related
-        .map((item) => `<button class="action-btn" type="button" onclick="openStudyPost('${item.id}')">${escapeHtml(item.title)}</button>`)
+        .map((item) => `<a class="action-btn" href="#study/${escapeHtml(encodeURIComponent(String(item.id)))}" data-action="open-study-post" data-id="${escapeHtml(item.id)}">${escapeHtml(item.title)}</a>`)
         .join("")
     : `<span class="pill locked">같은 카테고리의 다른 글이 아직 없습니다.</span>`;
   $("#study-post-nav").innerHTML = `
-    ${previousPost ? `<button class="action-btn" type="button" onclick="openStudyPost('${previousPost.id}')">이전 글: ${escapeHtml(previousPost.title)}</button>` : ""}
-    ${nextPost ? `<button class="action-btn" type="button" onclick="openStudyPost('${nextPost.id}')">다음 글: ${escapeHtml(nextPost.title)}</button>` : ""}
+    ${previousPost ? `<a class="action-btn" href="#study/${escapeHtml(encodeURIComponent(String(previousPost.id)))}" data-action="open-study-post" data-id="${escapeHtml(previousPost.id)}">이전 글: ${escapeHtml(previousPost.title)}</a>` : ""}
+    ${nextPost ? `<a class="action-btn" href="#study/${escapeHtml(encodeURIComponent(String(nextPost.id)))}" data-action="open-study-post" data-id="${escapeHtml(nextPost.id)}">다음 글: ${escapeHtml(nextPost.title)}</a>` : ""}
   `;
   if (pushHistory) {
     history.pushState({ page: "study", postId: id, scroll: 0 }, "", `#study/${id}`);
@@ -1459,8 +1505,7 @@ function renderUpdates() {
   if (!visibleUpdates.length) {
     $("#updates-list").innerHTML = `
       <article class="empty-state">
-        <div class="empty-state-icon">◌</div>
-        <h3 class="empty-state-title">Empty</h3>
+        <p class="empty-state-title">아직 기록이 없습니다.</p>
       </article>
     `;
     return;
@@ -1468,8 +1513,8 @@ function renderUpdates() {
 
   $("#updates-list").innerHTML = visibleUpdates.map((item) => `
     <article class="timeline-item" id="update-${escapeHtml(item.id)}">
-      <h3 class="timeline-title">${escapeHtml(item.title)}</h3>
-      <div class="timeline-meta">${escapeHtml(item.date)} / ${escapeHtml(resolveCategoryLabel("update", item.category || "updates"))} / 댓글 ${commentCount("update", item.id)}</div>
+      <h2 class="timeline-title">${escapeHtml(item.title)}</h2>
+      <div class="timeline-meta">${escapeHtml(item.date)} / ${escapeHtml(resolveCategoryLabel("update", item.category || "updates"))}${commentCountSuffix("update", item.id)}</div>
       <p class="timeline-desc">${escapeHtml(item.desc)}</p>
       ${item.body ? `<div class="post-body">${renderSiteNarrativeBlocks(contentBlocks("update", item))}</div>` : ""}
       ${commentSectionMarkup("update", item.id)}
@@ -1478,36 +1523,24 @@ function renderUpdates() {
 }
 
 function renderContact() {
-  $("#contact-copy").textContent = "";
-  $("#contact-copy").hidden = true;
-  $("#contact-links").innerHTML = "";
-
   const rows = [
     { label: "EMAIL", value: content.contact.email, href: content.contact.email ? `mailto:${content.contact.email}` : "" },
     { label: "GITHUB", value: stripProtocol(content.contact.github), href: safeHref(content.contact.github) }
   ].filter((row) => row.value);
 
-  $("#contact-list").innerHTML = rows.map((row) => {
-    const value = row.href
-      ? `<a class="contact-value" href="${safeHref(row.href)}" ${safeExternalAttrs(safeHref(row.href))}>${escapeHtml(row.value)}</a>`
-      : `<span class="contact-value">${escapeHtml(row.value)}</span>`;
-    return `
-      <article class="card project-card contact-card">
-        <div class="project-card-topline">
-          <span class="mini-label">${escapeHtml(row.label)}</span>
-        </div>
-        <div class="card-top">
-          <h3 class="card-title project-card-title">${value}</h3>
-        </div>
-      </article>
-    `;
-  }).join("");
+  const sidebarContact = $("#sidebar-contact-links");
+  if (sidebarContact) {
+    sidebarContact.innerHTML = rows.map((row) => {
+      const href = safeHref(row.href);
+      return `<a href="${escapeHtml(href)}" ${safeExternalAttrs(href)}><span>${escapeHtml(row.label)}</span><span aria-hidden="true">↗</span></a>`;
+    }).join("");
+  }
 }
 
 function renderFooter() {
   const node = $("#footer-copy");
   if (!node) return;
-  node.textContent = "";
+  node.textContent = normalizeText(content.footer, defaultContent.footer);
 }
 
 class HomePageRenderer {
@@ -1560,11 +1593,11 @@ class PublicPageController {
     sanitizeStateAgainstContent();
     this.home.render();
     this.portfolio.render();
-    syncCosmosItems();
     this.study.render(currentStudyCategory);
     this.moments.render();
     this.contact.render();
     this.footer.render();
+    updatePublicNavVisibility();
     if ($("#page-admin")) {
       renderAdmin();
     }
@@ -1599,9 +1632,17 @@ function formatLinksForTextarea(links) {
   return links.map((link) => `${link.label}|${link.href}`).join("\n");
 }
 
-function renderSiteNarrativeBlocks(blocks) {
+function renderSiteNarrativeBlocks(blocks, options = {}) {
   const normalized = normalizeEditorBlocks(blocks, { prefix: "render-block" });
   if (!normalized.length) return "";
+  const rootSectionHeadingLevel = options.rootSectionHeadingLevel === 2 ? 2 : 3;
+
+  function postBlockTitleMarkup(block, title, fallback = "") {
+    const value = normalizeText(title, fallback);
+    if (!value) return "";
+    const level = rootSectionHeadingLevel === 2 && (Number(block?.indent) || 0) === 0 ? 2 : 3;
+    return `<h${level} class="post-block-title">${escapeHtml(value)}</h${level}>`;
+  }
 
   function renderNarrativeRange(startIndex, baseIndent) {
     let html = "";
@@ -1639,12 +1680,12 @@ function renderSiteNarrativeBlocks(blocks) {
     };
   }
 
-  function renderLinkCard({ label, title, url, body = "" }, childHtml = "") {
+  function renderLinkCard({ label, title, url, body = "", block = null }, childHtml = "") {
     const href = safeHref(url);
     const nestedMarkup = childHtml ? `<div class="post-block-children">${childHtml}</div>` : "";
     const cardBody = `
       <div class="mini-label">${escapeHtml(label)}</div>
-      ${title ? `<h3 class="post-block-title">${escapeHtml(title)}</h3>` : ""}
+      ${postBlockTitleMarkup(block, title)}
       <div class="post-block-bookmark-url">${escapeHtml(url || "")}</div>
       ${body ? `<div class="post-block-body">${richTextParagraphMarkup(body)}</div>` : ""}
     `;
@@ -1702,7 +1743,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "todo") {
       return `
         <section class="post-block">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <ul class="post-block-list post-block-todo-list">
             ${block.items.map((item) => `
               <li class="post-block-todo-item ${item.checked ? "done" : ""}">
@@ -1718,7 +1759,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "numbered") {
       return `
         <section class="post-block">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <ol class="post-block-list post-block-numbered-list">
             ${block.items.map((item) => `<li>${escapeHtml(item.text)}</li>`).join("")}
           </ol>
@@ -1731,7 +1772,8 @@ function renderSiteNarrativeBlocks(blocks) {
         label: "Bookmark",
         title: block.title,
         url: block.href,
-        body: block.body
+        body: block.body,
+        block
       }, childHtml);
     }
     if (block.kind === "image") {
@@ -1741,7 +1783,7 @@ function renderSiteNarrativeBlocks(blocks) {
           ${src
             ? `<img class="post-block-image-media" src="${escapeHtml(src)}" alt="${escapeHtml(block.title || block.caption || "Image")}" loading="lazy" decoding="async">`
             : `<div class="post-block-bookmark-card"><div class="mini-label">Image</div><div class="post-block-bookmark-url">${escapeHtml(block.url || "")}</div></div>`}
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           ${block.caption ? `<figcaption class="post-block-body">${escapeHtml(block.caption).replace(/\n/g, "<br>")}</figcaption>` : ""}
           ${nestedMarkup}
         </figure>
@@ -1753,7 +1795,7 @@ function renderSiteNarrativeBlocks(blocks) {
         <section class="post-block post-block-file">
           <div class="post-block-bookmark-card">
             <div class="mini-label">File</div>
-            ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : `<h3 class="post-block-title">파일</h3>`}
+            ${postBlockTitleMarkup(block, block.title, "파일")}
             ${block.description ? `<div class="post-block-body">${escapeHtml(block.description).replace(/\n/g, "<br>")}</div>` : ""}
             ${href && href !== "#"
               ? `<a class="action-btn" href="${href}" ${safeExternalAttrs(href)}>${escapeHtml(block.title || "파일 열기")}</a>`
@@ -1770,7 +1812,8 @@ function renderSiteNarrativeBlocks(blocks) {
           label: "Embed",
           title: "임베드 링크",
           url: block.url,
-          body: block.caption
+          body: block.caption,
+          block
         }, childHtml);
       }
       return `
@@ -1794,7 +1837,7 @@ function renderSiteNarrativeBlocks(blocks) {
       return `
         <section class="post-block ${block.tone === "accent" ? "accent" : ""}">
           ${block.kicker ? `<div class="mini-label">${escapeHtml(block.kicker)}</div>` : ""}
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <div class="post-block-body">${richTextParagraphMarkup(block.body)}</div>
           ${nestedMarkup}
         </section>
@@ -1803,7 +1846,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "bullets") {
       return `
         <section class="post-block">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <ul class="post-block-list">
             ${block.items.map((item) => `<li>${escapeHtml(item.text)}</li>`).join("")}
           </ul>
@@ -1825,7 +1868,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "callout") {
       return `
         <section class="post-block post-block-callout">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <div class="post-block-body">${richTextParagraphMarkup(block.body)}</div>
           ${nestedMarkup}
         </section>
@@ -1834,7 +1877,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "code") {
       return `
         <section class="post-block post-block-code">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <pre class="post-block-code-pre"><code>${escapeHtml(block.body || "")}</code></pre>
           ${nestedMarkup}
         </section>
@@ -1843,7 +1886,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "links" || block.kind === "showcase") {
       return `
         <section class="post-block">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <div class="links">
             ${block.items.map((item) => `<a class="action-btn" href="${safeHref(item.href)}" ${safeExternalAttrs(safeHref(item.href))}>${escapeHtml(item.label)}</a>`).join("")}
           </div>
@@ -1854,7 +1897,7 @@ function renderSiteNarrativeBlocks(blocks) {
     if (block.kind === "facts") {
       return `
         <section class="post-block">
-          ${block.title ? `<h3 class="post-block-title">${escapeHtml(block.title)}</h3>` : ""}
+          ${postBlockTitleMarkup(block, block.title)}
           <div class="post-facts-grid">
             ${block.items.map((item) => `
               <article class="post-fact-chip">
@@ -1881,7 +1924,6 @@ function renderAdminSiteForm() {
 }
 
 function renderAdminContactForm() {
-  fillAdminField("admin-contact-copy", content.contact.copy);
   fillAdminField("admin-contact-email", content.contact.email);
   fillAdminField("admin-contact-github", content.contact.github);
   renderAdminContactPreview();
@@ -1900,14 +1942,9 @@ function renderAdminSitePreview(values = {}) {
 }
 
 function renderAdminContactPreview(values = {}) {
-  const copy = normalizeText(values.copy ?? $("#admin-contact-copy")?.value, content.contact.copy || "");
   const email = normalizeText(values.email ?? $("#admin-contact-email")?.value, content.contact.email || defaultContent.contact.email);
   const github = normalizeText(values.github ?? $("#admin-contact-github")?.value, content.contact.github || defaultContent.contact.github);
-  const copyNode = $("#admin-contact-preview-copy");
   const linksNode = $("#admin-contact-preview-links");
-  if (copyNode) {
-    copyNode.textContent = copy || "문의나 제안이 들어왔을 때 먼저 보이는 문구를 여기서 자연스럽게 다듬을 수 있습니다.";
-  }
   if (linksNode) {
     const chips = [
       email ? `<span class="pill">${escapeHtml(email)}</span>` : "",
@@ -1964,7 +2001,7 @@ function renderAdminContentFilters() {
   if (statusNode) {
     statusNode.innerHTML = statusFilters.map((f) => `
       <button class="tab-btn ${f.id === adminState.contentFilterStatus ? "active" : ""}"
-        type="button" onclick="setAdminContentStatusFilter('${f.id}')">
+        type="button" data-action="set-admin-content-status-filter" data-status="${escapeHtml(f.id)}">
         ${escapeHtml(f.label)}
       </button>
     `).join("");
@@ -1973,7 +2010,7 @@ function renderAdminContentFilters() {
   if (sectionNode) {
     sectionNode.innerHTML = sectionFilters.map((f) => `
       <button class="tab-btn ${f.id === adminState.contentFilterSection ? "active" : ""}"
-        type="button" onclick="setAdminContentSectionFilter('${f.id}')">
+        type="button" data-action="set-admin-content-section-filter" data-section="${escapeHtml(f.id)}">
         ${escapeHtml(f.label)}
       </button>
     `).join("");
@@ -2000,7 +2037,7 @@ function renderAdminContentFilters() {
     if (categoryWrap) categoryWrap.hidden = categoryFilters.length <= 1;
     categoryNode.innerHTML = categoryFilters.map((filter) => `
       <button class="tab-btn ${filter.id === adminState.contentFilterCategory ? "active" : ""}"
-        type="button" onclick="setAdminContentCategoryFilter('${filter.id}')">
+        type="button" data-action="set-admin-content-category-filter" data-category="${escapeHtml(filter.id)}">
         ${escapeHtml(filter.label)}
       </button>
     `).join("");
@@ -2034,11 +2071,11 @@ function renderAdminContentList() {
       <span>페이지 ${items.length}</span>
       <span class="admin-list-view-switch" aria-label="보기 방식">
         ${views.map((view) => `
-          <button class="tab-btn ${adminState.contentListView === view ? "active" : ""}" type="button" onclick="setAdminContentListView('${view}')">${escapeHtml({
-            list: "List",
-            table: "Table",
-            gallery: "Gallery",
-            board: "Board"
+          <button class="tab-btn ${adminState.contentListView === view ? "active" : ""}" type="button" data-action="set-admin-content-list-view" data-view="${escapeHtml(view)}">${escapeHtml({
+            list: "목록",
+            table: "표",
+            gallery: "갤러리",
+            board: "보드"
           }[view])}</button>
         `).join("")}
       </span>
@@ -2054,24 +2091,26 @@ function renderAdminContentList() {
   }
 
   const actionFor = (item) => isTrash
-    ? `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지 복원" title="복원" onclick="event.stopPropagation(); restoreContentItem('${item.type}', '${item.id}')">복원</button>`
-    : `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지를 휴지통으로 이동" title="휴지통" onclick="event.stopPropagation(); moveToTrash('${item.type}', '${item.id}')">휴지통</button>`;
+    ? `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지 복원" title="복원" data-action="restore-content-item" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">복원</button>`
+    : `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지를 휴지통으로 이동" title="휴지통" data-action="move-to-trash" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">휴지통</button>`;
   const selectedClass = (item) => adminState.contentEditId === item.id && adminState.contentEditType === item.type ? "selected" : "";
   const renderListRow = (item) => {
     const statusMeta = adminStatusMeta(item.status);
     const subcopy = [item.categoryLabel].filter(Boolean).join(" · ");
     return `
-      <button class="admin-page-row ${selectedClass(item)}" type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
-        <span class="admin-page-row-icon">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
-        <span class="admin-page-row-body">
-          <div class="admin-page-row-topline">
-            <strong>${escapeHtml(item.title)}</strong>
-            <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
-          </div>
-          <span>${escapeHtml(subcopy)}</span>
-        </span>
+      <div class="admin-page-row ${selectedClass(item)}">
+        <button class="admin-page-row-open" type="button" aria-label="${escapeHtml(item.title)} 편집" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+          <span class="admin-page-row-icon">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
+          <span class="admin-page-row-body">
+            <span class="admin-page-row-topline">
+              <strong>${escapeHtml(item.title)}</strong>
+              <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
+            </span>
+            <span>${escapeHtml(subcopy)}</span>
+          </span>
+        </button>
         <span class="admin-page-row-meta">${actionFor(item)}</span>
-      </button>
+      </div>
     `;
   };
 
@@ -2084,14 +2123,16 @@ function renderAdminContentList() {
         ${items.map((item) => {
           const statusMeta = adminStatusMeta(item.status);
           return `
-            <button class="admin-db-row ${selectedClass(item)}" type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
-              <span class="admin-db-title"><span>${escapeHtml(item.icon || defaultPageIcon(item.type))}</span><strong>${escapeHtml(item.title)}</strong></span>
-              <span>${escapeHtml(contentTypeMeta(item.type).label)}</span>
-              <span>${escapeHtml(item.categoryLabel || "")}</span>
-              <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
-              <span>${escapeHtml(formatContentTimestamp(item.date, ""))}</span>
+            <div class="admin-db-row ${selectedClass(item)}">
+              <button class="admin-db-row-open" type="button" aria-label="${escapeHtml(item.title)} 편집" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+                <span class="admin-db-title"><span>${escapeHtml(item.icon || defaultPageIcon(item.type))}</span><strong>${escapeHtml(item.title)}</strong></span>
+                <span>${escapeHtml(contentTypeMeta(item.type).label)}</span>
+                <span>${escapeHtml(item.categoryLabel || "")}</span>
+                <span class="admin-status-badge status-${escapeHtml(statusMeta.tone)}">${escapeHtml(statusMeta.label)}</span>
+                <span>${escapeHtml(formatContentTimestamp(item.date, ""))}</span>
+              </button>
               <span class="admin-db-actions">${actionFor(item)}</span>
-            </button>
+            </div>
           `;
         }).join("")}
       </div>
@@ -2106,7 +2147,7 @@ function renderAdminContentList() {
           const statusMeta = adminStatusMeta(item.status);
           return `
             <article class="admin-page-gallery-card ${selectedClass(item)}">
-              <button type="button" onclick="startContentDraft('${item.type}', '${item.id}')">
+              <button type="button" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
                 <span class="admin-page-gallery-cover cover-${escapeHtml(item.cover || defaultPageCover(item.type))}">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
                 <strong>${escapeHtml(item.title)}</strong>
                 <span>${escapeHtml(item.categoryLabel || contentTypeMeta(item.type).label)}</span>
@@ -2195,35 +2236,35 @@ function renderAdminPagePropertiesInline() {
   node.innerHTML = `
     <label class="admin-page-property-select admin-page-property-compact">
       <span class="admin-page-property-key">아이콘</span>
-      <input class="admin-page-property-input" value="${escapeHtml(icon)}" maxlength="4" oninput="changeAdminProperty('icon', this.value)">
+      <input class="admin-page-property-input" value="${escapeHtml(icon)}" maxlength="4" data-input-action="change-admin-property" data-property-key="icon">
     </label>
     <label class="admin-page-property-select admin-page-property-compact">
       <span class="admin-page-property-key">커버</span>
-      <select class="admin-page-property-input" onchange="changeAdminProperty('cover', this.value)">
+      <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="cover">
         ${coverOptions}
       </select>
     </label>
     <label class="admin-page-property-select">
       <span class="admin-page-property-key">그룹</span>
-      <select class="admin-page-property-input" onchange="changeAdminProperty('section', this.value)">
+      <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="section">
         ${sectionOptions}
       </select>
     </label>
     <label class="admin-page-property-select">
       <span class="admin-page-property-key">카테고리</span>
-      <select class="admin-page-property-input" onchange="changeAdminProperty('category', this.value)">
+      <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="category">
         ${categoryOptions}
       </select>
     </label>
     <label class="admin-page-property-select admin-page-property-compact">
       <span class="admin-page-property-key">상태</span>
-      <select class="admin-page-property-input" onchange="changeAdminProperty('status', this.value)">
+      <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="status">
         ${statusOptions}
       </select>
     </label>
     <label class="admin-page-property-select">
       <span class="admin-page-property-key">날짜</span>
-      <input class="admin-page-property-input" value="${escapeHtml(date)}" oninput="changeAdminProperty('date', this.value)">
+      <input class="admin-page-property-input" value="${escapeHtml(date)}" data-input-action="change-admin-property" data-property-key="date">
     </label>
   `;
 }
@@ -2289,11 +2330,27 @@ function adminPropertyMenuConfig(key = "section") {
 }
 
 function renderAdminPageChrome() {
+  ensureAdminHistoryState();
   const section = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
   const icon = currentAdminIconValue(section);
   const iconTrigger = $("#admin-page-icon-trigger");
+  const previewToggle = $("#admin-preview-toggle");
+  const historyToggle = $("#admin-history-toggle");
+  const undoButton = $("#admin-undo-btn");
+  const redoButton = $("#admin-redo-btn");
 
   if (iconTrigger) iconTrigger.textContent = icon;
+  if (previewToggle) {
+    const isOpen = adminState.previewOpen !== false;
+    previewToggle.setAttribute("aria-pressed", isOpen ? "true" : "false");
+    previewToggle.classList.toggle("active", isOpen);
+  }
+  if (historyToggle) {
+    historyToggle.setAttribute("aria-pressed", adminState.historyOpen ? "true" : "false");
+    historyToggle.classList.toggle("active", adminState.historyOpen);
+  }
+  if (undoButton) undoButton.disabled = adminState.undoStack.length < 2;
+  if (redoButton) redoButton.disabled = adminState.redoStack.length === 0;
 
   renderAdminIconPicker();
 }
@@ -2303,7 +2360,7 @@ function renderAdminIconPicker() {
   if (!node) return;
   const current = currentAdminIconValue();
   node.innerHTML = ADMIN_PAGE_ICON_OPTIONS.map((icon) => `
-    <button class="admin-icon-option ${icon === current ? "active" : ""}" type="button" onclick="setAdminPageIcon('${icon}')">${escapeHtml(icon)}</button>
+    <button class="admin-icon-option ${icon === current ? "active" : ""}" type="button" data-action="set-admin-page-icon" data-icon="${escapeHtml(icon)}">${escapeHtml(icon)}</button>
   `).join("");
 }
 
@@ -2349,7 +2406,7 @@ function renderAdminPanelTabs() {
     <button
       class="admin-tab ${tab.id === adminState.activePanel ? "active" : ""}"
       type="button"
-      onclick="setAdminPanel('${tab.id}')"
+      data-action="set-admin-panel" data-panel="${escapeHtml(tab.id)}"
     >
       <span class="admin-tab-icon">${escapeHtml(tab.icon)}</span>
       <span class="admin-tab-label">${escapeHtml(tab.label)}</span>
@@ -3150,7 +3207,7 @@ class AdminBlockEditorController {
         <div class="admin-block-head">
           <div class="admin-block-head-copy">
             <div class="admin-block-kind-meta">
-              <button class="admin-block-kind-chip" type="button" onclick="openAdminSlashMenu(${index}, 'body', this, 'convert')" aria-label="Change block type">
+              <button class="admin-block-kind-chip" type="button" data-action="open-admin-slash-menu" data-index="${index}" data-field="body" data-mode="convert" aria-label="Change block type">
                 ${escapeHtml(blockKindLabel(block.kind))}
               </button>
               ${hasChildren ? `<div class="admin-block-tree-meta">${block.collapsed ? `${descendantCount} hidden` : `${descendantCount} nested`}</div>` : ""}
@@ -3160,9 +3217,9 @@ class AdminBlockEditorController {
       `;
 
       const side = `
-        <button class="admin-block-add-btn" type="button" data-open-insert-menu="true" onclick="openAdminInsertMenu(${index}, this)" aria-label="아래에 블록 추가">+</button>
+        <button class="admin-block-add-btn" type="button" data-open-insert-menu="true" data-action="open-admin-insert-menu" data-index="${index}" aria-label="아래에 블록 추가">+</button>
         <div class="admin-block-side">
-          ${hasChildren ? `<button class="admin-block-side-btn ${block.collapsed ? "active" : ""}" type="button" onclick="toggleAdminBlockCollapse(${index})" aria-label="자식 블록 접기">${block.collapsed ? "▸" : "▾"}</button>` : `<span class="admin-block-side-spacer"></span>`}
+          ${hasChildren ? `<button class="admin-block-side-btn ${block.collapsed ? "active" : ""}" type="button" data-action="toggle-admin-block-collapse" data-index="${index}" aria-label="자식 블록 접기">${block.collapsed ? "▸" : "▾"}</button>` : `<span class="admin-block-side-spacer"></span>`}
           <button class="admin-block-handle" type="button" draggable="true" data-drag-block-index="${index}" data-open-block-menu="true" aria-label="블록 이동 및 메뉴">⋮⋮</button>
         </div>
       `;
@@ -4480,7 +4537,7 @@ class AdminInteractionController {
     node.innerHTML = kinds.map((kind) => {
       const meta = adminBlockKindMeta(kind.id);
       return `
-        <button class="admin-insert-item" type="button" onclick="selectAdminInsertKind('${kind.id}')">
+        <button class="admin-insert-item" type="button" data-action="select-admin-insert-kind" data-kind="${escapeHtml(kind.id)}">
           <span class="admin-insert-item-icon">${escapeHtml(meta.icon)}</span>
           <span class="admin-insert-item-body">
             <span class="admin-insert-item-title">${escapeHtml(kind.label)}</span>
@@ -4542,7 +4599,7 @@ class AdminInteractionController {
         <div class="admin-property-menu-head">${escapeHtml(config.title)}</div>
         <div class="admin-property-menu-body">
           <input class="admin-property-menu-input" id="admin-property-menu-input" type="text" value="${escapeHtml(config.value || "")}" placeholder="값 입력">
-          <button class="action-btn primary" type="button" onclick="applyAdminPropertyInput()">Apply</button>
+          <button class="action-btn primary" type="button" data-action="apply-admin-property-input">Apply</button>
         </div>
       `;
       requestAnimationFrame(() => $("#admin-property-menu-input")?.focus());
@@ -4554,7 +4611,7 @@ class AdminInteractionController {
         <div class="admin-property-menu-head">${escapeHtml(config.title)}</div>
         <div class="admin-property-menu-list">
           ${config.actions.map((item) => `
-            <button class="admin-property-item" type="button" onclick="selectAdminPropertyValue('${this.state.propertyMenu.key}', '${item.action}')">${escapeHtml(item.label)}</button>
+            <button class="admin-property-item" type="button" data-action="select-admin-property-value" data-property-key="${escapeHtml(this.state.propertyMenu.key)}" data-property-value="${escapeHtml(item.action)}">${escapeHtml(item.label)}</button>
           `).join("")}
         </div>
       `;
@@ -4571,10 +4628,10 @@ class AdminInteractionController {
 
     node.innerHTML = `
       <div class="admin-property-menu-head">${escapeHtml(config.title)}</div>
-      ${searchable ? `<input class="admin-property-menu-input" id="admin-property-menu-search" type="text" value="${escapeHtml(this.state.propertyMenu.query || "")}" placeholder="${escapeHtml(config.title)} 검색" oninput="updateAdminPropertyQuery(this.value)">` : ""}
+      ${searchable ? `<input class="admin-property-menu-input" id="admin-property-menu-search" type="text" value="${escapeHtml(this.state.propertyMenu.query || "")}" placeholder="${escapeHtml(config.title)} 검색" data-input-action="update-admin-property-query">` : ""}
       <div class="admin-property-menu-list">
         ${items.length ? items.map((item) => `
-          <button class="admin-property-item ${item.value === currentValue ? "active" : ""}" type="button" onclick="selectAdminPropertyValue('${this.state.propertyMenu.key}', '${item.value}')">${escapeHtml(item.label)}</button>
+          <button class="admin-property-item ${item.value === currentValue ? "active" : ""}" type="button" data-action="select-admin-property-value" data-property-key="${escapeHtml(this.state.propertyMenu.key)}" data-property-value="${escapeHtml(item.value)}">${escapeHtml(item.label)}</button>
         `).join("") : `<div class="admin-property-menu-empty">검색 결과가 없습니다.</div>`}
       </div>
     `;
@@ -4742,7 +4799,7 @@ class AdminInteractionController {
         <button
           class="admin-slash-item ${itemIndex === this.state.slashMenu.selectedIndex ? "active" : ""}"
           type="button"
-          onclick="selectAdminSlashKind('${kind.id}')"
+          data-action="select-admin-slash-kind" data-kind="${escapeHtml(kind.id)}"
         >
           <span class="admin-slash-item-icon">${escapeHtml(meta.icon)}</span>
           <span class="admin-slash-item-body">
@@ -4792,12 +4849,12 @@ class AdminInteractionController {
     node.style.top = `${this.state.formatMenu.top}px`;
     const linkNode = adminSelectionLinkNode();
     node.innerHTML = `
-      <button class="admin-format-btn" type="button" onmousedown="event.preventDefault()" onclick="applyAdminInlineFormat('bold')"><strong>B</strong></button>
-      <button class="admin-format-btn" type="button" onmousedown="event.preventDefault()" onclick="applyAdminInlineFormat('italic')"><em>I</em></button>
-      <button class="admin-format-btn" type="button" onmousedown="event.preventDefault()" onclick="applyAdminInlineFormat('code')"><code>{ }</code></button>
-      <button class="admin-format-btn" type="button" onmousedown="event.preventDefault()" onclick="applyAdminInlineFormat('link')">Link</button>
-      ${linkNode ? `<button class="admin-format-btn" type="button" onmousedown="event.preventDefault()" onclick="applyAdminInlineFormat('unlink')">Unlink</button>` : ""}
-      <button class="admin-format-btn" type="button" onmousedown="event.preventDefault()" onclick="applyAdminInlineFormat('clear')">Clear</button>
+      <button class="admin-format-btn" type="button" data-prevent-mousedown="true" data-action="apply-admin-inline-format" data-format="bold"><strong>B</strong></button>
+      <button class="admin-format-btn" type="button" data-prevent-mousedown="true" data-action="apply-admin-inline-format" data-format="italic"><em>I</em></button>
+      <button class="admin-format-btn" type="button" data-prevent-mousedown="true" data-action="apply-admin-inline-format" data-format="code"><code>{ }</code></button>
+      <button class="admin-format-btn" type="button" data-prevent-mousedown="true" data-action="apply-admin-inline-format" data-format="link">Link</button>
+      ${linkNode ? `<button class="admin-format-btn" type="button" data-prevent-mousedown="true" data-action="apply-admin-inline-format" data-format="unlink">Unlink</button>` : ""}
+      <button class="admin-format-btn" type="button" data-prevent-mousedown="true" data-action="apply-admin-inline-format" data-format="clear">Clear</button>
     `;
   }
 
@@ -4857,7 +4914,7 @@ class AdminInteractionController {
         .filter((group) => group.items.length);
       node.innerHTML = `
         <div class="admin-context-head">
-          <button class="admin-context-back" type="button" onclick="openAdminBlockMenuActions()">←</button>
+          <button class="admin-context-back" type="button" data-action="open-admin-block-menu-actions">←</button>
           <div class="admin-context-head-copy">
             <strong>Turn into</strong>
             <span>${escapeHtml(blockKindLabel(current?.kind || ""))}</span>
@@ -4869,7 +4926,7 @@ class AdminInteractionController {
             ${group.items.map((kind) => {
               const meta = adminBlockKindMeta(kind.id);
               return `
-                <button class="admin-context-item ${current?.kind === kind.id ? "active" : ""}" type="button" onclick="selectAdminBlockMenuKind('${kind.id}')">
+                <button class="admin-context-item ${current?.kind === kind.id ? "active" : ""}" type="button" data-action="select-admin-block-menu-kind" data-kind="${escapeHtml(kind.id)}">
                   <span class="admin-context-icon">${escapeHtml(meta.icon)}</span>
                   <span>${escapeHtml(kind.label)}</span>
                 </button>
@@ -4882,20 +4939,20 @@ class AdminInteractionController {
     }
     node.innerHTML = `
       <div class="admin-context-group">
-        <button class="admin-context-item" type="button" onclick="openAdminBlockTurnIntoMenu()"><span class="admin-context-icon">⇄</span><span>Turn into</span></button>
+        <button class="admin-context-item" type="button" data-action="open-admin-block-turn-into-menu"><span class="admin-context-icon">⇄</span><span>Turn into</span></button>
       </div>
       <div class="admin-context-group">
-        <button class="admin-context-item" type="button" onclick="copyAdminBlocks(${index})"><span class="admin-context-icon">⎘</span><span>복사 ${selectedCount > 1 ? `(${selectedCount})` : ""}</span></button>
-        <button class="admin-context-item" type="button" onclick="pasteAdminBlocks(${index})"><span class="admin-context-icon">⤵</span><span>아래에 붙여넣기</span></button>
-        <button class="admin-context-item" type="button" onclick="duplicateAdminBlock(${index})"><span class="admin-context-icon">⧉</span><span>복제</span></button>
+        <button class="admin-context-item" type="button" data-action="copy-admin-blocks" data-index="${index}"><span class="admin-context-icon">⎘</span><span>복사 ${selectedCount > 1 ? `(${selectedCount})` : ""}</span></button>
+        <button class="admin-context-item" type="button" data-action="paste-admin-blocks" data-index="${index}"><span class="admin-context-icon">⤵</span><span>아래에 붙여넣기</span></button>
+        <button class="admin-context-item" type="button" data-action="duplicate-admin-block" data-index="${index}"><span class="admin-context-icon">⧉</span><span>복제</span></button>
       </div>
       <div class="admin-context-group">
-        <button class="admin-context-item" type="button" onclick="indentAdminBlocks(${index}, 1)"><span class="admin-context-icon">→</span><span>들여쓰기</span></button>
-        <button class="admin-context-item" type="button" onclick="indentAdminBlocks(${index}, -1)"><span class="admin-context-icon">←</span><span>내어쓰기</span></button>
-        <button class="admin-context-item" type="button" onclick="toggleAdminBlockCollapse(${index})"><span class="admin-context-icon">▾</span><span>접기/펼치기</span></button>
+        <button class="admin-context-item" type="button" data-action="indent-admin-blocks" data-index="${index}" data-delta="1"><span class="admin-context-icon">→</span><span>들여쓰기</span></button>
+        <button class="admin-context-item" type="button" data-action="indent-admin-blocks" data-index="${index}" data-delta="-1"><span class="admin-context-icon">←</span><span>내어쓰기</span></button>
+        <button class="admin-context-item" type="button" data-action="toggle-admin-block-collapse" data-index="${index}"><span class="admin-context-icon">▾</span><span>접기/펼치기</span></button>
       </div>
       <div class="admin-context-group">
-        <button class="admin-context-item danger" type="button" onclick="removeAdminBlock(${index})"><span class="admin-context-icon">×</span><span>삭제</span></button>
+        <button class="admin-context-item danger" type="button" data-action="remove-admin-block" data-index="${index}"><span class="admin-context-icon">×</span><span>삭제</span></button>
       </div>
     `;
   }
@@ -5716,7 +5773,6 @@ class AdminInteractionController {
     }
     if (target?.closest?.("#admin-contact-form")) {
       renderAdminContactPreview({
-        copy: $("#admin-contact-copy")?.value,
         email: $("#admin-contact-email")?.value,
         github: $("#admin-contact-github")?.value
       });
@@ -5791,7 +5847,6 @@ class AdminInteractionController {
     }
     if (event.target?.closest?.("#admin-contact-form")) {
       renderAdminContactPreview({
-        copy: $("#admin-contact-copy")?.value,
         email: $("#admin-contact-email")?.value,
         github: $("#admin-contact-github")?.value
       });
@@ -6167,19 +6222,22 @@ function renderAdminListEditor(kind = "bullets", items = [], options = {}) {
       ${rows.map((item, rowIndex) => `
         <div class="admin-list-row ${kind === "todo" && item.checked ? "checked" : ""}" data-list-row="true" data-row-index="${rowIndex}" data-checked="${item.checked ? "true" : "false"}">
           ${kind === "todo"
-            ? `<button class="admin-list-toggle" type="button" data-list-toggle="true" aria-label="Toggle to-do">${item.checked ? "☑" : "☐"}</button>`
+            ? `<button class="admin-list-toggle" type="button" data-list-toggle="true" aria-label="할 일 완료 상태 전환">${item.checked ? "☑" : "☐"}</button>`
             : kind === "numbered"
               ? `<span class="admin-list-marker">${rowIndex + 1}.</span>`
               : `<span class="admin-list-marker">•</span>`}
           <div
             class="admin-list-row-content"
             contenteditable="true"
+            role="textbox"
+            aria-label="${escapeHtml(placeholder)}"
+            aria-multiline="false"
             data-field="items"
             data-list-row-content="true"
             data-placeholder="${escapeHtml(placeholder)}"
-            spellcheck="false"
+            spellcheck="true"
           >${editableContentHtml(item.text)}</div>
-          <button class="admin-list-remove" type="button" data-list-remove="true" aria-label="Remove list item">×</button>
+          <button class="admin-list-remove" type="button" data-list-remove="true" aria-label="목록 항목 삭제">×</button>
         </div>
       `).join("")}
     </div>
@@ -6197,20 +6255,26 @@ function renderAdminFactEditor(items = [], options = {}) {
           <div
             class="admin-fact-cell admin-fact-label"
             contenteditable="true"
+            role="textbox"
+            aria-label="${escapeHtml(labelPlaceholder)}"
+            aria-multiline="false"
             data-field="items"
             data-fact-field="label"
             data-placeholder="${escapeHtml(labelPlaceholder)}"
-            spellcheck="false"
+            spellcheck="true"
           >${editableContentHtml(item.label)}</div>
           <div
             class="admin-fact-cell admin-fact-value"
             contenteditable="true"
+            role="textbox"
+            aria-label="${escapeHtml(valuePlaceholder)}"
+            aria-multiline="false"
             data-field="items"
             data-fact-field="value"
             data-placeholder="${escapeHtml(valuePlaceholder)}"
-            spellcheck="false"
+            spellcheck="true"
           >${editableContentHtml(item.value)}</div>
-          <button class="admin-fact-remove" type="button" data-fact-remove="true" aria-label="Remove fact item">×</button>
+          <button class="admin-fact-remove" type="button" data-fact-remove="true" aria-label="정보 항목 삭제">×</button>
         </div>
       `).join("")}
     </div>
@@ -6378,15 +6442,20 @@ function floatingMenuAnchorRect(target) {
 
 function renderAdminEditable(field, value, placeholder, className = "", options = {}) {
   const rich = options.rich === true;
+  const singleLine = ["title", "kicker", "href", "url"].includes(field);
+  const spellcheck = !["href", "url"].includes(field) && !className.includes("code");
   return `
     <div
       class="${`admin-editable ${className} ${rich ? "admin-editable-rich" : ""}`.trim()}"
       contenteditable="true"
+      role="textbox"
+      aria-label="${escapeHtml(placeholder)}"
+      aria-multiline="${singleLine ? "false" : "true"}"
       data-editable="true"
       ${rich ? 'data-rich-editable="true"' : ""}
       data-field="${escapeHtml(field)}"
       data-placeholder="${escapeHtml(placeholder)}"
-      spellcheck="false"
+      spellcheck="${spellcheck ? "true" : "false"}"
     >${rich ? sanitizeRichTextHtml(value) : editableContentHtml(value)}</div>
   `;
 }
@@ -6476,6 +6545,7 @@ function pushAdminUndoSnapshot(snapshot = adminSnapshotFromDom(), options = {}) 
   }
   if (options.clearRedo !== false) adminState.redoStack = [];
   if (options.persist !== false) saveAdminHistorySnapshot(snapshot);
+  renderAdminPageChrome();
 }
 
 function applyAdminSnapshot(snapshot, options = {}) {
@@ -6507,7 +6577,7 @@ function applyAdminSnapshot(snapshot, options = {}) {
   } finally {
     adminState.suppressHistory = false;
   }
-  if (options.dirty !== false) setAdminStatus("Edited");
+  if (options.dirty !== false) setAdminStatus("변경사항 있음");
 }
 
 function loadAdminHistoryStore() {
@@ -6620,6 +6690,7 @@ function toggleAdminPreview() {
   ensureAdminHistoryState();
   adminState.previewOpen = !adminState.previewOpen;
   renderAdminPreviewPane();
+  renderAdminPageChrome();
 }
 
 function renderAdminHistoryPanel() {
@@ -6635,7 +6706,7 @@ function renderAdminHistoryPanel() {
   panel.hidden = false;
   panel.innerHTML = snapshots.length
     ? snapshots.map((snapshot, index) => `
-      <button class="admin-history-item" type="button" onclick="restoreAdminHistorySnapshot(${index})">
+      <button class="admin-history-item" type="button" data-action="restore-admin-history-snapshot" data-index="${index}">
         <strong>${escapeHtml(snapshot.title || "제목 없음")}</strong>
         <span>${escapeHtml(new Date(snapshot.savedAt || Date.now()).toLocaleString())}</span>
       </button>
@@ -6649,6 +6720,7 @@ function toggleAdminHistory() {
   adminState.historyOpen = !adminState.historyOpen;
   loadAdminHistorySnapshots();
   renderAdminHistoryPanel();
+  renderAdminPageChrome();
 }
 
 function restoreAdminHistorySnapshot(index) {
@@ -7337,7 +7409,7 @@ function renderAdminTaxonomy() {
       const groupCategories = categoryDefinitions(group);
       const structureMarkup = groupCategories.length
         ? groupCategories.map((definition) => `
-          <button class="admin-taxonomy-structure-chip ${adminState.taxonomyCategoryEditKey === `${definition.group}:${definition.id}` ? "selected" : ""}" type="button" onclick="startCategoryDraft('${definition.group}:${definition.id}')">
+          <button class="admin-taxonomy-structure-chip ${adminState.taxonomyCategoryEditKey === `${definition.group}:${definition.id}` ? "selected" : ""}" type="button" data-action="start-category-draft" data-key="${escapeHtml(`${definition.group}:${definition.id}`)}">
             ${escapeHtml(definition.label)}
           </button>
         `).join("")
@@ -7347,14 +7419,14 @@ function renderAdminTaxonomy() {
           const selected = adminState.taxonomyCategoryEditKey === `${definition.group}:${definition.id}`;
           return `
             <article class="admin-taxonomy-row ${selected ? "selected" : ""}">
-              <button class="admin-taxonomy-row-main" type="button" onclick="startCategoryDraft('${definition.group}:${definition.id}')">
+              <button class="admin-taxonomy-row-main" type="button" data-action="start-category-draft" data-key="${escapeHtml(`${definition.group}:${definition.id}`)}">
                 <span class="admin-taxonomy-row-copy">
                   <strong>${escapeHtml(definition.label)}</strong>
                   <span>${categoryUsageCount(definition.group, definition.id)}개 페이지</span>
                 </span>
               </button>
               <span class="admin-taxonomy-row-actions">
-                <button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="카테고리 삭제" title="삭제" onclick="deleteCategoryDefinition('${definition.group}', '${definition.id}')">삭제</button>
+                <button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="카테고리 삭제" title="삭제" data-action="delete-category-definition" data-group="${escapeHtml(definition.group)}" data-id="${escapeHtml(definition.id)}">삭제</button>
               </span>
             </article>
           `;
@@ -7366,7 +7438,7 @@ function renderAdminTaxonomy() {
             <div>
               <h4 class="panel-title">${escapeHtml(groupMeta.label)}</h4>
             </div>
-            <button class="text-link admin-taxonomy-add-link" type="button" onclick="startCategoryDraft('', '${group}')">추가</button>
+            <button class="text-link admin-taxonomy-add-link" type="button" data-action="start-category-draft" data-group="${escapeHtml(group)}">추가</button>
           </div>
           <div class="admin-taxonomy-structure-line">
             <span class="admin-taxonomy-structure-group">${escapeHtml(groupMeta.label)}</span>
@@ -7534,17 +7606,25 @@ class AdminEditorController {
 
     syncAdminPageMetaFromDom();
     const titleInput = $("#admin-content-title");
+    const titleEditable = $("#admin-page-title-editable");
     const title = titleInput?.value.trim() || "";
     if (!title) {
-      titleInput?.classList.add("field-error");
-      titleInput?.focus();
-      showToast("Title required", "Please enter a title before publishing.");
-      titleInput?.addEventListener("input", () => titleInput.classList.remove("field-error"), { once: true });
+      titleEditable?.classList.add("field-error");
+      titleEditable?.setAttribute("aria-invalid", "true");
+      titleEditable?.focus();
+      showToast("제목 필요", "게시하기 전에 페이지 제목을 입력해 주세요.");
+      titleEditable?.addEventListener("input", () => {
+        titleEditable.classList.remove("field-error");
+        titleEditable.removeAttribute("aria-invalid");
+      }, { once: true });
       return;
     }
 
+    const form = $("#admin-content-form");
     const submitBtn = status === "published" ? $("#admin-content-submit") : $("#admin-content-draft");
     const topSubmitBtn = status === "published" ? $("#admin-content-submit-top") : $("#admin-content-draft-top");
+    form?.setAttribute("aria-busy", "true");
+    setAdminStatus("저장 중…");
     if (submitBtn) submitBtn.disabled = true;
     if (topSubmitBtn) topSubmitBtn.disabled = true;
 
@@ -7569,10 +7649,11 @@ class AdminEditorController {
       adminState.contentEditId = nextItem.id;
 
       renderAdminContentList();
-      const label = status === "draft" ? "Draft saved" : "Published";
-      await persistContent(label, label, status === "draft" ? "Saved as draft." : "Content published.", label);
+      const label = status === "draft" ? "임시저장됨" : "게시됨";
+      await persistContent(label, label, status === "draft" ? "페이지를 임시저장했습니다." : "페이지를 게시했습니다.", label);
       saveAdminHistorySnapshot(adminSnapshotFromDom());
     } finally {
+      form?.removeAttribute("aria-busy");
       if (submitBtn) submitBtn.disabled = false;
       if (topSubmitBtn) topSubmitBtn.disabled = false;
     }
@@ -7993,7 +8074,9 @@ async function requestAdminOtp() {
       "인증번호 발송",
       payload.deliveryMode === "smtp"
         ? "인증번호를 보냈습니다."
-        : "SMTP 미설정 상태라 인증번호가 서버 로그에 출력됩니다.",
+        : payload.deliveryMode === "console"
+          ? "개발 모드라 인증번호가 서버 로그에 출력됩니다."
+          : "인증번호 발송 설정을 확인해 주세요.",
       "success"
     );
   } catch (error) {
@@ -8017,9 +8100,10 @@ async function verifyAdminOtp(event) {
       body: JSON.stringify({ code })
     });
     authState.applySessionPayload(payload);
+    await contentService.hydrate();
     fillAdminField("admin-otp-code", "");
     setAdminStatus("이메일 인증으로 로그인했습니다.");
-    renderAdmin();
+    renderAllContent();
     showToast("로그인 완료", "관리자 세션이 활성화되었습니다.", "success");
   } catch (error) {
     console.error(error);
@@ -8043,8 +8127,13 @@ async function logoutAdmin() {
     console.error(error);
   }
   authState.clear();
+  try {
+    await contentService.hydrate();
+  } catch (error) {
+    console.error(error);
+  }
   setAdminStatus("로그아웃했습니다.");
-  renderAdmin();
+  renderAllContent();
   showToast("로그아웃 완료", "관리자 세션을 종료했습니다.", "success");
 }
 
@@ -8169,7 +8258,7 @@ async function saveContactSettings(event) {
   event.preventDefault();
   if (!ensureAdminAuthenticated()) return;
   content.contact = normalizeContact({
-    copy: $("#admin-contact-copy").value,
+    copy: content.contact.copy,
     email: $("#admin-contact-email").value,
     github: $("#admin-contact-github").value
   });
@@ -8206,7 +8295,8 @@ async function handleContentImport(event) {
   try {
     const text = await file.text();
     const parsed = JSON.parse(text);
-    replaceContentData(parsed);
+    const nextContent = parsed?.content && typeof parsed.content === "object" ? parsed.content : parsed;
+    replaceContentData(nextContent);
     adminState.contentEditId = null;
     adminState.contentEditType = "portfolio";
     await saveContent("JSON 파일을 불러왔습니다.");
@@ -8226,7 +8316,8 @@ async function resetContentToDefault() {
   const confirmed = window.confirm("콘텐츠를 기본값으로 되돌릴까요? 현재 브라우저에 저장한 변경 내용은 지워집니다.");
   if (!confirmed) return;
   try {
-    const payload = await requestJson(CONTENT_RESET_API_URL, { method: "POST", body: JSON.stringify({}) });
+    const payload = await requestJson(ADMIN_CONTENT_RESET_API_URL, { method: "POST", body: JSON.stringify({}) });
+    if (payload.csrfToken) authState.csrfToken = payload.csrfToken;
     replaceContentData(payload.content || defaultContent);
     adminState.contentEditId = null;
     adminState.contentEditType = "portfolio";
@@ -8240,10 +8331,17 @@ async function resetContentToDefault() {
 
 async function init() {
   try {
-    await Promise.all([hydrateContentFromServer(), hydrateAuthSession(), hydrateCommentsFromServer()]);
+    await hydrateAuthSession();
   } catch (error) {
     console.error(error);
     authState.checked = true;
+    setAdminStatus("관리자 세션 확인에 실패했습니다. 공개 콘텐츠를 먼저 불러옵니다.");
+  }
+
+  try {
+    await Promise.all([hydrateContentFromServer(), hydrateCommentsFromServer()]);
+  } catch (error) {
+    console.error(error);
     setAdminStatus("서버 연결에 실패해 기본 콘텐츠로 시작합니다.");
   }
   sanitizeStateAgainstContent();
@@ -8257,11 +8355,11 @@ async function init() {
 
   renderHome();
   renderPortfolio();
-  syncCosmosItems();
   renderStudyPosts();
   renderUpdates();
   renderContact();
   renderFooter();
+  updatePublicNavVisibility();
   renderAdmin();
   saveState();
 
@@ -8270,7 +8368,7 @@ async function init() {
   const initialPage = ["portfolio", "study", "updates", "admin"].includes(hashPage) ? hashPage : "home";
 
   if (hashSubId && initialPage === "portfolio") {
-    const project = content.portfolio.find((p) => p.id === hashSubId);
+    const project = publishedPortfolio().find((p) => p.id === hashSubId);
     if (project) activePortfolioProjectId = hashSubId;
   }
 
@@ -8334,40 +8432,157 @@ window.addEventListener("popstate", (e) => {
   }
 });
 
-function updateCosmosSystemLabel() {
-  cosmosController.updateSystemLabel();
+function runDeclarativeHandler(handler, event, target) {
+  try {
+    const result = handler(target, event);
+    if (result && typeof result.catch === "function") {
+      result.catch((error) => {
+        console.error(error);
+        showToast("처리 실패", "요청을 처리하는 중 문제가 발생했습니다.");
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    showToast("처리 실패", "요청을 처리하는 중 문제가 발생했습니다.");
+  }
 }
 
-function setCosmosSystem(index) {
-  cosmosController.setSystem(index);
+const declarativeClickHandlers = {
+  "show-public-page": (target) => showPage(target.dataset.page || "home"),
+  "toggle-public-menu": () => togglePublicMenu(),
+  "close-portfolio-project": () => closePortfolioProject(),
+  "close-study-post": () => closeStudyPost(),
+  "request-admin-otp": () => requestAdminOtp(),
+  "start-content-draft": (target) => startContentDraft(target.dataset.type || undefined, target.dataset.id || undefined),
+  "toggle-admin-filter-panel": () => toggleAdminFilterPanel(),
+  "logout-admin": () => logoutAdmin(),
+  "toggle-admin-sidebar": () => toggleAdminSidebar(),
+  "toggle-admin-preview": () => toggleAdminPreview(),
+  "toggle-admin-history": () => toggleAdminHistory(),
+  "admin-undo": () => adminUndo(),
+  "admin-redo": () => adminRedo(),
+  "save-draft": () => saveDraft(),
+  "start-category-draft": (target) => startCategoryDraft(target.dataset.key || "", target.dataset.group || ""),
+  "toggle-comment-editor": (target) => toggleCommentEditor(target.dataset.commentId || ""),
+  "delete-comment": (target) => deleteComment(target.dataset.commentId || ""),
+  "open-home-feed-item": (target) => openHomeFeedItem(target.dataset.type || "", target.dataset.id || ""),
+  "set-portfolio-category": (target) => setPortfolioCategory(target.dataset.category || "all"),
+  "set-study-category": (target) => setStudyCategory(target.dataset.category || "all"),
+  "open-study-post": (target) => openStudyPost(target.dataset.id || ""),
+  "set-admin-content-status-filter": (target) => setAdminContentStatusFilter(target.dataset.status || "published"),
+  "set-admin-content-section-filter": (target) => setAdminContentSectionFilter(target.dataset.section || "all"),
+  "set-admin-content-category-filter": (target) => setAdminContentCategoryFilter(target.dataset.category || "all"),
+  "set-admin-content-list-view": (target) => setAdminContentListView(target.dataset.view || "list"),
+  "restore-content-item": (target) => restoreContentItem(target.dataset.type || "", target.dataset.id || ""),
+  "move-to-trash": (target) => moveToTrash(target.dataset.type || "", target.dataset.id || ""),
+  "set-admin-page-icon": (target) => setAdminPageIcon(target.dataset.icon || ""),
+  "set-admin-panel": (target) => setAdminPanel(target.dataset.panel || "content"),
+  "open-admin-slash-menu": (target) => openAdminSlashMenu(Number(target.dataset.index ?? -1), target.dataset.field || "body", target, target.dataset.mode || "convert"),
+  "open-admin-insert-menu": (target) => openAdminInsertMenu(Number(target.dataset.index ?? -1), target),
+  "toggle-admin-block-collapse": (target) => toggleAdminBlockCollapse(Number(target.dataset.index ?? -1)),
+  "select-admin-insert-kind": (target) => selectAdminInsertKind(target.dataset.kind || "paragraph"),
+  "apply-admin-property-input": () => applyAdminPropertyInput(),
+  "select-admin-property-value": (target) => selectAdminPropertyValue(target.dataset.propertyKey || "", target.dataset.propertyValue || ""),
+  "select-admin-slash-kind": (target) => selectAdminSlashKind(target.dataset.kind || "paragraph"),
+  "apply-admin-inline-format": (target) => applyAdminInlineFormat(target.dataset.format || "clear"),
+  "open-admin-block-menu-actions": () => openAdminBlockMenuActions(),
+  "select-admin-block-menu-kind": (target) => selectAdminBlockMenuKind(target.dataset.kind || "paragraph"),
+  "open-admin-block-turn-into-menu": () => openAdminBlockTurnIntoMenu(),
+  "copy-admin-blocks": (target) => copyAdminBlocks(Number(target.dataset.index ?? -1)),
+  "paste-admin-blocks": (target) => pasteAdminBlocks(Number(target.dataset.index ?? -1)),
+  "duplicate-admin-block": (target) => duplicateAdminBlock(Number(target.dataset.index ?? -1)),
+  "indent-admin-blocks": (target) => indentAdminBlocks(Number(target.dataset.index ?? -1), Number(target.dataset.delta ?? 0)),
+  "remove-admin-block": (target) => removeAdminBlock(Number(target.dataset.index ?? -1)),
+  "restore-admin-history-snapshot": (target) => restoreAdminHistorySnapshot(Number(target.dataset.index ?? -1)),
+  "delete-category-definition": (target) => deleteCategoryDefinition(target.dataset.group || "", target.dataset.id || ""),
+  "retry-save": () => retrySave(),
+  "dismiss-save-error": () => dismissSaveError()
+};
+
+const declarativeSubmitHandlers = {
+  "verify-admin-otp": (_target, event) => verifyAdminOtp(event),
+  "save-content-draft": (_target, event) => saveContentDraft(event),
+  "save-category-definition": (_target, event) => saveCategoryDefinition(event),
+  "save-site-settings": (_target, event) => saveSiteSettings(event),
+  "save-contact-settings": (_target, event) => saveContactSettings(event),
+  "submit-comment": (target, event) => submitComment(event, target.dataset.targetType || "", target.dataset.targetId || ""),
+  "update-comment": (target, event) => updateComment(event, target.dataset.commentId || "")
+};
+
+const declarativeInputHandlers = {
+  "set-admin-content-search": (target) => setAdminContentSearch(target.value),
+  "update-comment-count": (target) => updateCommentCount(target.dataset.commentKey || target.id.replace(/^comment-body-/, "")),
+  "change-admin-property": (target) => changeAdminProperty(target.dataset.propertyKey || "", target.value),
+  "update-admin-property-query": (target) => updateAdminPropertyQuery(target.value)
+};
+
+const declarativeChangeHandlers = {
+  "handle-content-type-change": () => handleContentTypeChange(),
+  "change-admin-property": (target) => changeAdminProperty(target.dataset.propertyKey || "", target.value)
+};
+
+function handleDeclarativeClick(event) {
+  const target = event.target.closest("[data-action]");
+  if (!target) return;
+  const handler = declarativeClickHandlers[target.dataset.action];
+  if (!handler) return;
+  event.preventDefault();
+  event.stopPropagation();
+  runDeclarativeHandler(handler, event, target);
 }
 
-function prevCosmosSystem() {
-  cosmosController.prevSystem();
+function handleDeclarativeSubmit(event) {
+  const target = event.target.closest("[data-submit-action]");
+  if (!target) return;
+  const handler = declarativeSubmitHandlers[target.dataset.submitAction];
+  if (!handler) return;
+  event.preventDefault();
+  runDeclarativeHandler(handler, event, target);
 }
 
-function nextCosmosSystem() {
-  cosmosController.nextSystem();
+function handleDeclarativeInput(event) {
+  const target = event.target.closest("[data-input-action]");
+  if (!target) return;
+  const handler = declarativeInputHandlers[target.dataset.inputAction];
+  if (!handler) return;
+  runDeclarativeHandler(handler, event, target);
 }
 
-window.addEventListener("scroll", function () {
-  cosmosState.scrollY = window.scrollY;
-}, { passive: true });
+function handleDeclarativeChange(event) {
+  const target = event.target.closest("[data-change-action]");
+  if (!target) return;
+  const handler = declarativeChangeHandlers[target.dataset.changeAction];
+  if (!handler) return;
+  runDeclarativeHandler(handler, event, target);
+}
+
+function handleDeclarativeMouseDown(event) {
+  const target = event.target.closest("[data-prevent-mousedown]");
+  if (!target) return;
+  event.preventDefault();
+}
 
 document.addEventListener("keydown", function (e) {
-  if (currentPage !== "home") return;
-  const tag = document.activeElement?.tagName?.toLowerCase();
-  if (tag === "input" || tag === "textarea" || tag === "select") return;
-  if (e.key === "ArrowLeft") {
+  if (e.defaultPrevented) return;
+  if (e.key === "Escape" && adminState.sidebarOpen) {
     e.preventDefault();
-    prevCosmosSystem();
-  } else if (e.key === "ArrowRight") {
+    closeAdminSidebar({ restoreFocus: true });
+    return;
+  }
+  if (e.key === "Escape" && $(".topbar")?.dataset.menuOpen === "true") {
     e.preventDefault();
-    nextCosmosSystem();
+    setPublicMenuOpen(false);
+    $(".public-menu-toggle")?.focus();
   }
 });
 
 adminInteractionController.bindEvents();
+document.addEventListener("click", handleDeclarativeClick, true);
+document.addEventListener("submit", handleDeclarativeSubmit, true);
+document.addEventListener("input", handleDeclarativeInput);
+document.addEventListener("change", handleDeclarativeChange);
+document.addEventListener("mousedown", handleDeclarativeMouseDown);
+ADMIN_DRAWER_MEDIA.addEventListener("change", renderAdminShellState);
 
 document.addEventListener("click", (event) => {
   const brand = event.target.closest(".brand");
@@ -8392,92 +8607,5 @@ document.addEventListener("click", (event) => {
 });
 
 window.showPage = showPage;
-window.inspectProject = inspectProject;
-window.openPortfolioProject = openPortfolioProject;
-window.closePortfolioProject = closePortfolioProject;
-window.openProjectLink = openProjectLink;
-window.prevCosmosSystem = prevCosmosSystem;
-window.nextCosmosSystem = nextCosmosSystem;
-window.selectSignalProject = selectSignalProject;
-window.openSignalProject = openSignalProject;
-window.openPortfolioSection = openPortfolioSection;
-window.selectCosmosOrbit = selectCosmosOrbit;
 window.setPortfolioCategory = setPortfolioCategory;
 window.setStudyCategory = setStudyCategory;
-window.openStudyPost = openStudyPost;
-window.closeStudyPost = closeStudyPost;
-window.exportContentJson = exportContentJson;
-window.triggerContentImport = triggerContentImport;
-window.handleContentImport = handleContentImport;
-window.resetContentToDefault = resetContentToDefault;
-window.saveSiteSettings = saveSiteSettings;
-window.saveContactSettings = saveContactSettings;
-window.startContentDraft = startContentDraft;
-window.handleContentTypeChange = handleContentTypeChange;
-window.saveContentDraft = saveContentDraft;
-window.saveDraft = saveDraft;
-window.adminUndo = adminUndo;
-window.adminRedo = adminRedo;
-window.toggleAdminPreview = toggleAdminPreview;
-window.toggleAdminHistory = toggleAdminHistory;
-window.restoreAdminHistorySnapshot = restoreAdminHistorySnapshot;
-window.addAdminBlock = addAdminBlock;
-window.insertAdminBlock = insertAdminBlock;
-window.openAdminInsertMenu = openAdminInsertMenu;
-window.openAdminInsertMenuAtEnd = openAdminInsertMenuAtEnd;
-window.selectAdminInsertKind = selectAdminInsertKind;
-window.openAdminBlockMenuActions = openAdminBlockMenuActions;
-window.openAdminBlockTurnIntoMenu = openAdminBlockTurnIntoMenu;
-window.selectAdminBlockMenuKind = selectAdminBlockMenuKind;
-window.copyAdminBlocks = copyAdminBlocks;
-window.pasteAdminBlocks = pasteAdminBlocks;
-window.toggleAdminBlockSelection = toggleAdminBlockSelection;
-window.toggleAdminBlockCollapse = toggleAdminBlockCollapse;
-window.duplicateAdminBlock = duplicateAdminBlock;
-window.indentAdminBlocks = indentAdminBlocks;
-window.applyAdminInlineFormat = applyAdminInlineFormat;
-window.selectAdminSlashKind = selectAdminSlashKind;
-window.setAdminBlockKind = setAdminBlockKind;
-window.moveAdminBlock = moveAdminBlock;
-window.removeAdminBlock = removeAdminBlock;
-window.deleteContentItem = deleteContentItem;
-window.moveToTrash = moveToTrash;
-window.restoreContentItem = restoreContentItem;
-window.permanentDeleteContentItem = permanentDeleteContentItem;
-window.dismissSaveError = dismissSaveError;
-window.retrySave = retrySave;
-window.startTypeDraft = startTypeDraft;
-window.startCategoryDraft = startCategoryDraft;
-window.saveTypeDefinition = saveTypeDefinition;
-window.saveCategoryDefinition = saveCategoryDefinition;
-window.deleteTypeDefinition = deleteTypeDefinition;
-window.deleteCategoryDefinition = deleteCategoryDefinition;
-window.setAdminContentSearch = setAdminContentSearch;
-window.setAdminContentListView = setAdminContentListView;
-window.setAdminContentTypeFilter = setAdminContentTypeFilter;
-window.setAdminContentSectionFilter = setAdminContentSectionFilter;
-window.setAdminContentCategoryFilter = setAdminContentCategoryFilter;
-window.setAdminContentStatusFilter = setAdminContentStatusFilter;
-window.toggleAdminPageGroup = toggleAdminPageGroup;
-window.toggleAdminProperties = toggleAdminProperties;
-window.toggleAdminSidebar = toggleAdminSidebar;
-window.toggleAdminFilterPanel = toggleAdminFilterPanel;
-window.editAdminProperty = editAdminProperty;
-window.selectAdminPropertyValue = selectAdminPropertyValue;
-window.applyAdminPropertyInput = applyAdminPropertyInput;
-window.updateAdminPropertyQuery = updateAdminPropertyQuery;
-window.toggleAdminIconPicker = toggleAdminIconPicker;
-window.setAdminPageIcon = setAdminPageIcon;
-window.changeAdminProperty = changeAdminProperty;
-window.applyAdminContentTemplate = applyAdminContentTemplate;
-window.duplicateAdminContentItem = duplicateAdminContentItem;
-window.setAdminPanel = setAdminPanel;
-window.requestAdminOtp = requestAdminOtp;
-window.verifyAdminOtp = verifyAdminOtp;
-window.logoutAdmin = logoutAdmin;
-window.openHomeFeedItem = openHomeFeedItem;
-window.submitComment = submitComment;
-window.toggleCommentEditor = toggleCommentEditor;
-window.updateComment = updateComment;
-window.deleteComment = deleteComment;
-window.updateCommentCount = updateCommentCount;

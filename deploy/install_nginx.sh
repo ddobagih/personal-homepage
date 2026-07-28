@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [ "${ALLOW_LEGACY_STATIC_INSTALL:-0}" != "1" ]; then
+  echo "legacy static nginx install is disabled; use deploy/install_node_stack.sh for the Node app" >&2
+  echo "set ALLOW_LEGACY_STATIC_INSTALL=1 only after operator confirmation" >&2
+  exit 2
+fi
+
 SITE_ROOT="/var/www/thecistus.com/current"
 REPO_DIR="${1:-$PWD}"
 CONFIG_SRC="$REPO_DIR/deploy/nginx.thecistus.com.conf"
