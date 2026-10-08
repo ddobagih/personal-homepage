@@ -133,6 +133,27 @@ function createAdminSession() {
   };
 }
 
+function adminContentHeaders(admin) {
+  return { Origin: "https://thecistus.com", Cookie: admin.cookie, "X-CSRF-Token": admin.csrfToken };
+}
+
+async function readAdminContent(admin) {
+  const response = await jsonFetch("/api/admin/content", { method: "GET", headers: { Cookie: admin.cookie } });
+  assert.equal(response.status, 200);
+  return response.json();
+}
+
+async function contentFiles() {
+  const files = new Map();
+  for (const name of ["content.json", ...Object.keys(sampleContent()).map((key) => `content/${key}.json`)]) {
+    files.set(name, await fs.readFile(path.join(tempDir, name), "utf8"));
+  }
+  let backups = [];
+  try { backups = await fs.readdir(path.join(tempDir, "backups")); } catch (error) { if (error.code !== "ENOENT") throw error; }
+  for (const name of backups) files.set(`backups/${name}`, await fs.readFile(path.join(tempDir, "backups", name), "utf8"));
+  return files;
+}
+
 test.beforeEach(async () => {
   await startServer();
 });
@@ -242,7 +263,8 @@ test("public content API returns only published content and strips admin metadat
   ];
   current.portfolio[0].links = [{ id: "link-one", label: "Link", href: "https://example.com", privateToken: adminOnlyValue }];
   current.taxonomy.types[0].adminOnly = adminOnlyValue;
-  await appServer.runtime.contentStore.writeCurrent(current);
+  const { revision } = await appServer.runtime.contentStore.readCurrentWithRevision();
+  await appServer.runtime.contentStore.writeCurrent(current, revision);
 
   const response = await jsonFetch("/api/content", { method: "GET" });
   assert.equal(response.status, 200);
@@ -275,6 +297,7 @@ test("public content API returns only published content and strips admin metadat
 });
 
 test("admin content API requires authentication, trusted origin, and CSRF for writes", async () => {
+  appServer.runtime.config.maxRequestBodyBytes = 1024 * 1024;
   const unauthRead = await jsonFetch("/api/admin/content", { method: "GET" });
   assert.equal(unauthRead.status, 401);
 
@@ -308,11 +331,114 @@ test("admin content API requires authentication, trusted origin, and CSRF for wr
   const ok = await jsonFetch("/api/admin/content", {
     method: "PUT",
     headers: { Origin: "https://thecistus.com", Cookie: admin.cookie, "X-CSRF-Token": admin.csrfToken },
-    body: JSON.stringify({ content: minimalContent() })
+    body: JSON.stringify({ content: minimalContent(), expectedRevision: (await readAdminContent(admin)).revision })
   });
   assert.equal(ok.status, 200);
   const payload = await ok.json();
   assert.equal(payload.csrfToken, admin.csrfToken);
+  assert.match(payload.revision, /^[a-f0-9]{64}$/);
+});
+
+test("admin content revision rejects missing and stale saves without changing files or backups", async () => {
+  appServer.runtime.config.maxRequestBodyBytes = 1024 * 1024;
+  const first = createAdminSession();
+  const second = createAdminSession();
+  const firstRead = await readAdminContent(first);
+  const secondRead = await readAdminContent(second);
+  assert.match(firstRead.revision, /^[a-f0-9]{64}$/);
+  assert.equal(firstRead.revision, secondRead.revision);
+  const initialFiles = await contentFiles();
+  for (const expectedRevision of [undefined, null, "", 1, "invalid"]) {
+    const missing = await jsonFetch("/api/admin/content", {
+      method: "PUT", headers: adminContentHeaders(first),
+      body: JSON.stringify({ content: firstRead.content, expectedRevision })
+    });
+    assert.equal(missing.status, 428);
+    assert.deepEqual(await missing.json(), { error: "Content revision is required" });
+  }
+  assert.deepEqual(await contentFiles(), initialFiles);
+  const changed = structuredClone(firstRead.content);
+  changed.portfolio[0].title = "First administrator's saved title";
+  const saved = await jsonFetch("/api/admin/content", {
+    method: "PUT", headers: adminContentHeaders(first),
+    body: JSON.stringify({ content: changed, expectedRevision: firstRead.revision })
+  });
+  assert.equal(saved.status, 200);
+  const savedPayload = await saved.json();
+  assert.notEqual(savedPayload.revision, firstRead.revision);
+  assert.equal(savedPayload.csrfToken, first.csrfToken);
+  const beforeStale = await contentFiles();
+  const staleContent = structuredClone(secondRead.content);
+  staleContent.portfolio[0].title = "Stale administrator must not overwrite";
+  const stale = await jsonFetch("/api/admin/content", {
+    method: "PUT", headers: adminContentHeaders(second),
+    body: JSON.stringify({ content: staleContent, expectedRevision: secondRead.revision })
+  });
+  assert.equal(stale.status, 409);
+  assert.deepEqual(await stale.json(), { error: "Content revision conflict" });
+  assert.deepEqual(await contentFiles(), beforeStale);
+  assert.deepEqual((await readAdminContent(second)).content, changed);
+  const publicContent = await (await jsonFetch("/api/content")).json();
+  assert.equal("revision" in publicContent, false);
+  assert.equal(publicContent.content.portfolio[0].title, changed.portfolio[0].title);
+});
+
+test("concurrent admin content PUTs with the same revision allow only one commit, even for unchanged content", async () => {
+  appServer.runtime.config.maxRequestBodyBytes = 1024 * 1024;
+  const clients = [createAdminSession(), createAdminSession()];
+  const before = await readAdminContent(clients[0]);
+  const responses = await Promise.all(clients.map((admin) => jsonFetch("/api/admin/content", {
+    method: "PUT", headers: adminContentHeaders(admin),
+    body: JSON.stringify({ content: before.content, expectedRevision: before.revision })
+  })));
+  assert.deepEqual(responses.map((response) => response.status).sort(), [200, 409]);
+  const winner = await responses.find((response) => response.status === 200).json();
+  assert.notEqual(winner.revision, before.revision);
+  assert.equal((await fs.readdir(path.join(tempDir, "backups"))).length, 1);
+  const readers = await Promise.all(Array.from({ length: 8 }, () => readAdminContent(clients[1])));
+  for (const read of readers) {
+    assert.equal(read.revision, winner.revision);
+    assert.deepEqual(read.content, before.content);
+  }
+});
+
+test("content revision survives server restart and reset requires the current revision", async () => {
+  appServer.runtime.config.maxRequestBodyBytes = 1024 * 1024;
+  let admin = createAdminSession();
+  const before = await readAdminContent(admin);
+  const changed = structuredClone(before.content);
+  changed.site.title = "Saved before restart";
+  const saved = await jsonFetch("/api/admin/content", {
+    method: "PUT", headers: adminContentHeaders(admin),
+    body: JSON.stringify({ content: changed, expectedRevision: before.revision })
+  });
+  assert.equal(saved.status, 200);
+  const { revision } = await saved.json();
+  const options = appServer.runtime.config;
+  await new Promise((resolve) => appServer.close(resolve));
+  appServer = createServer(options);
+  await new Promise((resolve) => appServer.listen(0, "127.0.0.1", resolve));
+  baseUrl = `http://127.0.0.1:${appServer.address().port}`;
+  admin = createAdminSession();
+  const restored = await readAdminContent(admin);
+  assert.equal(restored.revision, revision);
+  assert.deepEqual(restored.content, changed);
+  const filesBeforeReset = await contentFiles();
+  for (const [body, expectedStatus] of [[{}, 428], [{ expectedRevision: before.revision }, 409]]) {
+    const reset = await jsonFetch("/api/admin/content/reset", {
+      method: "POST", headers: adminContentHeaders(admin), body: JSON.stringify(body)
+    });
+    assert.equal(reset.status, expectedStatus);
+  }
+  assert.deepEqual(await contentFiles(), filesBeforeReset);
+  const reset = await jsonFetch("/api/admin/content/reset", {
+    method: "POST", headers: adminContentHeaders(admin), body: JSON.stringify({ expectedRevision: revision })
+  });
+  assert.equal(reset.status, 200);
+  const resetPayload = await reset.json();
+  assert.notEqual(resetPayload.revision, revision);
+  assert.deepEqual(resetPayload.content, sampleContent());
+  assert.equal(resetPayload.csrfToken, admin.csrfToken);
 });
 
 test("production OTP fails closed when SMTP is missing and verify attempts are rate-limited", async () => {

@@ -7,10 +7,17 @@ cd "$ROOT_DIR"
 echo "[preflight] syntax check"
 node --check server.js
 node --check content-store.js
+node --check editor-draft-store.js
+node --check notion-store.js
+node --check notion-content.js
 node --check assets/js/core.js
 node --check assets/js/cosmos.js
 node --check assets/site.js
 bash -n deploy/*.sh
+
+echo "[preflight] clone admin typecheck/build"
+npm run check:admin
+npm run build:admin
 
 echo "[preflight] html parse smoke test"
 python3 - <<'PY'
@@ -35,6 +42,11 @@ trap 'rm -rf "$tmp_dest"' EXIT
 bash deploy/publish_node_app.sh "$tmp_dest" >/dev/null
 test -f "$tmp_dest/server.js"
 test -f "$tmp_dest/content-store.js"
+test -f "$tmp_dest/editor-draft-store.js"
+test -f "$tmp_dest/notion-store.js"
+test -f "$tmp_dest/notion-content.js"
+test -f "$tmp_dest/assets/notion-app/index.html"
+test -f "$tmp_dest/assets/notion-app/LICENSE.notion-clone.txt"
 test -f "$tmp_dest/package.json"
 test -f "$tmp_dest/package-lock.json"
 test -d "$tmp_dest/assets"
@@ -44,6 +56,11 @@ test ! -e "$tmp_dest/test"
 test ! -e "$tmp_dest/.env"
 test ! -e "$tmp_dest/data/content.json"
 test ! -e "$tmp_dest/data/comments.json"
+test ! -e "$tmp_dest/data/editor-drafts.json"
+test ! -e "$tmp_dest/data/notion-documents.json"
+test ! -e "$tmp_dest/data/notion-uploads"
+test ! -e "$tmp_dest/data/notion-backups"
+test ! -e "$tmp_dest/admin-src"
 test ! -e "$tmp_dest/homepage-critical-feedback.html"
 test ! -e "$tmp_dest/daylog"
 

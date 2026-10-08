@@ -5,6 +5,11 @@ DEST="${1:-/var/www/thecistus.com/current}"
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 DRY_RUN="${DRY_RUN:-0}"
 
+if [ ! -f "$ROOT_DIR/assets/notion-app/index.html" ]; then
+  echo "관리자 빌드가 없습니다. 소스에서 npm run build:admin을 먼저 실행하세요." >&2
+  exit 2
+fi
+
 if [ "$DRY_RUN" = "1" ]; then
   if [ ! -d "$DEST" ]; then
     echo "dry-run destination must already exist so this script does not create directories: $DEST" >&2
@@ -43,6 +48,9 @@ rsync -a \
   "$ROOT_DIR/sitemap.xml" \
   "$ROOT_DIR/server.js" \
   "$ROOT_DIR/content-store.js" \
+  "$ROOT_DIR/editor-draft-store.js" \
+  "$ROOT_DIR/notion-store.js" \
+  "$ROOT_DIR/notion-content.js" \
   "$ROOT_DIR/package.json" \
   "$ROOT_DIR/package-lock.json" \
   "$ROOT_DIR/assets" \

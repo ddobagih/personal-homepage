@@ -1,7 +1,7 @@
 /* Public-facing shell inspired by editorial portfolio and workspace UIs.
-   Admin styles remain owned by site.css and are intentionally out of scope. */
+   Admin styles remain owned by site.css and admin.css. */
 
-.public-menu-toggle {
+body:not([data-current-page="admin"]) :is(.public-menu-toggle, .admin-header-label) {
   display: none;
 }
 
@@ -16,16 +16,19 @@ body[data-current-page="admin"] :is(
 }
 
 body:not([data-current-page="admin"]) {
-  --public-sans: "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
-  --public-bg: #e9e6e2;
-  --public-rail: #efedea;
-  --public-surface: #f4f2ef;
-  --public-surface-strong: #fbfaf8;
+  --public-sans: "DM Sans", "IBM Plex Sans KR", "Noto Sans KR", sans-serif;
+  --public-bg: #f3f1ec;
+  --public-rail: #ece9e3;
+  --public-surface: #f8f6f1;
+  --public-surface-strong: #fffdf7;
   --public-ink: #171614;
-  --public-muted: #66615c;
+  --public-muted: #59544f;
   --public-line: rgba(23, 22, 20, 0.12);
   --public-accent: #4a3429;
   --public-accent-soft: #ded4cd;
+  --public-cover: #343e36;
+  --public-cover-ink: #f5f0df;
+  --public-cover-muted: #d4dccc;
   padding-left: 250px;
   background: var(--public-bg) !important;
   color: var(--public-ink);
@@ -43,7 +46,7 @@ body:not([data-current-page="admin"]) > .topbar {
   background: var(--public-rail) !important;
   border: 0 !important;
   border-right: 1px solid var(--public-line) !important;
-  backdrop-filter: none;
+  backdrop-filter: none !important;
 }
 
 body:not([data-current-page="admin"]) > .topbar .topbar-inner {
@@ -77,8 +80,7 @@ body:not([data-current-page="admin"]) .brand-avatar {
   border-radius: 50%;
   background: var(--public-ink);
   color: #f6f3ef;
-  font: 500 0.76rem/1 var(--mono);
-  letter-spacing: -0.08em;
+  font: 600 1rem/1 var(--public-sans);
 }
 
 body:not([data-current-page="admin"]) .brand-copy {
@@ -89,28 +91,29 @@ body:not([data-current-page="admin"]) .brand-copy {
 
 body:not([data-current-page="admin"]) .brand-name {
   color: var(--public-ink) !important;
-  font-size: 0.98rem;
-  font-weight: 600;
-  letter-spacing: -0.04em;
+  font-family: var(--public-sans) !important;
+  font-size: 0.98rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
 }
 
 body:not([data-current-page="admin"]) .brand-role {
   color: var(--public-muted);
-  font: 500 0.64rem/1.2 var(--mono);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font: 400 0.75rem/1.4 var(--public-sans);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 body:not([data-current-page="admin"]) .nav {
   width: 100%;
-  margin-top: 6.75rem;
+  margin-top: 3.25rem;
   display: grid;
   gap: 0.28rem;
 }
 
 body:not([data-current-page="admin"]) .nav-link {
   width: 100%;
-  min-height: 2.55rem;
+  min-height: 2.75rem;
   padding: 0.65rem 0.72rem !important;
   display: flex;
   align-items: center;
@@ -118,10 +121,11 @@ body:not([data-current-page="admin"]) .nav-link {
   border: 1px solid transparent !important;
   border-radius: 7px !important;
   background: transparent !important;
-  color: #625e59 !important;
+  color: var(--public-muted) !important;
+  font-family: var(--public-sans);
   font-size: 0.88rem !important;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
   text-decoration: none;
   box-shadow: none !important;
 }
@@ -129,7 +133,7 @@ body:not([data-current-page="admin"]) .nav-link {
 body:not([data-current-page="admin"]) .nav-link > span {
   width: 1rem;
   color: #77726c;
-  font-family: var(--mono);
+  font-family: var(--public-sans);
   font-size: 0.88rem;
   text-align: center;
 }
@@ -143,6 +147,7 @@ body:not([data-current-page="admin"]) .nav-link.active {
   background: var(--public-surface-strong) !important;
   color: var(--public-ink) !important;
   border-color: rgba(23, 22, 20, 0.05) !important;
+  font-weight: 600 !important;
 }
 
 body:not([data-current-page="admin"]) .sidebar-contact {
@@ -153,10 +158,11 @@ body:not([data-current-page="admin"]) .sidebar-contact {
 body:not([data-current-page="admin"]) .sidebar-contact-links {
   margin-top: 0;
   display: grid;
-  gap: 0.5rem;
+  gap: 0.125rem;
 }
 
 body:not([data-current-page="admin"]) .sidebar-contact-links a {
+  min-height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -164,6 +170,7 @@ body:not([data-current-page="admin"]) .sidebar-contact-links a {
   color: var(--public-ink);
   font-size: 0.8rem;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 body:not([data-current-page="admin"]) .sidebar-contact-links a span:last-child {
@@ -171,15 +178,55 @@ body:not([data-current-page="admin"]) .sidebar-contact-links a span:last-child {
   font-family: var(--mono);
 }
 
-body:not([data-current-page="admin"]) :is(a, button) {
+body:not([data-current-page="admin"]) .sidebar-admin-link {
+  min-height: 2.75rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border-top: 1px solid var(--public-line);
+  color: var(--public-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+body:not([data-current-page="admin"]) .sidebar-admin-link > span:first-child {
+  width: 1rem;
+  flex: 0 0 auto;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+body:not([data-current-page="admin"]) :is(.sidebar-contact-links a, .sidebar-admin-link):hover {
+  color: var(--public-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+body:not([data-current-page="admin"]) :is(a, button, summary) {
   touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(74, 52, 41, 0.14);
+}
+
+body:not([data-current-page="admin"]) :is(a, button, summary):focus-visible {
+  outline: 2px solid #2d6cdf;
+  outline-offset: 3px;
+}
+
+body:not([data-current-page="admin"]) .skip-link {
+  background: var(--public-surface-strong) !important;
+  color: var(--public-ink) !important;
+  border-color: var(--public-line) !important;
+  box-shadow: none !important;
+  transform: translateY(calc(-100% - 2rem));
 }
 
 body:not([data-current-page="admin"]) > main.shell {
   width: 100%;
-  max-width: 1360px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 clamp(2rem, 4vw, 4rem) 7rem;
+  padding: 0 clamp(25px, 3vw, 48px) 5rem;
 }
 
 body:not([data-current-page="admin"]) .page {
@@ -188,40 +235,106 @@ body:not([data-current-page="admin"]) .page {
 }
 
 body:not([data-current-page="admin"]) .home-intro {
-  min-height: 20.5rem;
-  padding: 5.25rem 0 2.75rem;
-  display: flex;
-  align-items: flex-end;
+  padding: clamp(3.5rem, 6vw, 5.5rem) 0 3.75rem;
+  text-align: center;
 }
 
 body:not([data-current-page="admin"]) .home-intro-copy {
-  max-width: 54rem;
+  min-width: 0;
+  max-width: 52rem;
+  margin: 0 auto;
 }
 
-body:not([data-current-page="admin"]) .hero-path {
-  margin-bottom: 1rem;
+body:not([data-current-page="admin"]) .home-profile-heading {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 1.5rem;
+  padding: 0.4rem 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--public-line);
+  border-radius: 999px;
   color: var(--public-muted);
-  font: 400 0.75rem/1.4 var(--mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .home-profile-heading::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--public-cover);
 }
 
 body:not([data-current-page="admin"]) .hero-title {
-  max-width: 15ch;
-  margin: 0;
+  max-width: 17ch;
+  margin: 0 auto;
   color: var(--public-ink) !important;
-  font-size: clamp(3.6rem, 5.5vw, 5.25rem) !important;
+  font-size: clamp(3.25rem, 5.5vw, 4.75rem) !important;
   font-weight: 600;
-  line-height: 1.02 !important;
-  letter-spacing: -0.035em !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.055em !important;
   text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 body:not([data-current-page="admin"]) .hero-lead {
-  max-width: 39rem;
-  margin: 1.45rem 0 0;
+  max-width: 43ch;
+  margin: 1.25rem auto 0;
   color: var(--public-muted) !important;
-  font-size: clamp(1rem, 1.35vw, 1.18rem) !important;
+  font-size: 1.125rem !important;
   line-height: 1.65 !important;
   text-wrap: pretty;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .home-intro-note {
+  margin: 1rem 0 0;
+  color: var(--public-muted);
+  font: italic 1.125rem/1.5 Georgia, serif;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) #page-home > .section {
+  margin-top: 3.5rem;
+}
+
+body:not([data-current-page="admin"]) #page-home > .home-intro + .section {
+  margin-top: 0;
+}
+
+body:not([data-current-page="admin"]) #page-home .section-head {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 1.25rem;
+}
+
+body:not([data-current-page="admin"]) #page-home .section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  font-size: 1.375rem !important;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+body:not([data-current-page="admin"]) .home-section-index {
+  color: var(--public-muted);
+  font: 400 0.6875rem/1.5 var(--mono);
+  letter-spacing: 0;
+}
+
+body:not([data-current-page="admin"]) #page-home .section-description {
+  padding: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }
 
 body:not([data-current-page="admin"]) :is(.action-btn, .text-link, .tab-btn) {
@@ -244,7 +357,7 @@ body:not([data-current-page="admin"]) .action-btn.primary {
 }
 
 body:not([data-current-page="admin"]) .section {
-  margin-top: 6rem;
+  margin-top: 3.5rem;
   padding: 0 !important;
   border: 0 !important;
   background: transparent !important;
@@ -252,33 +365,70 @@ body:not([data-current-page="admin"]) .section {
 }
 
 body:not([data-current-page="admin"]) .home-intro + .section {
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 body:not([data-current-page="admin"]) :is(#page-portfolio, #page-study, #page-updates) > .section:first-child {
   margin-top: 0;
-  padding-top: 4.5rem !important;
+  padding-top: 3.5rem !important;
 }
 
 body:not([data-current-page="admin"]) .section-head {
   min-height: 0;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
   padding: 0 !important;
-  display: grid;
-  grid-template-columns: auto minmax(3rem, 1fr);
-  align-items: center;
-  gap: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
   border: 0 !important;
 }
 
-body:not([data-current-page="admin"]) .section-head::before {
-  display: none !important;
+body:not([data-current-page="admin"]) .section-head:has(> .section-description) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  row-gap: 0;
 }
 
+body:not([data-current-page="admin"]) .section-head > .document-list-toolbar {
+  grid-column: 1 / -1;
+}
+
+body:not([data-current-page="admin"]) .section-head > .collection-count {
+  align-self: center;
+}
+
+body:not([data-current-page="admin"]) .document-list-toolbar {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+body:not([data-current-page="admin"]) .collection-count {
+  flex: 0 0 auto;
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+body:not([data-current-page="admin"]) .section-description {
+  grid-column: 1 / -1;
+  max-width: 65ch;
+  margin: 0.5rem 0 0;
+  color: var(--public-muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .section-head::before,
 body:not([data-current-page="admin"]) .section-head::after {
-  content: "";
-  height: 1px;
-  background: var(--public-line);
+  display: none !important;
 }
 
 body:not([data-current-page="admin"]) .section-kicker {
@@ -289,7 +439,7 @@ body:not([data-current-page="admin"]) .section-kicker {
   border-radius: 0;
   background: transparent;
   color: var(--public-muted) !important;
-  font: 500 0.66rem/1 var(--mono);
+  font: 400 0.75rem/1.5 var(--mono);
   letter-spacing: 0.02em;
   text-transform: none;
 }
@@ -299,10 +449,11 @@ body:not([data-current-page="admin"]) .page:not([hidden]) .section-head .section
   color: var(--public-ink) !important;
   padding-left: 0 !important;
   border-left: 0 !important;
-  font-size: clamp(2rem, 3vw, 2.65rem) !important;
+  font-size: clamp(1.5rem, 2vw, 1.75rem) !important;
   font-weight: 600 !important;
-  line-height: 1.08 !important;
-  letter-spacing: -0.035em !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.025em !important;
+  overflow-wrap: anywhere;
 }
 
 body:not([data-current-page="admin"]) :is(
@@ -328,9 +479,8 @@ body:not([data-current-page="admin"]) :is(
 
 body:not([data-current-page="admin"]) .empty-state {
   align-items: flex-start;
-  padding: 1.4rem 0;
+  padding: 1rem 0;
   border-top: 1px solid var(--public-line);
-  border-bottom: 1px solid var(--public-line);
   color: var(--public-muted);
   text-align: left;
 }
@@ -353,8 +503,9 @@ body:not([data-current-page="admin"]) :is(.card, .feed-item, .timeline-item):hov
   box-shadow: none !important;
 }
 
-body:not([data-current-page="admin"]) :is(.quick-grid, .home-study, .home-feed, #portfolio-list, #study-list) {
+body:not([data-current-page="admin"]) :is(.quick-grid, .home-study, .home-feed, #portfolio-list, #study-list):not([hidden]) {
   display: block !important;
+  margin-top: 0;
 }
 
 body:not([data-current-page="admin"]) #portfolio-list {
@@ -377,12 +528,12 @@ body:not([data-current-page="admin"]) .project-index-item.selected {
 
 body:not([data-current-page="admin"]) .project-index-button {
   width: 100%;
-  min-height: 13.5rem;
-  padding: 1.65rem 0 !important;
+  min-height: 0;
+  padding: 1.5rem 0 !important;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  gap: clamp(1.5rem, 5vw, 5rem);
+  gap: clamp(1.5rem, 3vw, 3rem);
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
@@ -393,37 +544,100 @@ body:not([data-current-page="admin"]) .project-index-button {
 }
 
 body:not([data-current-page="admin"]) .project-index-button.has-media {
-  grid-template-columns: minmax(14rem, 0.72fr) minmax(22rem, 1.28fr);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child:has(.project-index-button.has-media) {
+  margin-bottom: 1.5rem;
+  border: 0;
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media {
+  padding: 0 0 1.75rem !important;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--public-line) !important;
+  background: transparent !important;
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-visual {
+  order: -1;
+  aspect-ratio: 2.5;
+  border-radius: 14px;
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-copy {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  gap: 0.625rem 2rem;
+  padding-inline: 0.25rem;
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-meta {
+  grid-column: 1 / -1;
+  font-size: 0.75rem;
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-title {
+  font-size: clamp(1.5rem, 2.7vw, 2.25rem);
+  line-height: 1.25;
+}
+
+body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-description {
+  align-self: center;
+  max-width: 45ch;
+  font-size: 0.9375rem;
 }
 
 body:not([data-current-page="admin"]) .project-index-button:not(.has-media) {
   min-height: 0;
-  padding-block: 1.65rem !important;
+  padding-block: 1rem !important;
 }
 
 body:not([data-current-page="admin"]) .project-index-copy {
   min-width: 0;
   display: grid;
-  gap: 1.25rem;
+  gap: 0.75rem;
 }
 
 body:not([data-current-page="admin"]) .project-index-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.7rem 1.15rem;
+  gap: 0.5rem 0.9rem;
   color: var(--public-muted);
-  font: 400 0.7rem/1.4 var(--mono);
+  font: 400 0.8125rem/1.5 var(--mono);
 }
 
 body:not([data-current-page="admin"]) .project-index-title {
-  max-width: 16ch;
+  max-width: 22ch;
   margin: 0;
   color: var(--public-ink);
-  font-size: clamp(1.8rem, 3.4vw, 3.1rem);
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
   font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.035em;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
   text-wrap: balance;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .project-index-button:not(.has-media) .project-index-title {
+  max-width: none;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+body:not([data-current-page="admin"]) .project-index-button:not(.has-media) .project-index-copy {
+  gap: 0.5rem;
+}
+
+body:not([data-current-page="admin"]) .project-index-description {
+  max-width: 44ch;
+  word-break: keep-all;
+  margin: 0;
+  color: var(--public-muted);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
 body:not([data-current-page="admin"]) .project-index-visual {
@@ -440,12 +654,249 @@ body:not([data-current-page="admin"]) .project-index-visual img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   transition: opacity 160ms ease;
 }
 
-body:not([data-current-page="admin"]) .project-index-button:hover .project-index-title {
+body:not([data-current-page="admin"]) .project-cover-concept {
+  min-height: 18rem;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "label label"
+    "art caption"
+    "art tags";
+  gap: 0.75rem 1rem;
+  aspect-ratio: auto;
+  border-color: transparent;
+  background: var(--public-cover);
+}
+
+body:not([data-current-page="admin"]) .project-cover-label {
+  grid-area: label;
+  color: var(--public-cover-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+body:not([data-current-page="admin"]) .project-cover-route-art {
+  grid-area: art;
+  position: relative;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 11rem;
+  height: 10rem;
+}
+
+body:not([data-current-page="admin"]) .project-cover-route-art::before {
+  content: "";
+  position: absolute;
+  inset: 12% 12% 15%;
+  border-left: 6px solid var(--public-cover-ink);
+  border-bottom: 6px solid var(--public-cover-ink);
+  border-bottom-left-radius: 2.5rem;
+}
+
+body:not([data-current-page="admin"]) .project-cover-route-art > span {
+  position: absolute;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 4px solid var(--public-cover-ink);
+  border-radius: 50%;
+  background: var(--public-cover);
+}
+
+body:not([data-current-page="admin"]) .project-cover-route-art > span:nth-child(1) {
+  top: calc(12% - 0.5rem);
+  left: calc(12% - 0.4375rem);
+}
+
+body:not([data-current-page="admin"]) .project-cover-route-art > span:nth-child(2) {
+  bottom: calc(15% - 0.4375rem);
+  left: calc(12% + 1.75rem);
+}
+
+body:not([data-current-page="admin"]) .project-cover-route-art > span:nth-child(3) {
+  right: calc(12% - 0.5rem);
+  bottom: calc(15% - 0.4375rem);
+}
+
+body:not([data-current-page="admin"]) .project-cover-caption {
+  grid-area: caption;
+  min-width: 0;
+  margin: 0;
+  align-self: end;
+  display: grid;
+  gap: 0.5rem;
+  color: var(--public-cover-ink);
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .project-cover-caption > span {
+  font-size: clamp(1.625rem, 2.5vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+body:not([data-current-page="admin"]) .project-cover-caption > small {
+  color: var(--public-cover-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+body:not([data-current-page="admin"]) .project-cover-tags {
+  grid-area: tags;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  align-self: start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  list-style: none;
+}
+
+body:not([data-current-page="admin"]) .project-cover-tags > li {
+  max-width: 100%;
+  margin: 0;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid rgba(245, 240, 223, 0.3);
+  border-radius: 4px;
+  color: var(--public-cover-ink);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial {
+  position: relative;
+  min-height: 14rem;
+  aspect-ratio: 1.3;
+  padding: 1.5rem;
+  display: block;
+  isolation: isolate;
+  background: #e3d6be;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-photo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  object-fit: cover;
+  object-position: center 58%;
+  transition: transform 320ms ease !important;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-label {
+  position: relative;
+  width: fit-content;
+  padding: 0.35rem 0.7rem;
+  display: block;
+  border: 1px solid rgba(64, 47, 29, 0.13);
+  border-radius: 999px;
+  background: #f8f3e9;
+  color: #4f4539;
+  font-size: 0.75rem;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-route-art {
+  display: none;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-caption {
+  position: absolute;
+  left: 1.5rem;
+  top: 4.75rem;
+  width: 42%;
+  max-width: 17rem;
+  color: #362f23;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-caption > span {
+  font: italic clamp(2rem, 3.8vw, 3.5rem)/1.02 Georgia, serif;
+  letter-spacing: -0.045em;
+  text-wrap: initial;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-caption > small {
+  display: none;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-tags {
+  display: none;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-index-tags {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin: 0.375rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-index-tags > li {
+  max-width: 100%;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid rgba(64, 47, 29, 0.13);
+  border-radius: 999px;
+  background: #f8f3e9;
+  color: #4f4539;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .project-cover-arrow {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #fffaf0;
+  color: #362f23;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-index-button:is(:hover, :focus-visible) .project-cover-photo {
+  opacity: 1;
+  transform: scale(1.025);
+}
+
+body:not([data-current-page="admin"]) #home-grid .project-index-button:is(:hover, :focus-visible) .project-cover-arrow {
+  background: var(--public-cover);
+  color: var(--public-cover-ink);
+}
+
+body:not([data-current-page="admin"]) #home-study > .document-branch {
+  padding: 0.25rem 1.25rem;
+  border: 1px solid var(--public-line);
+  border-radius: 12px;
+  background: var(--public-surface-strong);
+}
+
+body:not([data-current-page="admin"]) #home-study > .document-branch + .document-branch {
+  margin-top: 0.75rem;
+}
+
+body:not([data-current-page="admin"]) #home-study .archive-row {
+  border-bottom: 0 !important;
+}
+
+body:not([data-current-page="admin"]) .project-index-button:is(:hover, :focus-visible) .project-index-title {
   color: var(--public-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
 }
 
 body:not([data-current-page="admin"]) .project-index-button:hover .project-index-visual img {
@@ -459,8 +910,8 @@ body:not([data-current-page="admin"]) :is(.project-index-button, .archive-row):f
 
 body:not([data-current-page="admin"]) .archive-row {
   width: 100%;
-  min-height: 4.7rem;
-  padding: 1.2rem 0 !important;
+  min-height: 4.25rem;
+  padding: 1rem 0 !important;
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr) auto;
   align-items: center;
@@ -482,7 +933,7 @@ body:not([data-current-page="admin"]) .archive-row:last-child {
 body:not([data-current-page="admin"]) .archive-row-index,
 body:not([data-current-page="admin"]) .archive-row-meta {
   color: var(--public-muted);
-  font: 400 0.7rem/1.45 var(--mono);
+  font: 400 0.8125rem/1.5 var(--mono);
 }
 
 body:not([data-current-page="admin"]) .archive-row-title {
@@ -492,14 +943,239 @@ body:not([data-current-page="admin"]) .archive-row-title {
   font-weight: 600;
   line-height: 1.45;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
-body:not([data-current-page="admin"]) .archive-row:hover .archive-row-title {
+body:not([data-current-page="admin"]) .archive-row-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+body:not([data-current-page="admin"]) .archive-row-description {
+  max-width: 65ch;
+  margin: 0;
+  color: var(--public-muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+body:not([data-current-page="admin"]) .archive-row:is(:hover, :focus-visible) .archive-row-title {
   color: var(--public-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
 }
 
 body:not([data-current-page="admin"]) .archive-row-meta {
+  max-width: 24ch;
+  overflow-wrap: anywhere;
   text-align: right;
+}
+
+body:not([data-current-page="admin"]) .document-branch {
+  min-width: 0;
+  margin: 0;
+  border-top: 1px solid var(--public-line);
+}
+
+body:not([data-current-page="admin"]) .document-branch:last-child {
+  border-bottom: 1px solid var(--public-line);
+}
+
+body:not([data-current-page="admin"]) .document-branch > :is(.project-index-item, .archive-row) {
+  border: 0 !important;
+}
+
+body:not([data-current-page="admin"]) .document-children {
+  margin: 0 0 1rem 2.5rem;
+}
+
+body:not([data-current-page="admin"]) .document-children > summary {
+  width: fit-content;
+  max-width: 100%;
+  min-height: 2.75rem;
+  padding: 0.75rem 0;
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .document-children > summary::marker {
+  color: var(--public-muted);
+}
+
+body:not([data-current-page="admin"]) .document-children[open] > summary,
+body:not([data-current-page="admin"]) .document-children > summary:hover {
+  color: var(--public-ink);
+}
+
+body:not([data-current-page="admin"]) .document-child-list {
+  min-width: 0;
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+  border-left: 1px solid var(--public-line);
+  list-style: none;
+}
+
+body:not([data-current-page="admin"]) .document-child-item {
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body:not([data-current-page="admin"]) .document-child-item::before {
+  content: "";
+  position: absolute;
+  top: 1.25rem;
+  left: -1.25rem;
+  width: 1rem;
+  height: 1px;
+  background: var(--public-line);
+}
+
+body:not([data-current-page="admin"]) .document-child-link {
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.5rem 0;
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.2rem 0.625rem;
+  color: var(--public-ink);
+  text-decoration: none;
+  scroll-margin-block: 1rem;
+}
+
+body:not([data-current-page="admin"]) .document-page-icon {
+  width: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+body:not([data-current-page="admin"]) .document-page-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.2rem;
+}
+
+body:not([data-current-page="admin"]) .document-page-title {
+  min-width: 0;
+  color: var(--public-ink);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .document-page-meta {
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .document-child-link > .document-page-meta {
+  grid-column: 2;
+}
+
+body:not([data-current-page="admin"]) .document-child-link > span:last-child[aria-hidden="true"] {
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+}
+
+body:not([data-current-page="admin"]) .document-child-link:is(:hover, :focus-visible) .document-page-title {
+  color: var(--public-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+body:not([data-current-page="admin"]) .document-navigation {
+  min-width: 0;
+  margin: 0 0 1.5rem;
+}
+
+body:not([data-current-page="admin"]) .document-breadcrumbs ol {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  list-style: none;
+}
+
+body:not([data-current-page="admin"]) .document-breadcrumbs li {
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+body:not([data-current-page="admin"]) .document-breadcrumbs li + li::before {
+  content: "/";
+  flex: 0 0 auto;
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+}
+
+body:not([data-current-page="admin"]) .document-breadcrumbs :is(a, span) {
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0.65rem 0;
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  scroll-margin-block: 1rem;
+}
+
+body:not([data-current-page="admin"]) .document-breadcrumbs a:hover {
+  color: var(--public-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+body:not([data-current-page="admin"]) .document-breadcrumbs [aria-current="page"] {
+  color: var(--public-ink);
+}
+
+body:not([data-current-page="admin"]) .document-family {
+  margin-top: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--public-line);
+}
+
+body:not([data-current-page="admin"]) .document-family-head {
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+body:not([data-current-page="admin"]) .document-family-head h2 {
+  min-width: 0;
+  margin: 0;
+  color: var(--public-ink);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+body:not([data-current-page="admin"]) .document-family-head > span {
+  color: var(--public-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
 }
 
 body:not([data-current-page="admin"]) :is(
@@ -514,6 +1190,24 @@ body:not([data-current-page="admin"]) :is(
 ) {
   color: var(--public-ink) !important;
   text-shadow: none !important;
+}
+
+body:not([data-current-page="admin"]) .post-head {
+  margin-bottom: 1.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+body:not([data-current-page="admin"]) .post-title {
+  max-width: 32ch;
+  font-size: clamp(1.75rem, 2.8vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 body:not([data-current-page="admin"]) .project-card-title {
@@ -548,6 +1242,9 @@ body:not([data-current-page="admin"]) :is(
   .project-card-cta
 ) {
   color: var(--public-muted) !important;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 body:not([data-current-page="admin"]) :is(.tag, .pill, .chip) {
@@ -555,6 +1252,7 @@ body:not([data-current-page="admin"]) :is(.tag, .pill, .chip) {
   border-radius: 4px !important;
   background: transparent !important;
   color: #5f5a55 !important;
+  font-size: 0.8125rem;
 }
 
 body:not([data-current-page="admin"]) :is(.pill.active, .tab-btn.active) {
@@ -562,7 +1260,7 @@ body:not([data-current-page="admin"]) :is(.pill.active, .tab-btn.active) {
 }
 
 body:not([data-current-page="admin"]) :is(#portfolio-filters, #study-filters) {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   gap: 1.25rem;
 }
 
@@ -571,7 +1269,7 @@ body:not([data-current-page="admin"]) :is(#portfolio-filters, #study-filters)[hi
 }
 
 body:not([data-current-page="admin"]) .tab-btn {
-  min-height: 2.25rem;
+  min-height: 2.75rem;
   padding: 0.45rem 0 !important;
   border: 0 !important;
   border-bottom: 1px solid transparent !important;
@@ -675,8 +1373,26 @@ body:not([data-current-page="admin"]) #study-post-body {
   backdrop-filter: none !important;
 }
 
+body:not([data-current-page="admin"]) :is(.post-body, #study-post-body):has(.notion-published-document) {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  white-space: normal;
+}
+
+body:not([data-current-page="admin"]) .notion-published-document {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  height: 480px;
+  border: 0;
+  background: transparent;
+}
+
 body:not([data-current-page="admin"]) #portfolio-project-sections :is(.mini-label, .post-fact-chip span) {
-  color: #7b6558 !important;
+  color: var(--public-muted) !important;
+  font-size: 0.8125rem;
 }
 
 body:not([data-current-page="admin"]) :is(input, textarea, select) {
@@ -687,6 +1403,7 @@ body:not([data-current-page="admin"]) :is(input, textarea, select) {
 
 body:not([data-current-page="admin"]) .comments-panel .comment-field > span {
   color: var(--public-muted) !important;
+  font-size: 0.8125rem;
 }
 
 body:not([data-current-page="admin"]) .comments-panel .comment-field :is(input, textarea) {
@@ -721,13 +1438,16 @@ body:not([data-current-page="admin"]) .comments-panel :is(
 
 body:not([data-current-page="admin"]) .comments-panel :is(.comment-meta, .comment-empty) {
   color: var(--public-muted) !important;
+  font-size: 0.8125rem;
 }
 
 body:not([data-current-page="admin"]) .comments-panel .comment-char-count {
   color: var(--public-muted) !important;
+  font-size: 0.75rem;
 }
 
 body:not([data-current-page="admin"]) .timeline {
+  margin-top: 0;
   border-top: 1px solid var(--public-line);
 }
 
@@ -751,9 +1471,10 @@ body:not([data-current-page="admin"]) .back-link {
 
 body:not([data-current-page="admin"]) .footer {
   margin: 0;
-  padding: 3rem 25px;
+  padding: 2rem 25px;
   border-top: 1px solid var(--public-line);
   color: var(--public-muted);
+  font-size: 0.875rem;
 }
 
 body:not([data-current-page="admin"]) .skip-link {
@@ -775,12 +1496,16 @@ body:not([data-current-page="admin"]) .skip-link {
     align-items: center;
   }
 
+  body:not([data-current-page="admin"]) :is(.topbar, .topbar .topbar-inner, .topbar .nav) {
+    overflow: visible;
+  }
+
   body:not([data-current-page="admin"]) :is(.brand-copy, .sidebar-contact) {
     display: none;
   }
 
   body:not([data-current-page="admin"]) .nav {
-    margin-top: 4.8rem;
+    margin-top: 3rem;
   }
 
   body:not([data-current-page="admin"]) .nav-link {
@@ -791,6 +1516,47 @@ body:not([data-current-page="admin"]) .skip-link {
 
   body:not([data-current-page="admin"]) .nav-link > span {
     font-size: 1rem;
+  }
+
+  body:not([data-current-page="admin"]) .sidebar-admin-link {
+    width: 100%;
+    margin-top: auto;
+    justify-content: center;
+    gap: 0;
+    font-size: 0;
+  }
+
+  body:not([data-current-page="admin"]) .sidebar-admin-link > span:last-child {
+    display: none;
+  }
+
+  body:not([data-current-page="admin"]) :is(.nav-link, .sidebar-admin-link)[data-label] {
+    position: relative;
+  }
+
+  body:not([data-current-page="admin"]) :is(.nav-link, .sidebar-admin-link)[data-label]::after {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 1rem);
+    z-index: 1;
+    width: max-content;
+    max-width: 14rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 7px;
+    background: var(--public-ink);
+    color: var(--public-surface-strong);
+    font: 400 0.8125rem/1.5 var(--public-sans);
+    letter-spacing: 0;
+    text-decoration: none;
+    white-space: nowrap;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
+  body:not([data-current-page="admin"]) :is(.nav-link, .sidebar-admin-link)[data-label]:is(:hover, :focus-visible)::after {
+    visibility: visible;
   }
 
 }
@@ -822,7 +1588,7 @@ body:not([data-current-page="admin"]) .skip-link {
   body:not([data-current-page="admin"]) > .topbar .topbar-inner {
     height: auto;
     min-height: calc(70px + env(safe-area-inset-top));
-    padding: calc(15px + env(safe-area-inset-top)) 20px 15px !important;
+    padding: calc(13px + env(safe-area-inset-top)) 20px 13px !important;
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     align-content: start;
@@ -830,12 +1596,16 @@ body:not([data-current-page="admin"]) .skip-link {
   }
 
   body:not([data-current-page="admin"]) .brand-copy {
+    display: grid;
+  }
+
+  body:not([data-current-page="admin"]) .brand-role {
     display: none;
   }
 
   body:not([data-current-page="admin"]) .public-menu-toggle {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     padding: 0;
     display: inline-grid;
     place-content: center;
@@ -861,12 +1631,12 @@ body:not([data-current-page="admin"]) .skip-link {
     transform: translateY(-3px) rotate(-45deg);
   }
 
-  body:not([data-current-page="admin"]) :is(.topbar .nav, .topbar .sidebar-contact) {
+  body:not([data-current-page="admin"]) :is(.topbar .nav, .topbar .sidebar-contact, .topbar .sidebar-admin-link) {
     display: none !important;
     grid-column: 1 / -1;
   }
 
-  body:not([data-current-page="admin"]) .topbar[data-menu-open="true"] :is(.nav, .sidebar-contact) {
+  body:not([data-current-page="admin"]) .topbar[data-menu-open="true"] :is(.nav, .sidebar-contact, .sidebar-admin-link) {
     display: flex !important;
   }
 
@@ -882,7 +1652,10 @@ body:not([data-current-page="admin"]) .skip-link {
   body:not([data-current-page="admin"]) .topbar[data-menu-open="true"] .sidebar-contact {
     margin-top: 2rem;
     padding-top: 0;
-    order: 4;
+  }
+
+  body:not([data-current-page="admin"]) .topbar[data-menu-open="true"] .sidebar-admin-link {
+    margin-top: 1rem;
   }
 
   body:not([data-current-page="admin"]) > main.shell {
@@ -891,33 +1664,43 @@ body:not([data-current-page="admin"]) .skip-link {
 
   body:not([data-current-page="admin"]) .home-intro {
     min-height: 0;
-    padding: 3.25rem 0 2.25rem;
+    padding: 2.75rem 0 2.5rem;
+  }
+
+  body:not([data-current-page="admin"]) .home-profile-heading {
+    margin-bottom: 0.75rem;
   }
 
   body:not([data-current-page="admin"]) .hero-title {
-    max-width: 11ch;
-    font-size: clamp(2.9rem, 13.5vw, 3.65rem) !important;
-    line-height: 1.02 !important;
+    max-width: none;
+    font-size: clamp(2.25rem, 10vw, 2.75rem) !important;
+    line-height: 1.1 !important;
   }
 
   body:not([data-current-page="admin"]) .hero-lead {
+    margin-top: 0.875rem;
     font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  body:not([data-current-page="admin"]) .home-intro-note {
+    margin-top: 1.25rem;
   }
 
   body:not([data-current-page="admin"]) .section {
-    margin-top: 4.5rem;
+    margin-top: 2.75rem;
   }
 
   body:not([data-current-page="admin"]) .home-intro + .section {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
 
   body:not([data-current-page="admin"]) :is(#page-portfolio, #page-study, #page-updates) > .section:first-child {
-    padding-top: 3.25rem !important;
+    padding-top: 2rem !important;
   }
 
   body:not([data-current-page="admin"]) .page:not([hidden]) .section-head .section-title {
-    font-size: clamp(1.9rem, 9vw, 2.3rem) !important;
+    font-size: 1.5rem !important;
   }
 
   body:not([data-current-page="admin"]) .section-head {
@@ -926,7 +1709,7 @@ body:not([data-current-page="admin"]) .skip-link {
 
   body:not([data-current-page="admin"]) .project-index-button.has-media {
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   body:not([data-current-page="admin"]) .project-index-button {
@@ -934,9 +1717,53 @@ body:not([data-current-page="admin"]) .skip-link {
     padding: 1.25rem 0 !important;
   }
 
+  body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0 0 1.25rem !important;
+    gap: 1.25rem;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-title {
+    font-size: 1.75rem;
+  }
+
+  body:not([data-current-page="admin"]) .project-index-button:not(.has-media) {
+    padding-block: 1rem !important;
+  }
+
   body:not([data-current-page="admin"]) .project-index-title {
     max-width: none;
-    font-size: clamp(1.65rem, 8vw, 2.2rem);
+    font-size: clamp(1.5rem, 6.8vw, 1.875rem);
+  }
+
+  body:not([data-current-page="admin"]) .project-index-visual {
+    order: -1;
+  }
+
+  body:not([data-current-page="admin"]) .project-cover-concept {
+    min-height: 16rem;
+    padding: 1.25rem;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-areas:
+      "label label"
+      "art caption"
+      "tags tags";
+    column-gap: 1rem;
+  }
+
+  body:not([data-current-page="admin"]) .project-cover-route-art {
+    height: 8.5rem;
+  }
+
+  body:not([data-current-page="admin"]) .project-cover-caption {
+    align-self: center;
+  }
+
+  body:not([data-current-page="admin"]) .project-cover-caption > span {
+    font-size: 1.5rem;
   }
 
   body:not([data-current-page="admin"]) .archive-row {
@@ -946,7 +1773,29 @@ body:not([data-current-page="admin"]) .skip-link {
 
   body:not([data-current-page="admin"]) .archive-row-meta {
     grid-column: 2;
+    max-width: none;
     text-align: left;
+  }
+
+  body:not([data-current-page="admin"]) .document-children {
+    margin-left: 1rem;
+  }
+
+  body:not([data-current-page="admin"]) .document-child-list {
+    padding-left: 0.75rem;
+  }
+
+  body:not([data-current-page="admin"]) .document-child-item::before {
+    left: -0.75rem;
+    width: 0.5rem;
+  }
+
+  body:not([data-current-page="admin"]) :is(.document-child-link, .document-children > summary, .document-breadcrumbs a) {
+    scroll-margin-top: calc(90px + env(safe-area-inset-top));
+  }
+
+  body:not([data-current-page="admin"]) .post-title {
+    font-size: clamp(1.625rem, 7.5vw, 2rem);
   }
 
   body:not([data-current-page="admin"]) :is(.card, .feed-item, .timeline-item):hover {
@@ -954,14 +1803,98 @@ body:not([data-current-page="admin"]) .skip-link {
   }
 
   body:not([data-current-page="admin"]) .footer {
-    padding: 2.5rem 20px;
+    padding: 2rem 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  body:not([data-current-page="admin"]) .project-cover-concept {
+    min-height: 15.25rem;
+    padding: 1rem;
+    column-gap: 0.75rem;
+  }
+
+  body:not([data-current-page="admin"]) .project-cover-route-art {
+    height: 7.5rem;
+  }
+}
+
+@media (max-width: 780px) {
+  body:not([data-current-page="admin"]) #page-home > .section {
+    margin-top: 2.5rem;
+  }
+
+  body:not([data-current-page="admin"]) #page-home > .home-intro + .section {
+    margin-top: 0;
+  }
+
+  body:not([data-current-page="admin"]) #page-home .section-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 0.35rem 1rem;
+  }
+
+  body:not([data-current-page="admin"]) #page-home .section-head .section-title {
+    font-size: 1.25rem !important;
+  }
+
+  body:not([data-current-page="admin"]) #page-home .section-description {
+    font-size: 0.75rem;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-visual {
+    aspect-ratio: 1.25;
+    border-radius: 12px;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-copy {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid > .document-branch:first-child .project-index-button.has-media .project-index-meta {
+    grid-column: auto;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid .project-cover-editorial {
+    min-height: 14rem;
+    aspect-ratio: 1.25;
+    padding: 1rem;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-caption {
+    top: 3.75rem;
+    left: 1rem;
+  }
+
+  body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-caption > span {
+    font-size: 2rem;
+  }
+
+  body:not([data-current-page="admin"]) .project-cover-arrow {
+    bottom: 1rem;
+    right: 1rem;
+  }
+
+  body:not([data-current-page="admin"]) #home-study > .document-branch {
+    padding-inline: 0.875rem;
+  }
+}
+
+@media (max-width: 360px) {
+  body:not([data-current-page="admin"]) #home-grid .project-cover-editorial .project-cover-caption {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   body:not([data-current-page="admin"]) > .topbar,
+  body:not([data-current-page="admin"]) .skip-link,
   body:not([data-current-page="admin"]) .public-menu-toggle span,
-  body:not([data-current-page="admin"]) .project-index-visual img {
-    transition: none;
+  body:not([data-current-page="admin"]) .project-index-visual img,
+  body:not([data-current-page="admin"]) #home-grid .project-cover-photo,
+  body:not([data-current-page="admin"]) .project-cover-arrow {
+    transition: none !important;
   }
 }

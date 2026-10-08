@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["admin-src/upstream/*"],
+      "convex/react": ["admin-src/platform/convex.tsx"],
+      "@clerk/nextjs": ["admin-src/platform/clerk.tsx"],
+      "next/navigation": ["admin-src/platform/navigation.ts"],
+      "next/dynamic": ["admin-src/platform/dynamic.tsx"],
+      "next/image": ["admin-src/platform/image.tsx"],
+      "next/link": ["admin-src/platform/link.tsx"]
+    }
+  },
+  "include": ["admin-src/main.tsx", "admin-src/App.tsx", "admin-src/platform/**/*"]
+}

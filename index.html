@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>thecistus.com | 포트폴리오와 기록</title>
+  <title>Personal archive | Home</title>
   <meta
     name="description"
     content="포트폴리오, 공부글, 근황을 정리하는 개인 홈페이지입니다."
   >
-  <meta name="theme-color" content="#e9e6e2">
+  <meta name="theme-color" content="#f3f1ec">
   <meta name="robots" content="index,follow">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ko_KR">
@@ -47,21 +47,22 @@
     rel="stylesheet"
   >
   <link rel="stylesheet" href="./assets/site.css?v=20260622-03">
-  <link rel="stylesheet" href="./assets/public.css?v=20260716-12">
-  <link rel="stylesheet" href="./assets/admin.css?v=20260716-02">
+  <link rel="stylesheet" href="./assets/public.css?v=20261004-04">
+  <link rel="stylesheet" href="./assets/admin.css?v=20261001-18">
 </head>
-<body data-current-page="home">
+<body data-current-page="home" data-notion-workspace="/admin/">
   <a class="skip-link" href="#content-start">본문으로 건너뛰기</a>
 
   <header class="topbar">
     <div class="shell topbar-inner">
-      <a class="brand" href="#home" aria-label="thecistus 홈">
-        <span class="brand-avatar" aria-hidden="true">&gt;_</span>
+      <a class="brand" href="#home" aria-label="Personal archive Home">
+        <span class="brand-avatar" aria-hidden="true">P</span>
         <span class="brand-copy">
-          <span class="brand-name">thecistus</span>
-          <span class="brand-role">personal archive</span>
+          <span class="brand-name">Personal archive</span>
+          <span class="brand-role">Projects &amp; notes</span>
         </span>
       </a>
+      <span class="admin-header-label">콘텐츠 관리</span>
       <button
         class="public-menu-toggle"
         type="button"
@@ -74,14 +75,15 @@
         <span aria-hidden="true"></span>
       </button>
       <nav class="nav" id="public-nav" aria-label="주요 섹션">
-        <a class="nav-link active" href="#home" data-page="home" aria-current="page"><span aria-hidden="true">⌂</span>Home</a>
-        <a class="nav-link" href="#portfolio" data-page="portfolio"><span aria-hidden="true">□</span>Portfolio</a>
-        <a class="nav-link" href="#study" data-page="study"><span aria-hidden="true">▤</span>Study</a>
-        <a class="nav-link" href="#updates" data-page="updates"><span aria-hidden="true">○</span>Moments</a>
+        <a class="nav-link active" href="#home" data-page="home" data-label="Home" title="Home" aria-label="Home" aria-current="page"><span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v11H3Z"/><path d="M9 21v-8h6v8"/></svg></span>Home</a>
+        <a class="nav-link" href="#portfolio" data-page="portfolio" data-label="Projects" title="Projects" aria-label="Projects"><span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V4h6l3 3h9v13H3Z"/></svg></span>Projects</a>
+        <a class="nav-link" href="#study" data-page="study" data-label="Study" title="Study" aria-label="Study"><span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h14v18H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm-2 14h16M9 7h7M9 11h5"/></svg></span>Study</a>
+        <a class="nav-link" href="#updates" data-page="updates" data-label="Updates" title="Updates" aria-label="Updates"><span aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Updates</a>
       </nav>
       <div class="sidebar-contact sidebar-only">
         <div class="sidebar-contact-links" id="sidebar-contact-links"></div>
       </div>
+      <a class="sidebar-admin-link" href="/admin/" aria-label="관리자" data-label="관리자" title="관리자"><span aria-hidden="true">⚙</span><span>관리자</span></a>
     </div>
   </header>
 
@@ -89,29 +91,32 @@
     <section class="page" id="page-home">
       <section class="home-intro" aria-labelledby="hero-title">
         <div class="home-intro-copy">
-          <div class="hero-path" aria-hidden="true">~/thecistus</div>
-          <h1 class="hero-title" id="hero-title">개인 페이지</h1>
+          <p class="home-profile-heading" id="home-profile-name" hidden></p>
+          <h1 class="hero-title" id="hero-title">작업과 기록</h1>
           <p class="hero-lead" id="hero-lead" hidden></p>
+          <p class="home-intro-note">Projects, notes &amp; ideas</p>
         </div>
       </section>
 
       <section class="section">
         <div class="section-head">
-          <h2 class="section-title">Portfolio</h2>
+          <h2 class="section-title"><span class="home-section-index" aria-hidden="true">01</span> Projects</h2>
+          <p class="section-description">Selected work &amp; the thinking behind it</p>
         </div>
         <div class="quick-grid" id="home-grid"></div>
       </section>
 
       <section class="section">
         <div class="section-head">
-          <h2 class="section-title">Study</h2>
+          <h2 class="section-title"><span class="home-section-index" aria-hidden="true">02</span> Study</h2>
+          <p class="section-description">Notes, ideas &amp; things learned along the way</p>
         </div>
         <div class="list home-study" id="home-study"></div>
       </section>
 
       <section class="section">
         <div class="section-head">
-          <h2 class="section-title">Moments</h2>
+          <h2 class="section-title"><span class="home-section-index" aria-hidden="true">03</span> Updates</h2>
         </div>
         <div class="list home-feed" id="home-feed"></div>
       </section>
@@ -121,7 +126,9 @@
     <section class="page" id="page-portfolio" hidden aria-hidden="true">
       <div class="section" id="portfolio-list-wrap">
         <div class="section-head">
-          <h1 class="section-title">Portfolio</h1>
+          <h1 class="section-title">Projects</h1>
+          <span class="collection-count" id="portfolio-document-count"></span>
+          <p class="section-description">프로젝트를 열어 상세 기록을 살펴보세요.</p>
         </div>
         <div class="links" id="portfolio-filters"></div>
         <div id="portfolio-filter-summary" hidden></div>
@@ -130,6 +137,7 @@
 
       <div class="post-view project-view" id="portfolio-project-view" hidden aria-hidden="true">
         <a class="back-link back-button" href="#portfolio" data-action="close-portfolio-project">← Projects</a>
+        <div class="document-navigation" id="portfolio-document-navigation"></div>
         <div class="project-hero" id="portfolio-project-hero">
           <div class="project-hero-copy">
             <div class="mini-label" id="portfolio-project-meta"></div>
@@ -154,6 +162,7 @@
         </div>
 
         <div class="project-section-grid" id="portfolio-project-sections"></div>
+        <div class="document-navigation" id="portfolio-document-children"></div>
 
         <div class="project-highlights" id="portfolio-project-highlights-wrap" hidden>
           <div class="section-head">
@@ -170,18 +179,22 @@
       <div class="section" id="study-list-wrap">
         <div class="section-head">
           <h1 class="section-title">Study</h1>
+          <span class="collection-count" id="study-document-count"></span>
+          <p class="section-description">문서 아래에 연결된 하위 문서도 함께 읽어보세요.</p>
         </div>
         <div class="links" id="study-filters"></div>
         <div class="list" id="study-list"></div>
       </div>
       <div class="post-view" id="study-post-view" hidden aria-hidden="true">
         <button class="back-link back-button" type="button" data-action="close-study-post">← Study</button>
+        <div class="document-navigation" id="study-document-navigation"></div>
         <div class="post-head">
           <div class="mini-label" id="study-post-meta"></div>
           <h1 class="post-title" id="study-post-title" tabindex="-1"></h1>
           <div class="links" id="study-post-submeta"></div>
         </div>
         <div class="post-body" id="study-post-body"></div>
+        <div class="document-navigation" id="study-document-children"></div>
         <div class="comments-block" id="study-comments"></div>
         <div class="section">
           <div class="section-head">
@@ -196,7 +209,7 @@
     <section class="page" id="page-updates" hidden aria-hidden="true">
       <div class="section">
         <div class="section-head">
-          <h1 class="section-title">Moments</h1>
+          <h1 class="section-title">Updates</h1>
         </div>
         <div class="timeline" id="updates-list"></div>
       </div>
@@ -205,14 +218,18 @@
     <section class="page admin-page" id="page-admin" hidden aria-hidden="true">
       <div class="section">
         <div class="panel admin-auth-card" id="admin-auth-gate" hidden>
+          <div class="admin-auth-intro">
+            <h1 class="panel-title">관리자 로그인</h1>
+            <p>인증번호를 받은 뒤 로그인하면 페이지를 편집할 수 있습니다.</p>
+          </div>
           <form class="admin-auth-form admin-auth-flow" id="admin-auth-form" data-submit-action="verify-admin-otp">
             <div class="admin-auth-inline">
               <label class="admin-field admin-auth-field">
                 <span class="admin-label">인증번호</span>
-                <input class="admin-input" id="admin-otp-code" name="otp-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000">
+                <input class="admin-input" id="admin-otp-code" name="otp-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="6자리 인증번호" spellcheck="false">
               </label>
               <button class="action-btn" id="admin-request-otp-btn" type="button" data-action="request-admin-otp">코드 보내기</button>
-              <button class="action-btn primary" type="submit">확인</button>
+              <button class="action-btn primary" type="submit">로그인</button>
             </div>
           </form>
         </div>
@@ -255,6 +272,11 @@
           </aside>
 
           <div class="admin-notion-main">
+            <div class="admin-workspace-bar">
+              <button class="text-link admin-sidebar-toggle" id="admin-sidebar-toggle" type="button" aria-controls="admin-notion-sidebar" aria-expanded="false" data-action="toggle-admin-sidebar">페이지 목록</button>
+              <h1 class="admin-workspace-label" id="admin-workspace-label">페이지 편집</h1>
+              <a class="admin-workspace-return" href="#home" data-action="show-public-page" data-page="home">사이트 보기 <span aria-hidden="true">↗</span></a>
+            </div>
             <div class="admin-panel-screen admin-panel-screen-content" id="admin-panel-content">
                 <form class="admin-form admin-notion-form" id="admin-content-form" data-submit-action="save-content-draft">
                   <div class="admin-editor-grid">
@@ -268,11 +290,13 @@
                       </div>
                     </div>
                     <div class="admin-page-actions">
-                      <button class="text-link admin-sidebar-toggle" id="admin-sidebar-toggle" type="button" aria-controls="admin-notion-sidebar" data-action="toggle-admin-sidebar">페이지</button>
+                      <div class="admin-page-tools">
                       <button class="text-link" id="admin-preview-toggle" type="button" aria-controls="admin-preview-pane" aria-pressed="false" data-action="toggle-admin-preview">미리보기</button>
                       <button class="text-link" id="admin-history-toggle" type="button" aria-controls="admin-history-panel" aria-pressed="false" data-action="toggle-admin-history">기록</button>
                       <button class="text-link" id="admin-undo-btn" type="button" data-action="admin-undo">실행 취소</button>
                       <button class="text-link" id="admin-redo-btn" type="button" data-action="admin-redo">다시 실행</button>
+                      </div>
+                      <div class="admin-page-save-actions">
                       <span class="admin-page-save-state" id="admin-page-save-state" aria-live="polite"></span>
                       <button class="text-link admin-shortcut-btn" id="admin-content-draft-top" type="button" data-action="save-draft">
                         <span>임시저장</span>
@@ -280,17 +304,27 @@
                       </button>
                       <button class="action-btn primary admin-shortcut-btn" id="admin-content-submit-top" type="submit">
                         <span>게시</span>
-                        <span class="admin-shortcut-hint">Ctrl/⌘ ⇧S</span>
                       </button>
+                      </div>
                     </div>
                   </div>
+                  <div class="editor-draft-notice" id="editor-draft-notice" role="status" hidden>
+                    <p id="editor-draft-copy"></p>
+                    <div class="editor-draft-actions">
+                      <button class="action-btn" type="button" data-action="restore-editor-draft">초안 복구</button>
+                      <button class="action-btn" type="button" data-action="discard-editor-draft">초안 버리기</button>
+                    </div>
+                  </div>
+                  <p class="admin-editor-help" id="admin-editor-help">자동 저장은 복구용 초안입니다. 공개 사이트에 반영하려면 게시 또는 변경 저장 버튼을 누르세요.
+                    <span class="admin-publication-state" id="admin-publication-state" role="status" aria-live="polite" hidden></span>
+                  </p>
                   <input id="admin-content-edit-id" type="hidden">
                   <input id="admin-content-edit-type" type="hidden">
                   <div class="admin-meta-store" hidden>
                     <select class="admin-input" id="admin-content-type" data-change-action="handle-content-type-change">
-                      <option value="portfolio">Portfolio</option>
+                      <option value="portfolio">Projects</option>
                       <option value="study">Study</option>
-                      <option value="update">Moments</option>
+                      <option value="update">Updates</option>
                     </select>
                     <input id="admin-content-type-id" type="hidden">
                     <input id="admin-content-status" type="hidden">
@@ -320,7 +354,7 @@
             <div class="admin-panel-screen" id="admin-panel-taxonomy" hidden>
               <div class="admin-notion-page-head">
                 <div>
-                  <h3 class="panel-title">스키마</h3>
+                  <h3 class="panel-title">카테고리 관리</h3>
                 </div>
               </div>
               <div class="admin-settings-shell">
@@ -354,9 +388,9 @@
                       <label class="admin-field">
                         <span class="admin-label">그룹</span>
                         <select class="admin-input" id="admin-category-group">
-                          <option value="portfolio">Portfolio</option>
+                          <option value="portfolio">Projects</option>
                           <option value="study">Study</option>
-                          <option value="update">Moments</option>
+                          <option value="update">Updates</option>
                         </select>
                       </label>
                     </div>
@@ -381,7 +415,7 @@
               <div class="admin-settings-shell admin-settings-shell-split">
                 <section class="admin-settings-preview">
                   <div class="mini-label">Preview</div>
-                  <h4 class="panel-title" id="admin-site-preview-title">개인 페이지</h4>
+                  <h4 class="panel-title" id="admin-site-preview-title">작업과 기록</h4>
                   <p class="panel-copy" id="admin-site-preview-lead">홈에 보일 소개가 여기에 표시됩니다.</p>
                   <div class="admin-settings-preview-meta">
                     <span class="pill" id="admin-site-preview-footer">thecistus.com</span>
@@ -391,7 +425,7 @@
                   <div class="admin-form-grid">
                     <label class="admin-field admin-span-2">
                       <span class="admin-label">제목</span>
-                      <textarea class="admin-textarea" id="admin-site-title" rows="2" placeholder="개인 페이지"></textarea>
+                      <textarea class="admin-textarea" id="admin-site-title" rows="2" placeholder="작업과 기록"></textarea>
                     </label>
                     <label class="admin-field admin-span-2">
                       <span class="admin-label">소개</span>
@@ -449,6 +483,28 @@
 
   <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
 
+  <div class="modal-overlay" id="unsaved-changes-modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="unsaved-changes-title" aria-describedby="unsaved-changes-copy">
+      <h3 class="modal-title" id="unsaved-changes-title">저장하지 않은 변경사항이 있어요</h3>
+      <p class="modal-copy" id="unsaved-changes-copy">이동하면 지금 수정한 내용이 사라집니다. 계속 편집하거나 변경사항을 버리고 이동할 수 있어요.</p>
+      <div class="modal-actions">
+        <button class="action-btn primary" type="button" data-action="keep-editing">계속 편집</button>
+        <button class="action-btn" type="button" data-action="discard-changes">버리고 이동</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="unpublish-page-modal" hidden>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="unpublish-page-title" aria-describedby="unpublish-page-copy">
+      <h3 class="modal-title" id="unpublish-page-title">페이지를 비공개로 전환할까요?</h3>
+      <p class="modal-copy" id="unpublish-page-copy">현재 편집 내용을 임시저장하고 공개 목록에서 숨깁니다.</p>
+      <div class="modal-actions">
+        <button class="action-btn primary" type="button" data-action="cancel-unpublish">계속 공개</button>
+        <button class="action-btn" type="button" data-action="confirm-unpublish">비공개로 전환</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="save-error-modal" hidden>
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="save-error-title" aria-describedby="save-error-copy">
       <h3 class="modal-title" id="save-error-title">저장 실패</h3>
@@ -460,7 +516,7 @@
     </div>
   </div>
 
-  <script defer src="./assets/js/core.js?v=20260716-01"></script>
-  <script defer src="./assets/site.js?v=20260716-13"></script>
+  <script defer src="./assets/js/core.js?v=20261001-18"></script>
+  <script defer src="./assets/site.js?v=20261004-03"></script>
 </body>
 </html>

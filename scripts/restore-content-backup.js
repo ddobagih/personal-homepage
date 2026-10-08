@@ -20,7 +20,7 @@ async function main() {
     defaultContentPath: path.join(cwd, "data/default-content.json")
   });
 
-  await store.writeCurrent(payload);
+  await store.writeCurrent(payload, (await store.readCurrentWithRevision()).revision);
   console.log(`Restored content from ${backupPath}`);
 }
 

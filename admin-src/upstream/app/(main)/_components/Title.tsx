@@ -1,0 +1,80 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { ChangeEvent, useRef, useState } from "react";
+
+interface TitleProps {
+  initialData: Doc<"documents">;
+}
+
+export const Title = ({ initialData }: TitleProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const update = useMutation(api.documents.update);
+
+  const [title, setTitle] = useState(initialData.title || "제목 없음");
+  const [isEditing, setIsEditing] = useState(false);
+
+  const enableInput = () => {
+    setTitle(initialData.title);
+    setIsEditing(true);
+    setTimeout(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(0, inputRef.current.value.length);
+    }, 0);
+  };
+
+  const disabledInput = () => {
+    setIsEditing(false);
+  };
+
+  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+    update({
+      id: initialData._id,
+      title: event.target.value || "제목 없음",
+    }).catch(() => {});
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "Enter" && !event.nativeEvent.isComposing) {
+      disabledInput();
+    }
+  };
+
+  return (
+    <div className="flex min-w-0 flex-1 items-center gap-x-1">
+      {!!initialData.icon && <p>{initialData.icon}</p>}
+      {isEditing ? (
+        <Input
+          ref={inputRef}
+          onClick={enableInput}
+          onBlur={disabledInput}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          value={title}
+          aria-label="페이지 제목"
+          className="h-11 min-w-0 w-full max-w-120 px-2"
+        />
+      ) : (
+        <Button
+          onClick={enableInput}
+          title={initialData.title}
+          variant="ghost"
+          size="sm"
+          className="h-auto max-w-[45vw] min-w-0 shrink overflow-hidden p-1 text-left font-normal md:max-w-[80vw]"
+        >
+          <span className="block min-w-0 truncate">{initialData?.title}</span>
+        </Button>
+      )}
+    </div>
+  );
+};
+
+Title.Skeleton = function TitleSkeleton() {
+  return <Skeleton className="h-6 w-20 rounded-md" />;
+};

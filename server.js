@@ -7,7 +7,9 @@ if (process.env.SKIP_DOTENV !== "1") {
   require("dotenv").config();
 }
 const nodemailer = require("nodemailer");
-const { createContentStore } = require("./content-store");
+const { createContentStore, requireContentRevision } = require("./content-store");
+const { createEditorDraftStore } = require("./editor-draft-store");
+const { createNotionStore, MAX_UPLOAD_BYTES } = require("./notion-store");
 
 const SESSION_COOKIE = "thecistus_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
@@ -131,12 +133,14 @@ function createConfig(overrides = {}) {
   const contentPath = overrides.contentPath || env.CONTENT_PATH || path.join(appDataDir, "content.json");
   const commentsPath = overrides.commentsPath || env.COMMENTS_PATH || path.join(appDataDir, "comments.json");
   const authPath = overrides.authPath || env.AUTH_PATH || path.join(appDataDir, "admin-auth.json");
+  const editorDraftsPath = path.join(appDataDir, "editor-drafts.json");
 
   if (isProduction) {
     assertProductionAppDataDir({ root, appDataDir, explicitAppDataDir });
     assertProductionRuntimePath({ root, appDataDir, filePath: contentPath, label: "CONTENT_PATH" });
     assertProductionRuntimePath({ root, appDataDir, filePath: commentsPath, label: "COMMENTS_PATH" });
     assertProductionRuntimePath({ root, appDataDir, filePath: authPath, label: "AUTH_PATH" });
+    assertProductionRuntimePath({ root, appDataDir, filePath: editorDraftsPath, label: "Editor drafts path" });
   }
 
   return {
@@ -150,6 +154,7 @@ function createConfig(overrides = {}) {
     defaultContentPath: overrides.defaultContentPath || env.DEFAULT_CONTENT_PATH || path.join(root, "data", "default-content.json"),
     commentsPath,
     authPath,
+    editorDraftsPath,
     authTemplatePath: overrides.authTemplatePath || env.AUTH_TEMPLATE_PATH || path.join(root, "data", "admin-auth.json"),
     maxRequestBodyBytes: positiveNumber(overrides.maxRequestBodyBytes ?? env.MAX_REQUEST_BODY_BYTES, 1024 * 1024),
     sessionCookieSecure: overrides.sessionCookieSecure ?? envBool(env.SESSION_COOKIE_SECURE, isProduction),
@@ -162,17 +167,20 @@ function createConfig(overrides = {}) {
 
 function createRuntime(overrides = {}) {
   const config = createConfig(overrides);
+  const contentStore = createContentStore({
+    appDataDir: config.appDataDir,
+    contentPath: config.contentPath,
+    defaultContentPath: config.defaultContentPath
+  });
   return {
     config,
     sessions: new Map(),
     otpChallenges: new Map(),
     rateLimitBuckets: new Map(),
     commentWriteQueue: Promise.resolve(),
-    contentStore: createContentStore({
-      appDataDir: config.appDataDir,
-      contentPath: config.contentPath,
-      defaultContentPath: config.defaultContentPath
-    })
+    editorDraftStore: createEditorDraftStore({ filePath: config.editorDraftsPath, isSafeContentId }),
+    contentStore,
+    notionStore: createNotionStore({ appDataDir: config.appDataDir, readLegacyContent: () => contentStore.readExisting(), isSafeContentId })
   };
 }
 
@@ -213,7 +221,7 @@ async function ensureCommentsFile(runtime) {
 }
 
 async function getCurrentContent(runtime) {
-  return runtime.contentStore.readCurrent();
+  return runtime.notionStore.publicContent();
 }
 
 async function getDefaultContent(runtime) {
@@ -251,8 +259,8 @@ async function commentTargetExists(runtime, targetType, targetId) {
   return false;
 }
 
-async function writeCurrentContent(runtime, payload) {
-  await runtime.contentStore.writeCurrent(payload);
+async function writeCurrentContent(runtime, payload, expectedRevision) {
+  return runtime.contentStore.writeCurrent(payload, expectedRevision);
 }
 
 async function writeCurrentComments(runtime, payload) {
@@ -346,9 +354,9 @@ function isPublishedItem(item) {
 }
 
 const PUBLIC_ITEM_KEYS = {
-  portfolio: ["id", "year", "date", "typeId", "category", "title", "icon", "cover", "desc", "body", "points", "tags", "detail", "blocks", "links"],
-  studyPosts: ["id", "date", "typeId", "category", "title", "icon", "cover", "excerpt", "body", "blocks"],
-  updates: ["id", "date", "typeId", "category", "title", "icon", "cover", "desc", "body", "blocks"],
+  portfolio: ["id", "year", "date", "typeId", "category", "title", "icon", "cover", "desc", "body", "points", "tags", "detail", "blocks", "links", "notionDocumentId"],
+  studyPosts: ["id", "date", "typeId", "category", "title", "icon", "cover", "excerpt", "body", "blocks", "notionDocumentId"],
+  updates: ["id", "date", "typeId", "category", "title", "icon", "cover", "desc", "body", "blocks", "notionDocumentId"],
   taxonomy: ["id", "label", "group"],
   site: ["eyebrow", "title", "lead", "status", "focus"],
   contact: ["copy", "email", "github"]
@@ -480,6 +488,9 @@ function publicContentPayload(content) {
     portfolio,
     studyPosts,
     updates,
+    notionPages: Array.isArray(content?.notionPages)
+      ? content.notionPages.map((node) => pickPublicFields(node, ["_id", "title", "icon", "group", "sourceId", "parentDocument", "order"]))
+      : [],
     taxonomy: {
       types: Array.isArray(content?.taxonomy?.types)
         ? content.taxonomy.types.filter((item) => CONTENT_GROUP_VALUES.has(item.group)).map((item) => pickPublicFields(item, PUBLIC_ITEM_KEYS.taxonomy))
@@ -870,10 +881,10 @@ function requireTrustedOrigin(runtime, req, res) {
   return false;
 }
 
-function readRequestBody(runtime, req) {
+function readRequestBuffer(req, maxBytes) {
   return new Promise((resolve, reject) => {
     const contentLength = Number(req.headers["content-length"] || 0);
-    if (contentLength > runtime.config.maxRequestBodyBytes) {
+    if (contentLength > maxBytes) {
       const error = new Error("Request body too large");
       error.statusCode = 413;
       reject(error);
@@ -886,7 +897,7 @@ function readRequestBody(runtime, req) {
     req.on("data", (chunk) => {
       if (tooLarge) return;
       totalBytes += chunk.length;
-      if (totalBytes > runtime.config.maxRequestBodyBytes && !tooLarge) {
+      if (totalBytes > maxBytes && !tooLarge) {
         tooLarge = true;
         const error = new Error("Request body too large");
         error.statusCode = 413;
@@ -898,21 +909,20 @@ function readRequestBody(runtime, req) {
     });
     req.on("end", () => {
       if (tooLarge) return;
-      const text = Buffer.concat(chunks).toString("utf8");
-      if (!text) {
-        resolve({});
-        return;
-      }
-      try {
-        resolve(JSON.parse(text));
-      } catch (error) {
-        error.statusCode = 400;
-        error.message = "Invalid JSON body";
-        reject(error);
-      }
+      resolve(Buffer.concat(chunks));
     });
     req.on("error", reject);
   });
+}
+
+async function readRequestBody(runtime, req) {
+  const body = await readRequestBuffer(req, runtime.config.maxRequestBodyBytes);
+  if (!body.length) return {};
+  try { return JSON.parse(body.toString("utf8")); } catch {
+    const error = new Error("Invalid JSON body");
+    error.statusCode = 400;
+    throw error;
+  }
 }
 
 function resolveStaticPath(runtime, normalizedPathname) {
@@ -931,7 +941,9 @@ async function serveStatic(runtime, req, res, urlPathname) {
     return;
   }
 
-  const pathname = normalizeUrlPathname(urlPathname);
+  const requestedPathname = normalizeUrlPathname(urlPathname);
+  const pathname = requestedPathname && (/^\/admin(?:\/.*)?$/.test(requestedPathname) || /^\/preview\/[a-z0-9._:-]+\/?$/i.test(requestedPathname))
+    ? "/assets/notion-app/index.html" : requestedPathname;
   if (!pathname || !isPublicStaticPath(pathname)) {
     sendJson(res, 404, { error: "Not Found" });
     return;
@@ -983,6 +995,76 @@ async function serveStatic(runtime, req, res, urlPathname) {
 
 async function handleApi(runtime, req, res, url) {
   const pathname = url.pathname;
+
+  if (pathname === "/api/admin/notion" && req.method === "GET") {
+    const session = requireAuth(runtime, req, res);
+    if (!session) return true;
+    sendJson(res, 200, { ...await runtime.notionStore.getSnapshot(), csrfToken: session.csrfToken });
+    return true;
+  }
+
+  if (pathname === "/api/admin/notion/files") {
+    const session = requireAuth(runtime, req, res);
+    if (!session) return true;
+    if (req.method !== "PUT") {
+      sendJson(res, 405, { error: "Method Not Allowed" }, { Allow: "PUT" });
+      return true;
+    }
+    if (!requireTrustedOrigin(runtime, req, res) || !requireCsrfToken(req, res, session)) return true;
+    if (!enforceRateLimit(runtime, req, res, "admin:notion-files", 20, 5 * 60 * 1000)) return true;
+    let name;
+    try { name = decodeURIComponent(firstHeaderValue(req.headers["x-file-name"])); } catch {
+      sendJson(res, 400, { error: "File name is invalid" });
+      return true;
+    }
+    const buffer = await readRequestBuffer(req, MAX_UPLOAD_BYTES);
+    const upload = await runtime.notionStore.upload(buffer, name, firstHeaderValue(req.headers["content-type"]));
+    sendJson(res, 200, upload);
+    return true;
+  }
+
+  const notionMethod = pathname.match(/^\/api\/admin\/notion\/([a-zA-Z]+)$/);
+  if (notionMethod) {
+    const session = requireAuth(runtime, req, res);
+    if (!session) return true;
+    if (req.method !== "POST") {
+      sendJson(res, 405, { error: "Method Not Allowed" }, { Allow: "POST" });
+      return true;
+    }
+    if (!requireTrustedOrigin(runtime, req, res) || !requireJsonRequest(req, res) || !requireCsrfToken(req, res, session)) return true;
+    if (!enforceRateLimit(runtime, req, res, "admin:notion", 300, 60 * 1000)) return true;
+    const args = await readRequestBody(runtime, req);
+    const result = await runtime.notionStore.run(notionMethod[1], args, { origin: requestOrigin(req) });
+    sendJson(res, 200, { ...result, csrfToken: session.csrfToken });
+    return true;
+  }
+
+  const notionDocument = pathname.match(/^\/api\/notion\/documents\/([a-z0-9._:-]+)$/i);
+  if (notionDocument) {
+    if (req.method !== "GET") {
+      sendJson(res, 405, { error: "Method Not Allowed" }, { Allow: "GET" });
+      return true;
+    }
+    const page = await runtime.notionStore.getPublishedPage(notionDocument[1]);
+    sendJson(res, 200, page);
+    return true;
+  }
+
+  const notionFile = pathname.match(/^\/api\/notion\/files\/([a-z0-9._:-]+)$/i);
+  if (notionFile) {
+    if (!["GET", "HEAD"].includes(req.method)) {
+      sendJson(res, 405, { error: "Method Not Allowed" }, { Allow: "GET, HEAD" });
+      return true;
+    }
+    const file = await runtime.notionStore.getFile(notionFile[1], Boolean(getSession(runtime, req)));
+    res.writeHead(200, {
+      ...SECURITY_HEADERS, "Cache-Control": "no-store", "Content-Length": file.buffer.length,
+      "Content-Type": file.inline ? file.type : "application/octet-stream",
+      "Content-Disposition": `${file.inline ? "inline" : "attachment"}; filename*=UTF-8''${encodeURIComponent(file.name).replace(/'/g, "%27")}`
+    });
+    res.end(req.method === "HEAD" ? undefined : file.buffer);
+    return true;
+  }
 
   if (pathname === "/api/auth/session" && req.method === "GET") {
     const authConfig = await getAuthConfig(runtime);
@@ -1087,8 +1169,35 @@ async function handleApi(runtime, req, res, url) {
   if (pathname === "/api/admin/content" && req.method === "GET") {
     const session = requireAuth(runtime, req, res);
     if (!session) return true;
-    const content = await getCurrentContent(runtime);
-    sendJson(res, 200, { content, csrfToken: session.csrfToken });
+    const { content, revision } = await runtime.contentStore.readCurrentWithRevision();
+    sendJson(res, 200, { content, revision, csrfToken: session.csrfToken });
+    return true;
+  }
+
+  if (pathname === "/api/admin/editor-drafts") {
+    const session = requireAuth(runtime, req, res);
+    if (!session) return true;
+    if (req.method === "GET") {
+      const draft = await runtime.editorDraftStore.get(url.searchParams.get("key"));
+      sendJson(res, 200, { draft });
+      return true;
+    }
+    if (!["PUT", "DELETE"].includes(req.method)) {
+      sendJson(res, 405, { error: "Method Not Allowed" }, { Allow: "GET, PUT, DELETE" });
+      return true;
+    }
+    if (!requireTrustedOrigin(runtime, req, res)) return true;
+    if (!requireJsonRequest(req, res)) return true;
+    if (!requireCsrfToken(req, res, session)) return true;
+    if (!enforceRateLimit(runtime, req, res, "admin:editor-drafts", 120, 60 * 1000)) return true;
+    const body = await readRequestBody(runtime, req);
+    if (req.method === "PUT") {
+      const draft = await runtime.editorDraftStore.put(body);
+      sendJson(res, 200, { draft });
+    } else {
+      await runtime.editorDraftStore.delete(body);
+      sendJson(res, 200, { ok: true });
+    }
     return true;
   }
 
@@ -1099,14 +1208,15 @@ async function handleApi(runtime, req, res, url) {
     if (!session) return true;
     if (!requireCsrfToken(req, res, session)) return true;
     const body = await readRequestBody(runtime, req);
-    const content = body?.content ?? body;
+    requireContentRevision(body?.expectedRevision);
+    const content = body?.content;
     const validationError = validateContentPayload(content);
     if (validationError) {
       sendJson(res, 400, { error: validationError });
       return true;
     }
-    await writeCurrentContent(runtime, content);
-    sendJson(res, 200, { ok: true, content, csrfToken: session.csrfToken });
+    const saved = await writeCurrentContent(runtime, content, body.expectedRevision);
+    sendJson(res, 200, { ok: true, ...saved, csrfToken: session.csrfToken });
     return true;
   }
 
@@ -1116,9 +1226,11 @@ async function handleApi(runtime, req, res, url) {
     const session = requireAuth(runtime, req, res);
     if (!session) return true;
     if (!requireCsrfToken(req, res, session)) return true;
+    const body = await readRequestBody(runtime, req);
+    requireContentRevision(body?.expectedRevision);
     const content = await getDefaultContent(runtime);
-    await writeCurrentContent(runtime, content);
-    sendJson(res, 200, { ok: true, content, csrfToken: session.csrfToken });
+    const saved = await writeCurrentContent(runtime, content, body.expectedRevision);
+    sendJson(res, 200, { ok: true, ...saved, csrfToken: session.csrfToken });
     return true;
   }
 

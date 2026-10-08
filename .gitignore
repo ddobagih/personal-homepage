@@ -10,5 +10,12 @@ tmp-*.png
 .env
 .env.local
 data/comments.json
+data/editor-drafts.json
+data/editor-drafts.json.*.tmp
 data/backups/
+data/notion-documents.json
+data/notion-documents.json.*.tmp
+data/notion-backups/
+data/notion-uploads/
+assets/notion-app/
 homepage-critical-feedback.html

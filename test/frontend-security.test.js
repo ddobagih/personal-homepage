@@ -88,10 +88,10 @@ test("public dynamic controls escape ids and portfolio detail moves focus", asyn
 test("asset cache version was bumped for changed frontend bundles", async () => {
   const html = await read("index.html");
   assert.match(html, /site\.css\?v=20260622-03/);
-  assert.match(html, /public\.css\?v=20260716-12/);
-  assert.match(html, /admin\.css\?v=20260716-02/);
-  assert.match(html, /core\.js\?v=20260716-01/);
-  assert.match(html, /site\.js\?v=20260716-13/);
+  assert.match(html, /public\.css\?v=20261004-04/);
+  assert.match(html, /admin\.css\?v=20261001-18/);
+  assert.match(html, /core\.js\?v=20261001-18/);
+  assert.match(html, /site\.js\?v=20261004-03/);
 });
 
 test("closed mobile admin drawer is removed from keyboard and accessibility navigation", async () => {
@@ -106,7 +106,7 @@ test("public workspace shell is responsive and remains scoped away from admin", 
   const publicCss = await read("assets/public.css");
   const site = await read("assets/site.js");
 
-  assert.match(html, /<body data-current-page="home">/);
+  assert.match(html, /<body data-current-page="home" data-notion-workspace="\/admin\/">/);
   assert.match(html, /data-action="toggle-public-menu"/);
   assert.doesNotMatch(html, /codex-panel|archive\.session|hero-status-line/);
   assert.doesNotMatch(html, /id="contact"/);

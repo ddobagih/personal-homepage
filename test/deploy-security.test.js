@@ -44,7 +44,7 @@ test("nginx configs block dotfiles, avoid duplicate CSP, and do not trust client
   const staticConf = await read("deploy/nginx.thecistus.com.conf");
   const nodeConf = await read("deploy/nginx.thecistus.com.node.conf");
   assert.match(staticConf, /location ~ \/\\\.\(\?!well-known/);
-  assert.match(staticConf, /server\\\.js\|content-store\\\.js\|package/);
+  assert.match(staticConf, /server\\\.js\|content-store\\\.js\|editor-draft-store\\\.js\|notion-store\\\.js\|notion-content\\\.js\|admin-src\|package/);
   assert.match(staticConf, /deploy\|scripts\|test\|data/);
   assert.match(nodeConf, /location ~ \/\\\.\(\?!well-known/);
   assert.match(nodeConf, /Strict-Transport-Security/);
@@ -117,14 +117,20 @@ test("node publish replaces stale runtime artifact directories", async () => {
     await fs.mkdir(path.join(tmp, name), { recursive: true });
     await fs.writeFile(path.join(tmp, name, "stale.txt"), "stale\n");
   }
+  await fs.writeFile(path.join(tmp, "data", "editor-drafts.json"), "{\"drafts\": []}\n");
   await fs.writeFile(path.join(tmp, ".env"), "SECRET=do-not-keep\n");
 
   await execFileAsync("bash", ["deploy/publish_node_app.sh", tmp], { cwd: ROOT });
 
   await fs.access(path.join(tmp, "server.js"));
+  await fs.access(path.join(tmp, "editor-draft-store.js"));
+  await fs.access(path.join(tmp, "notion-store.js"));
+  await fs.access(path.join(tmp, "notion-content.js"));
+  await fs.access(path.join(tmp, "assets", "notion-app", "index.html"));
+  await fs.access(path.join(tmp, "assets", "notion-app", "LICENSE.notion-clone.txt"));
   await fs.access(path.join(tmp, "data", "default-content.json"));
   await fs.access(path.join(tmp, "data", "admin-auth.json"));
-  for (const name of ["deploy", "scripts", "test", ".env", "data/content.json", "data/stale.txt"]) {
+  for (const name of ["deploy", "scripts", "test", ".env", "data/content.json", "data/editor-drafts.json", "data/notion-documents.json", "admin-src", "data/stale.txt"]) {
     await assert.rejects(fs.access(path.join(tmp, name)), undefined, name);
   }
 });
@@ -174,7 +180,7 @@ test("operator scripts avoid secret printing and cover env/smoke checks", async 
   assert.match(release, /password hash/);
   assert.match(release, /운영자만 실행/);
   assert.match(release, /install_node_stack\.sh/);
-  assert.match(gitignore, /^daylog\/$/m);
+  // Work records can be tracked in source; preflight checks their exclusion from web artifacts.
   assert.match(gitignore, /^homepage-critical-feedback\.html$/m);
   assert.match(hardening, /Content-Security-Policy-Report-Only/);
   assert.match(hardening, /frame-src/);
@@ -358,10 +364,10 @@ test("smoke script can verify a local fake app without printing response bodies"
     }
     if (pathname === "/api/content") {
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ content: { portfolio: [{ id: "project-one", title: "Published Project" }] } }));
+      res.end(JSON.stringify({ content: { site: { status: "personal page" }, portfolio: [{ id: "project-one", title: "Published Project" }] } }));
       return;
     }
-    if (pathname === "/api/admin/content") {
+    if (pathname === "/api/admin/content" || pathname === "/api/admin/editor-drafts") {
       res.writeHead(401, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Authentication required" }));
       return;
@@ -399,7 +405,7 @@ test("smoke script fails on public admin metadata without printing response bodi
       res.end(JSON.stringify({ content: { portfolio: [{ id: "draft-project", title: bodyOnlyForLeakCheck, status: "draft" }] } }));
       return;
     }
-    if (pathname === "/api/admin/content") {
+    if (pathname === "/api/admin/content" || pathname === "/api/admin/editor-drafts") {
       res.writeHead(401, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Authentication required" }));
       return;
@@ -442,7 +448,7 @@ test("smoke script fails on private 2xx and invalid JSON without printing respon
       res.end(JSON.stringify({ content: { portfolio: [] } }));
       return;
     }
-    if (pathname === "/api/admin/content") {
+    if (pathname === "/api/admin/content" || pathname === "/api/admin/editor-drafts") {
       res.writeHead(401, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "Authentication required" }));
       return;

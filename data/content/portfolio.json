@@ -1,7 +1,7 @@
 [
   {
     "id": "item",
-    "status": "published",
+    "status": "draft",
     "year": "2026",
     "date": "2026-07-16T11:37",
     "typeId": "portfolio",

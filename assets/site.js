@@ -26,6 +26,7 @@ function collectionForType(type) {
 
 const ADMIN_PAGE_ICON_OPTIONS = ["✨", "🧩", "🚀", "📘", "📝", "🎯", "🛠", "🌿", "📎", "💡"];
 const ADMIN_DRAWER_MEDIA = window.matchMedia("(max-width: 980px)");
+const PUBLIC_MENU_MEDIA = window.matchMedia("(max-width: 780px)");
 
 function defaultAdminTypeId(group = "portfolio") {
   return group;
@@ -47,7 +48,7 @@ function adminStatusMeta(status = "draft") {
 }
 
 function currentAdminStatusValue() {
-  return $("#admin-content-status")?.value || currentAdminContentItem()?.status || "draft";
+  return currentAdminContentItem()?.status || $("#admin-content-status")?.value || "draft";
 }
 
 function currentAdminTypeIdValue(section = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio") {
@@ -216,12 +217,15 @@ function portfolioCardVisual(project) {
 
 function portfolioIndexMarkup(project, index, source, selected = false) {
   const visual = portfolioCardVisual(project);
+  const conceptCover = visual && /(?:^|\/)hanium-architecture\.webp(?:[?#]|$)/.test(visual.src);
+  const conceptTags = (Array.isArray(project.tags) ? project.tags : []).slice(0, 3);
   const projectId = escapeHtml(project.id);
   const projectHref = `#portfolio/${encodeURIComponent(String(project.id))}`;
   const category = resolveCategoryLabel("portfolio", project.category);
   const titleMarkup = source === "portfolio"
     ? `<h2 class="project-index-title">${escapeHtml(project.title)}</h2>`
     : `<h3 class="project-index-title">${escapeHtml(project.title)}</h3>`;
+  const description = normalizeText(portfolioDetail(project).headline, normalizeText(project.desc, ""));
   return `
     <article class="project-index-item ${selected ? "selected" : ""}" data-project-id="${projectId}">
       <a class="project-index-button ${visual ? "has-media" : ""}" href="${escapeHtml(projectHref)}" data-open-project-id="${projectId}" data-open-project-source="${escapeHtml(source)}">
@@ -232,8 +236,19 @@ function portfolioIndexMarkup(project, index, source, selected = false) {
             <span>${escapeHtml(portfolioCardTimestamp(project))}</span>
           </div>
           ${titleMarkup}
+          ${description ? `<p class="project-index-description">${escapeHtml(description)}</p>` : ""}
+          ${source === "home-grid" && conceptCover ? `<ul class="project-index-tags">${conceptTags.map(tag => `<li>${escapeHtml(tag)}</li>`).join("")}</ul>` : ""}
         </div>
-        ${visual ? `
+        ${conceptCover ? `
+          <figure class="project-index-visual project-cover-concept ${source === "home-grid" ? "project-cover-editorial" : ""}">
+            ${source === "home-grid" ? `<img class="project-cover-photo" src="./assets/media/design/wayfinding-concept.webp" alt="" width="1536" height="1024" decoding="async" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>` : ""}
+            <span class="project-cover-label">Project concept</span>
+            <div class="project-cover-route-art" aria-hidden="true"><span></span><span></span><span></span></div>
+            <figcaption class="project-cover-caption"><span>Route, vision &amp; voice.</span><small>An accessibility project</small></figcaption>
+            <ul class="project-cover-tags">${conceptTags.map(tag => `<li>${escapeHtml(tag)}</li>`).join("")}</ul>
+            ${source === "home-grid" ? '<span class="project-cover-arrow" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18 18 6M6 6h12v12"/></svg></span>' : ""}
+          </figure>
+        ` : visual ? `
           <figure class="project-index-visual">
             <img src="${escapeHtml(visual.src)}" alt="${escapeHtml(visual.alt)}" width="1024" height="508" decoding="async" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>
           </figure>
@@ -454,18 +469,406 @@ function saveState() {
 
 function setAdminStatus(copy) {
   adminState.setStatus(copy);
-  if ($("#admin-page-save-state")) {
-    $("#admin-page-save-state").textContent = adminState.status || "";
+  const saveState = $("#admin-page-save-state");
+  if (saveState) {
+    saveState.textContent = adminState.status || "";
+    saveState.dataset.saveState = adminState.editorSaving ? "saving"
+      : /실패|만료/.test(adminState.status) ? "error"
+        : adminState.editorDirty ? "dirty" : "saved";
+    saveState.setAttribute("role", "status");
+    saveState.setAttribute("aria-live", "polite");
   }
+}
+
+function hasUnsavedAdminContent() {
+  if (!adminState.editorBaselineSignature) return false;
+  adminState.editorDirty = adminSnapshotSignature(adminSnapshotFromDom()) !== adminState.editorBaselineSignature;
+  return adminState.editorDirty;
+}
+
+function confirmAdminEditorNavigation(continuation = null) {
+  if (adminState.editorSaving) {
+    showToast("저장 중", "저장이 끝난 뒤 이동해 주세요.");
+    return false;
+  }
+  if ($("#unpublish-page-modal")?.hidden === false) cancelUnpublishCurrentPage();
+  if (editorDraftService.inFlight && continuation) {
+    editorDraftService.pauseWrites().then(() => continuation());
+    return false;
+  }
+  editorDraftService.pauseWrites();
+  if (!hasUnsavedAdminContent()) return true;
+  const modal = $("#unsaved-changes-modal");
+  if (!modal) {
+    showToast("변경사항 있음", "이동하기 전에 편집 내용을 저장해 주세요.");
+    return false;
+  }
+  if (modal.hidden === false) return false;
+  const previousFocus = document.activeElement;
+  const focusWasInSaveError = $("#save-error-modal")?.contains(previousFocus);
+  dismissSaveError();
+  adminState.editorNavigationGeneration += 1;
+  adminState.pendingEditorNavigation = continuation;
+  adminState.editorNavigationFocus = focusWasInSaveError
+    ? $("#admin-page-title-editable") || $("#admin-content-form")
+    : previousFocus;
+  adminState.editorNavigationInert = [$("main"), $(".topbar"), $(".footer")].filter(Boolean).map((node) => ({ node, inert: node.inert }));
+  adminState.editorNavigationInert.forEach(({ node }) => { node.inert = true; });
+  modal.hidden = false;
+  requestAnimationFrame(() => modal.querySelector('[data-action="keep-editing"]')?.focus());
+  return false;
+}
+
+function dismissUnsavedChanges(options = {}) {
+  adminState.editorNavigationGeneration += 1;
+  const modal = $("#unsaved-changes-modal");
+  if (modal) modal.hidden = true;
+  adminState.editorNavigationInert.forEach(({ node, inert }) => { node.inert = inert; });
+  adminState.editorNavigationInert = [];
+  adminState.pendingEditorNavigation = null;
+  const focusTarget = adminState.editorNavigationFocus;
+  adminState.editorNavigationFocus = null;
+  if (options.restoreFocus !== false && focusTarget?.isConnected !== false) focusTarget?.focus();
+  if (options.resumeDraft !== false) editorDraftService.resume();
+}
+
+function discardAdminEditorChanges(options = {}) {
+  if (adminState.editorSaving || $("#unsaved-changes-modal")?.hidden !== false) return false;
+  const generation = options.generation ?? adminState.editorNavigationGeneration;
+  if (generation !== adminState.editorNavigationGeneration) return false;
+  const continuation = options.draftSettled ? options.continuation : adminState.pendingEditorNavigation;
+  if (!options.draftSettled && editorDraftService.current) {
+    return editorDraftService.pause().then(async (context) => {
+      if (generation !== adminState.editorNavigationGeneration) return false;
+      const cleared = await editorDraftService.clear(context, true);
+      if (generation !== adminState.editorNavigationGeneration) return false;
+      if (!cleared) showToast("복구 초안 정리 실패", "현재 편집은 버렸지만 서버 복구 초안은 남아 있습니다.");
+      return discardAdminEditorChanges({ draftSettled: true, generation, continuation });
+    });
+  }
+  dismissUnsavedChanges({ restoreFocus: false, resumeDraft: false });
+  adminState.editorBaselineSignature = "";
+  adminState.editorDirty = false;
+  adminState.pendingEditorSaveStatus = null;
+  adminState.pendingEditorRecovery = null;
+  adminState.pendingContentMutation = null;
+  if ($("#admin-content-form")) renderAdminContentForm();
+  setAdminStatus("변경사항 없음");
+  const result = typeof continuation === "function" ? continuation() : undefined;
+  if (currentPage !== "admin") requestAnimationFrame(() => $("#content-start")?.focus());
+  return result;
+}
+
+function handleUnsavedChangesKeydown(event) {
+  const unsavedModal = $("#unsaved-changes-modal");
+  const modal = unsavedModal?.hidden === false ? unsavedModal : $("#unpublish-page-modal");
+  if (!modal || modal.hidden) return;
+  if (event.key === "Escape") {
+    event.preventDefault();
+    event.stopPropagation();
+    if (modal.id === "unpublish-page-modal") cancelUnpublishCurrentPage();
+    else dismissUnsavedChanges();
+    return;
+  }
+  if (event.key !== "Tab") return;
+  const buttons = [...modal.querySelectorAll('[data-action="keep-editing"], [data-action="discard-changes"], [data-action="cancel-unpublish"], [data-action="confirm-unpublish"]')];
+  const first = buttons[0];
+  const last = buttons.at(-1);
+  if (!buttons.includes(document.activeElement) || (event.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first)?.focus();
+  }
+}
+
+function requestUnpublishCurrentPage() {
+  if (!ensureAdminAuthenticated() || adminState.editorSaving || currentAdminStatusValue() !== "published") return false;
+  const modal = $("#unpublish-page-modal");
+  if (!modal || modal.hidden === false || $("#unsaved-changes-modal")?.hidden === false) return false;
+  const previousFocus = document.activeElement;
+  const focusWasInSaveError = $("#save-error-modal")?.contains(previousFocus);
+  dismissSaveError();
+  adminState.unpublishFocus = focusWasInSaveError ? $("#admin-page-title-editable") || $("#admin-content-form") : previousFocus;
+  adminState.unpublishPageKey = adminHistoryPageKey();
+  adminState.unpublishInert = [$("main"), $(".topbar"), $(".footer")].filter(Boolean).map((node) => ({ node, inert: node.inert }));
+  adminState.unpublishInert.forEach(({ node }) => { node.inert = true; });
+  modal.hidden = false;
+  requestAnimationFrame(() => modal.querySelector('[data-action="cancel-unpublish"]')?.focus());
+  return false;
+}
+
+function cancelUnpublishCurrentPage(options = {}) {
+  const modal = $("#unpublish-page-modal");
+  if (modal) modal.hidden = true;
+  adminState.unpublishInert.forEach(({ node, inert }) => { node.inert = inert; });
+  adminState.unpublishInert = [];
+  const focus = adminState.unpublishFocus;
+  adminState.unpublishFocus = null;
+  adminState.unpublishPageKey = "";
+  if (options.restoreFocus !== false && focus?.isConnected !== false) focus?.focus();
+}
+
+async function confirmUnpublishCurrentPage() {
+  if ($("#unpublish-page-modal")?.hidden !== false || adminState.editorSaving || adminState.unpublishPageKey !== adminHistoryPageKey()) return false;
+  const focus = adminState.unpublishFocus;
+  cancelUnpublishCurrentPage();
+  const saved = await adminEditorController.commit("draft", null, { confirmedUnpublish: true });
+  if (saved && focus?.isConnected !== false) requestAnimationFrame(() => focus?.focus());
+  return saved;
+}
+
+function setAdminEditorSaving(saving) {
+  adminState.editorSaving = saving;
+  const form = $("#admin-content-form");
+  if (saving) form?.setAttribute("aria-busy", "true");
+  else form?.removeAttribute("aria-busy");
+  if (form) form.inert = saving;
+  ["admin-content-submit", "admin-content-draft", "admin-content-submit-top", "admin-content-draft-top"].forEach((id) => {
+    const button = $(`#${id}`);
+    if (button) button.disabled = saving;
+  });
 }
 
 function markAdminContentDirty() {
   if (!authState.authenticated || adminState.activePanel !== "content") return;
   scheduleAdminHistorySnapshot();
   renderAdminPreviewPane();
-  if (adminState.status === "변경사항 있음") return;
-  setAdminStatus("변경사항 있음");
+  const dirty = hasUnsavedAdminContent();
+  if (!adminState.editorSaving) setAdminStatus(dirty ? "변경사항 있음" : "변경사항 없음");
+  editorDraftService.schedule();
 }
+
+function editorDraftKey(snapshot = adminSnapshotFromDom()) {
+  return snapshot ? (snapshot.editingId ? `${snapshot.editingType || snapshot.type}:page:${snapshot.editingId}` : `${snapshot.type}:new`) : "";
+}
+
+class EditorDraftService {
+  constructor() {
+    this.current = null;
+    this.timer = 0;
+    this.inFlight = null;
+    this.clearing = null;
+  }
+
+  enabled() {
+    return Boolean($("#editor-draft-notice") && authState.authenticated && currentPage === "admin" && adminState.activePanel === "content");
+  }
+
+  isCurrent(context, signature = null) {
+    return this.current === context && !context.paused && this.enabled() && editorDraftKey() === context.key
+      && (!signature || adminSnapshotSignature(adminSnapshotFromDom()) === signature);
+  }
+
+  cancelTimer() {
+    clearTimeout(this.timer);
+    this.timer = 0;
+  }
+
+  pauseWrites() {
+    this.cancelTimer();
+    if (this.current) this.current.paused = true;
+    return this.inFlight || this.clearing || Promise.resolve();
+  }
+
+  async pause() {
+    const context = this.current;
+    await this.pauseWrites();
+    if (context?.loading) await context.loading;
+    return context;
+  }
+
+  resume() {
+    if (this.current) this.current.paused = false;
+    this.schedule();
+  }
+
+  showCandidate(context, copy = "서버에 복구용 초안이 있습니다. 편집 내용에 불러오거나 폐기할 수 있습니다.") {
+    if (!this.isCurrent(context)) return;
+    const notice = $("#editor-draft-notice");
+    const node = $("#editor-draft-copy");
+    if (notice) notice.hidden = false;
+    if (node) node.textContent = copy;
+    const restore = notice?.querySelector('[data-action="restore-editor-draft"]');
+    if (restore) restore.disabled = !context.candidate;
+  }
+
+  status(context, copy, state = "error", signature = null) {
+    if (!this.isCurrent(context, signature)) return;
+    setAdminStatus(copy);
+    const node = $("#admin-page-save-state");
+    if (node) node.dataset.saveState = state;
+  }
+
+  canonicalSnapshot(snapshot, live = adminSnapshotFromDom()) {
+    return { ...snapshot, editingId: live.editingId, editingType: live.editingType, requestedId: live.requestedId, status: live.status };
+  }
+
+  validDraft(context, draft) {
+    return draft?.key === context.key && CONTENT_GROUPS.includes(draft.snapshot?.type) && editorDraftKey(draft.snapshot) === context.key;
+  }
+
+  open() {
+    this.cancelTimer();
+    if (this.current) this.current.paused = true;
+    this.current = null;
+    const notice = $("#editor-draft-notice");
+    if (notice) notice.hidden = true;
+    if (!this.enabled()) return;
+    const snapshot = adminSnapshotFromDom();
+    const context = { key: editorDraftKey(snapshot), baseSignature: adminState.editorBaselineSignature, live: snapshot, version: null, savedSignature: "", candidate: null, blocked: false, paused: false, ready: false };
+    this.current = context;
+    context.loading = (async () => {
+      try {
+        const payload = await requestJson(`${ADMIN_EDITOR_DRAFTS_API_URL}?key=${encodeURIComponent(context.key)}`, { cache: "no-store" });
+        const draft = payload.draft;
+        if (draft) {
+          if (!this.validDraft(context, draft)) throw new Error("복구 초안 형식이 올바르지 않습니다.");
+          context.version = draft.version;
+          context.savedSignature = adminSnapshotSignature(this.canonicalSnapshot(draft.snapshot, snapshot));
+          if (context.savedSignature !== context.baseSignature) {
+            context.candidate = draft;
+            context.blocked = true;
+            this.showCandidate(context);
+          }
+        }
+      } catch (error) {
+        context.blocked = true;
+        context.errorCopy = error?.status === 401 ? "복구 초안 저장에 로그인이 필요합니다. 편집 내용은 유지했습니다." : "복구 초안 자동저장에 실패했습니다. 수동 저장을 사용할 수 있습니다.";
+        this.status(context, context.errorCopy);
+      } finally {
+        context.ready = true;
+      }
+    })();
+  }
+
+  schedule() {
+    this.cancelTimer();
+    let context = this.current;
+    if (context && this.enabled() && editorDraftKey() !== context.key) {
+      this.open();
+      context = this.current;
+    }
+    if (!context || !this.isCurrent(context) || adminState.editorSaving) return;
+    if (context.blocked) {
+      if (context.errorCopy) this.status(context, context.errorCopy);
+      return;
+    }
+    const dirty = hasUnsavedAdminContent();
+    if (!dirty && (!context.version || context.savedSignature === adminSnapshotSignature(adminSnapshotFromDom()))) return;
+    this.timer = setTimeout(() => { this.timer = 0; return this.flush(); }, 800);
+  }
+
+  async conflict(context) {
+    context.blocked = true;
+    this.status(context, "다른 곳에서 복구 초안이 변경되었습니다. 현재 입력을 유지했습니다.");
+    try {
+      const payload = await requestJson(`${ADMIN_EDITOR_DRAFTS_API_URL}?key=${encodeURIComponent(context.key)}`, { cache: "no-store" });
+      if (payload.draft && !this.validDraft(context, payload.draft)) throw new Error("복구 초안 형식이 올바르지 않습니다.");
+      context.candidate = payload.draft;
+      context.version = payload.draft?.version || null;
+      this.showCandidate(context, "다른 곳에서 변경된 복구 초안이 있습니다. 현재 입력을 유지하며 불러오기 또는 폐기를 선택해 주세요.");
+    } catch {
+      this.status(context, "복구 초안 충돌을 확인하지 못했습니다. 현재 입력을 유지했습니다.");
+    }
+  }
+
+  async flush() {
+    const context = this.current;
+    if (!context) return;
+    if (context.loading) await context.loading;
+    while (this.inFlight || this.clearing) await (this.inFlight || this.clearing);
+    if (!this.isCurrent(context) || context.blocked || adminState.editorSaving) return;
+    const snapshot = { ...adminSnapshotFromDom(), key: context.key };
+    const signature = adminSnapshotSignature(snapshot);
+    if (!hasUnsavedAdminContent() && !context.version) return;
+    if (signature === context.savedSignature) return;
+    this.status(context, "복구 초안 저장 중…", "saving", signature);
+    let succeeded = false;
+    const request = (async () => {
+      try {
+        const payload = await requestJson(ADMIN_EDITOR_DRAFTS_API_URL, { method: "PUT", body: JSON.stringify({ key: context.key, snapshot, baseSignature: context.baseSignature, expectedVersion: context.version }) });
+        context.version = payload.draft.version;
+        context.savedSignature = signature;
+        succeeded = true;
+        this.status(context, "복구 초안 저장됨 · 공개 반영은 수동 저장", "saved", signature);
+      } catch (error) {
+        if (error?.status === 409) await this.conflict(context);
+        else {
+          if (error?.status === 401) context.blocked = true;
+          context.errorCopy = error?.status === 401 ? "복구 초안 저장에 로그인이 필요합니다. 편집 내용은 유지했습니다." : "복구 초안 자동저장에 실패했습니다. 편집 내용은 유지했습니다.";
+          this.status(context, context.errorCopy, "error", signature);
+        }
+      }
+    })();
+    this.inFlight = request;
+    await request;
+    if (this.inFlight === request) this.inFlight = null;
+    if (succeeded && this.isCurrent(context) && adminSnapshotSignature(adminSnapshotFromDom()) !== signature) this.schedule();
+  }
+
+  async clear(context, quiet = false) {
+    if (!context) return true;
+    while (this.inFlight || this.clearing) await (this.inFlight || this.clearing);
+    if (!context.version) {
+      context.candidate = null;
+      context.blocked = false;
+      context.errorCopy = "";
+      if (this.current === context && $("#editor-draft-notice")) $("#editor-draft-notice").hidden = true;
+      return true;
+    }
+    const version = context.version;
+    const request = (async () => {
+      try {
+        await requestJson(ADMIN_EDITOR_DRAFTS_API_URL, { method: "DELETE", body: JSON.stringify({ key: context.key, version }) });
+        if (context.version === version) {
+          context.version = null;
+          context.candidate = null;
+          context.savedSignature = "";
+          context.blocked = false;
+          context.errorCopy = "";
+        }
+        if (this.current === context && $("#editor-draft-notice")) $("#editor-draft-notice").hidden = true;
+        return true;
+      } catch (error) {
+        if (!quiet && error?.status === 409) await this.conflict(context);
+        else if (!quiet) this.status(context, "복구 초안 폐기에 실패했습니다. 편집 내용은 유지했습니다.");
+        return false;
+      }
+    })();
+    this.clearing = request;
+    const cleared = await request;
+    if (this.clearing === request) this.clearing = null;
+    if (this.isCurrent(context)) this.schedule();
+    return cleared;
+  }
+
+  restore() {
+    const context = this.current;
+    if (!context?.candidate || !this.isCurrent(context) || adminState.editorSaving) return;
+    const snapshot = this.canonicalSnapshot(context.candidate.snapshot, context.live);
+    context.candidate = null;
+    context.blocked = false;
+    context.errorCopy = "";
+    context.savedSignature = adminSnapshotSignature(snapshot);
+    context.baseSignature = adminState.editorBaselineSignature;
+    $("#editor-draft-notice").hidden = true;
+    pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
+    applyAdminSnapshot(snapshot);
+    pushAdminUndoSnapshot(adminSnapshotFromDom());
+    setAdminStatus("복구 초안을 불러왔습니다. 공개 반영은 수동 저장해 주세요.");
+  }
+
+  async discard() {
+    const context = this.current;
+    if (!context || !this.isCurrent(context) || adminState.editorSaving) return;
+    this.cancelTimer();
+    if (await this.clear(context)) {
+      this.status(context, "복구 초안을 폐기했습니다. 현재 편집 내용은 유지했습니다.", adminState.editorDirty ? "dirty" : "saved");
+      this.schedule();
+    }
+  }
+}
+
+const editorDraftService = new EditorDraftService();
 
 const ADMIN_RECENT_BLOCKS_KEY = "thecistus-admin-recent-blocks-v1";
 const ADMIN_HISTORY_STORAGE_KEY = "thecistus-admin-page-history-v1";
@@ -545,9 +948,13 @@ function renderAdminShellState() {
   }
   const sidebarToggle = $("#admin-sidebar-toggle");
   if (sidebarToggle) {
-    sidebarToggle.textContent = "페이지";
+    sidebarToggle.textContent = adminState.sidebarOpen ? "목록 닫기" : "페이지 목록";
     sidebarToggle.setAttribute("aria-expanded", adminState.sidebarOpen ? "true" : "false");
   }
+  const workspaceLabel = $("#admin-workspace-label");
+  if (workspaceLabel) workspaceLabel.textContent = {
+    content: "페이지 편집", taxonomy: "카테고리 관리", site: "홈 소개", contact: "연락처"
+  }[adminState.activePanel] || "관리자";
 }
 
 function toggleAdminSidebar() {
@@ -603,7 +1010,9 @@ async function requestJson(url, options = {}) {
 
 class ContentService {
   async hydrate() {
-    const url = authState.authenticated ? ADMIN_CONTENT_API_URL : PUBLIC_CONTENT_API_URL;
+    const url = document.body.dataset.notionWorkspace
+      ? PUBLIC_CONTENT_API_URL
+      : authState.authenticated ? ADMIN_CONTENT_API_URL : PUBLIC_CONTENT_API_URL;
     const payload = await requestJson(url, { method: "GET", cache: "no-store" });
     if (payload.csrfToken) authState.csrfToken = payload.csrfToken;
     replaceContentData(payload.content || payload);
@@ -634,6 +1043,15 @@ class ContentService {
 
   async retrySave() {
     dismissSaveError();
+    if (adminState.pendingContentMutation) {
+      const { action, type, id } = adminState.pendingContentMutation;
+      await (action === "trash" ? adminEditorController.moveToTrash(type, id) : adminEditorController.restoreItem(type, id));
+      return;
+    }
+    if (adminState.pendingEditorSaveStatus) {
+      await adminEditorController.commit(adminState.pendingEditorSaveStatus, null, { confirmedUnpublish: adminState.pendingEditorSaveStatus === "draft" });
+      return;
+    }
     try {
       await this.save("재시도 저장을 완료했습니다.");
       renderAllContent();
@@ -769,12 +1187,12 @@ function addUnique(list, value) {
   return false;
 }
 
-function showToast(title, copy, tone = "") {
+function showToast(title, copy, tone = "", action = null) {
   const stack = $("#toast-stack");
   if (!stack) return;
 
   const isError = !tone || tone === "error";
-  const duration = isError ? 4000 : 2600;
+  const duration = action ? 8000 : isError ? 4000 : 2600;
 
   const toast = document.createElement("div");
   toast.className = `toast ${tone}`.trim();
@@ -782,6 +1200,7 @@ function showToast(title, copy, tone = "") {
   toast.innerHTML = `
     <div class="toast-title">${escapeHtml(title)}</div>
     <div class="toast-copy">${escapeHtml(copy)}</div>
+    ${action ? `<button class="toast-action text-link" type="button" data-action="${escapeHtml(action.action)}" data-type="${escapeHtml(action.type)}" data-id="${escapeHtml(action.id)}">${escapeHtml(action.label)}</button>` : ""}
   `;
 
   stack.prepend(toast);
@@ -815,13 +1234,13 @@ function setPageVisibility(page) {
 }
 
 function updateDocumentTitle(page) {
-  document.title = page === "home" ? "thecistus.com | 포트폴리오와 기록" : `thecistus.com | ${pageLabels[page]}`;
+  document.title = `${publicProfileName(content.contact?.github) || "Personal archive"} | ${pageLabels[page] || pageLabels.home}`;
 }
 
 const ogMeta = {
   portfolio: { title: "thecistus.com | 포트폴리오", desc: "프로젝트 포트폴리오를 정리한 페이지입니다." },
   study: { title: "thecistus.com | 공부글", desc: "공부하며 정리한 글을 모아둔 페이지입니다." },
-  updates: { title: "thecistus.com | Moments", desc: "일상 기록 페이지입니다." },
+  updates: { title: "thecistus.com | Updates", desc: "일상 기록 페이지입니다." },
   home: { title: "thecistus.com | 개인 포트폴리오와 기록", desc: "포트폴리오, 공부글, 근황을 정리하는 개인 홈페이지입니다." }
 };
 
@@ -829,9 +1248,10 @@ function updateOgMeta(page) {
   const meta = ogMeta[page] || ogMeta.home;
   const set = (sel, val) => { const el = document.querySelector(sel); if (el) el.content = val; };
   set('meta[name="description"]', meta.desc);
-  set('meta[property="og:title"]', meta.title);
+  const title = `${publicProfileName(content.contact?.github) || "Personal archive"} | ${pageLabels[page] || pageLabels.home}`;
+  set('meta[property="og:title"]', title);
   set('meta[property="og:description"]', meta.desc);
-  set('meta[name="twitter:title"]', meta.title);
+  set('meta[name="twitter:title"]', title);
   set('meta[name="twitter:description"]', meta.desc);
 }
 
@@ -839,7 +1259,7 @@ function updatePublicNavVisibility() {
   const visibility = {
     study: true,
     updates: true,
-    admin: false
+    admin: true
   };
   Object.entries(visibility).forEach(([page, visible]) => {
     $$(`.nav-link[data-page="${page}"], [data-action="show-public-page"][data-page="${page}"]`).forEach((node) => {
@@ -873,7 +1293,16 @@ function togglePublicMenu() {
 }
 
 function showPage(page, options = {}) {
-  const { updateHash = true, track = true, pushHistory = true, restoreScroll = null } = options;
+  if (page === "admin" && document.body.dataset.notionWorkspace) {
+    location.assign(document.body.dataset.notionWorkspace);
+    return false;
+  }
+  const { updateHash = true, track = true, pushHistory = true, restoreScroll = null, resumeNavigation = null } = options;
+  if (currentPage === "admin" && page === "admin" && adminState.editorBaselineSignature) return true;
+  if (currentPage === "admin" && page !== "admin" && !confirmAdminEditorNavigation(resumeNavigation || (() => showPage(page, { ...options, updateHash: true })))) {
+    if (!updateHash) history.replaceState({ page: "admin", scroll: window.scrollY }, "", "#admin");
+    return false;
+  }
 
   // Save current scroll position into current history entry before navigating
   if (updateHash && pushHistory && history.state) {
@@ -915,7 +1344,7 @@ function showPage(page, options = {}) {
   }
 
   if (page === "study") {
-    closeStudyPost(false);
+    closeStudyPost(false, { updateHash });
     renderStudyPosts(currentStudyCategory);
   }
 
@@ -930,7 +1359,7 @@ function showPage(page, options = {}) {
   if (page === "admin") {
     renderAdmin();
   }
-
+  return true;
 }
 
 function parseContentSortValue(type, item) {
@@ -956,7 +1385,7 @@ function recentHomeFeedItems(limit = 4) {
       typeLabel: resolvePublicTypeLabel("update", item.typeId || "update"),
       date: item.date,
       summary: item.desc,
-      cta: "Moments",
+      cta: "Updates",
       orderHint: index,
       sortValue: parseContentSortValue("update", item)
     }));
@@ -975,19 +1404,17 @@ function highlightScrollTarget(node) {
 
 function openPortfolioProject(projectId, source = "portfolio") {
   if (!publishedPortfolio().some((project) => project.id === projectId)) return;
+  if (currentPage === "admin" && !confirmAdminEditorNavigation(() => openPortfolioProject(projectId, source))) return;
   state.selectedProjectId = projectId;
   activePortfolioProjectId = projectId;
   addUnique(state.viewedProjects, projectId);
   saveState();
 
-  history.pushState({ page: "portfolio", projectId, scroll: 0 }, "", `#portfolio/${projectId}`);
+  history.pushState({ page: "portfolio", projectId, scroll: 0 }, "", `#portfolio/${encodeURIComponent(projectId)}`);
 
   // 포트폴리오 페이지가 아니면 먼저 전환
   if (currentPage !== "portfolio") {
-    currentPage = "portfolio";
-    setPageVisibility("portfolio");
-    updateDocumentTitle("portfolio");
-    updateOgMeta("portfolio");
+    showPage("portfolio", { updateHash: false, pushHistory: false, track: false });
   }
 
   // 카드 목록 재렌더 (selected 상태 반영)
@@ -1007,15 +1434,13 @@ function openHomeFeedItem(type, id) {
   }
 
   if (type === "study") {
-    showPage("study");
+    if (!showPage("study")) return;
     requestAnimationFrame(() => openStudyPost(id));
     return;
   }
 
-  showPage("updates");
-  requestAnimationFrame(() => {
-    highlightScrollTarget(document.getElementById(`update-${id}`));
-  });
+  if (!showPage("updates")) return;
+  openPublicDocument("update", id);
 }
 
 function openPortfolioSection(projectId, sectionId, source = "signal-card") {
@@ -1027,11 +1452,113 @@ function openPortfolioSection(projectId, sectionId, source = "signal-card") {
   });
 }
 
+function publicDocumentHref(node) {
+  const section = node.group === "update" ? "updates" : node.group;
+  return `#${section}/${encodeURIComponent(node.sourceId)}`;
+}
+
+function publicDocumentLink(node, graph) {
+  const item = graph.entries.get(`${node.group}:${node.sourceId}`);
+  const meta = [resolveCategoryLabel(node.group, item?.category), formatContentTimestamp(item?.date || item?.year, "")].filter(Boolean).join(" · ");
+  return `<a class="document-child-link" href="${escapeHtml(publicDocumentHref(node))}" data-action="open-public-document" data-type="${escapeHtml(node.group)}" data-id="${escapeHtml(node.sourceId)}">
+    <span class="document-page-icon" aria-hidden="true">${escapeHtml(node.icon || "▤")}</span>
+    <span class="document-page-copy"><span class="document-page-title">${escapeHtml(node.title)}</span>${meta ? `<span class="document-page-meta">${escapeHtml(meta)}</span>` : ""}</span>
+    <span aria-hidden="true">→</span>
+  </a>`;
+}
+
+function publicDocumentBreadcrumbs(node, graph, includeCurrent = true) {
+  const ancestors = graph.ancestors(node);
+  if (!ancestors.length) return "";
+  return `<nav class="document-breadcrumbs" aria-label="문서 경로"><ol>${ancestors.map((ancestor) => `<li><a href="${escapeHtml(publicDocumentHref(ancestor))}" data-action="open-public-document" data-type="${escapeHtml(ancestor.group)}" data-id="${escapeHtml(ancestor.sourceId)}">${escapeHtml(ancestor.title)}</a></li>`).join("")}${includeCurrent ? `<li><span aria-current="page">${escapeHtml(node.title)}</span></li>` : ""}</ol></nav>`;
+}
+
+function publicDocumentChildList(node, graph, options = {}, depth = 0) {
+  if (!node || depth > 12) return "";
+  const children = (graph.children.get(node._id) || []).filter((child) => !options.included || options.included.has(`${child.group}:${child.sourceId}`));
+  if (!children.length) return "";
+  return `<ul class="document-child-list">${children.map((child) => `<li class="document-child-item">${publicDocumentLink(child, graph)}${options.recursive ? publicDocumentChildList(child, graph, options, depth + 1) : ""}</li>`).join("")}</ul>`;
+}
+
+function publicDocumentBranch(group, item, markup, graph, included) {
+  const node = graph.byItem.get(`${group}:${item.id}`);
+  const children = (graph.children.get(node?._id) || []).filter((child) => !included || included.has(`${child.group}:${child.sourceId}`));
+  const context = node && graph.ancestors(node).length ? publicDocumentBreadcrumbs(node, graph, false) : "";
+  return `<div class="document-branch">${context}${markup}${children.length ? `<details class="document-children" data-document-key="${escapeHtml(node._id)}" open><summary>하위 문서 ${children.length}개</summary>${publicDocumentChildList(node, graph, { recursive: true, included })}</details>` : ""}</div>`;
+}
+
+function publicDocumentNavigation(group, item, graph = createPublicDocumentGraph(content), options = {}) {
+  const node = graph.byItem.get(`${group}:${item.id}`);
+  if (!node) return "";
+  const children = graph.children.get(node._id) || [];
+  return `${options.part === "children" ? "" : publicDocumentBreadcrumbs(node, graph)}${options.part !== "path" && children.length ? `<section class="document-family" aria-label="연결된 하위 문서"><div class="document-family-head"><h2>하위 문서</h2><span>${children.length}개</span></div>${publicDocumentChildList(node, graph)}</section>` : ""}`;
+}
+
+function studyArchiveMarkup(post, index, headingLevel = 2) {
+  const description = String(post.excerpt || post.body || "").replace(/\s+/g, " ").trim().slice(0, 100);
+  return `<a class="archive-row list-button" href="#study/${escapeHtml(encodeURIComponent(String(post.id)))}" data-action="open-study-post" data-id="${escapeHtml(post.id)}">
+    <span class="archive-row-index" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span>
+    <div class="archive-row-copy"><h${headingLevel} class="archive-row-title">${escapeHtml(post.title)}</h${headingLevel}>${description ? `<span class="archive-row-description">${escapeHtml(description)}</span>` : ""}</div>
+    <span class="archive-row-meta">${escapeHtml(resolveCategoryLabel("study", post.category))} · ${escapeHtml(formatContentTimestamp(post.date, post.date))}${commentCountSuffix("study", post.id)}</span>
+  </a>`;
+}
+
+function openPublicDocument(type, id, { pushHistory = true } = {}) {
+  if (type === "portfolio") {
+    if (pushHistory) openPortfolioProject(id, "document-tree");
+    else {
+      activePortfolioProjectId = id;
+      showPage("portfolio", { updateHash: false, pushHistory: false, track: false });
+      renderPortfolioProjectDetail(id);
+    }
+    return;
+  }
+  if (type === "study") {
+    if (currentPage !== "study" && !showPage("study", { updateHash: false, pushHistory: false })) return;
+    openStudyPost(id, { pushHistory });
+    return;
+  }
+  if (type !== "update" || !publishedUpdates().some((item) => item.id === id)) return;
+  if (!showPage("updates", { updateHash: false, pushHistory: false })) return;
+  if (pushHistory) history.pushState({ page: "updates", updateId: id, scroll: 0 }, "", `#updates/${encodeURIComponent(id)}`);
+  const target = document.getElementById(`update-${id}`);
+  if (target) {
+    target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+    highlightScrollTarget(target);
+  }
+}
+
+function decodePublicRouteId(value = "") {
+  try { return decodeURIComponent(value); } catch { return ""; }
+}
+
+function publicProfileName(github) {
+  try {
+    const url = new URL(github);
+    if (!["https:", "http:"].includes(url.protocol) || !["github.com", "www.github.com"].includes(url.hostname) || url.username || url.password) return "";
+    const name = url.pathname.split("/").filter(Boolean)[0] || "";
+    return /^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(name) ? name : "";
+  } catch { return ""; }
+}
+
 function updateHomeIntroCopy() {
   const titleNode = $("#hero-title");
   const leadNode = $("#hero-lead");
   const title = normalizeText(content.site?.title, defaultContent.site.title);
   const lead = normalizeText(content.site?.lead, "");
+  const profile = publicProfileName(content.contact?.github);
+  const profileNode = $("#home-profile-name");
+  if (profileNode) {
+    profileNode.textContent = profile ? `${profile} · Personal archive` : "Personal archive";
+    profileNode.hidden = false;
+  }
+  const brand = $(".brand-name");
+  if (brand) brand.textContent = profile || "Personal archive";
+  const avatar = $(".brand-avatar");
+  if (avatar) avatar.textContent = profile ? profile[0].toUpperCase() : "P";
+  const brandLink = $(".brand");
+  if (brandLink) brandLink.setAttribute("aria-label", `${profile || "Personal archive"} Home`);
   if (titleNode) titleNode.textContent = title;
   if (leadNode) {
     leadNode.textContent = lead;
@@ -1042,12 +1569,14 @@ function updateHomeIntroCopy() {
 function renderHome() {
   updateHomeIntroCopy();
 
-  const allPortfolio = publishedPortfolio();
-  const allStudyPosts = publishedStudyPosts();
+  const graph = createPublicDocumentGraph(content);
+  const allPortfolio = graph.rootsFor("portfolio", publishedPortfolio());
+  if (!graph.nodes.length) allPortfolio.sort((a, b) => Number(Boolean(portfolioCardVisual(b))) - Number(Boolean(portfolioCardVisual(a))));
+  const allStudyPosts = graph.rootsFor("study", publishedStudyPosts());
 
   const pubPortfolio = allPortfolio.slice(0, 4);
   $("#home-grid").innerHTML = pubPortfolio.length
-      ? pubPortfolio.map((project, index) => portfolioIndexMarkup(project, index, "home-grid")).join("")
+      ? pubPortfolio.map((project, index) => publicDocumentBranch("portfolio", project, portfolioIndexMarkup(project, index, "home-grid"), graph)).join("")
     : `
       <article class="empty-state">
         <p class="empty-state-title">아직 공개된 포트폴리오가 없습니다.</p>
@@ -1058,25 +1587,19 @@ function renderHome() {
   if (studyEl) {
     const studyItems = allStudyPosts.slice(0, 4);
     const studySection = studyEl.closest(".section");
-    if (studySection) studySection.hidden = false;
+    if (studySection) studySection.hidden = !studyItems.length;
     studyEl.innerHTML = studyItems.length
-      ? studyItems.map((item, index) => `
-          <a class="archive-row list-button" href="#study/${escapeHtml(encodeURIComponent(String(item.id)))}" data-action="open-home-feed-item" data-type="study" data-id="${escapeHtml(item.id)}">
-            <span class="archive-row-index">${String(index + 1).padStart(2, "0")}</span>
-            <h3 class="archive-row-title">${escapeHtml(item.title)}</h3>
-            <span class="archive-row-meta">${escapeHtml(resolveCategoryLabel("study", item.category) || "Study")} · ${escapeHtml(item.date || "미정")}</span>
-          </a>
-        `).join("")
+      ? studyItems.map((item, index) => publicDocumentBranch("study", item, studyArchiveMarkup(item, index, 3), graph)).join("")
       : '<div class="empty-state"><p class="empty-state-title">아직 공개된 공부글이 없습니다.</p></div>';
   }
 
   const feedItems = recentHomeFeedItems();
   const homeFeedEl = $("#home-feed");
   const feedSection = $("#home-feed")?.closest(".section");
-  if (feedSection) feedSection.hidden = false;
+  if (feedSection) feedSection.hidden = !feedItems.length;
   if (homeFeedEl) homeFeedEl.innerHTML = feedItems.length
     ? feedItems.map((item, index) => `
-        <a class="archive-row list-button" href="#updates" data-action="open-home-feed-item" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+        <a class="archive-row list-button" href="${escapeHtml(publicDocumentHref({ group: item.type, sourceId: item.id }))}" data-action="open-home-feed-item" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
           <span class="archive-row-index">${String(index + 1).padStart(2, "0")}</span>
           <h3 class="archive-row-title">${escapeHtml(item.title)}</h3>
           <span class="archive-row-meta">${escapeHtml(item.categoryLabel || item.typeLabel)} · ${escapeHtml(item.date || "미정")}</span>
@@ -1104,9 +1627,9 @@ function inspectProject(projectId) {
   openPortfolioProject(projectId, "portfolio");
 }
 
-function closePortfolioProject(track = true) {
+function closePortfolioProject(track = true, { updateHash = true } = {}) {
   activePortfolioProjectId = null;
-  if (location.hash.startsWith("#portfolio/")) {
+  if (updateHash && location.hash.startsWith("#portfolio/")) {
     history.replaceState({ page: "portfolio", scroll: 0 }, "", "#portfolio");
   }
   $("#portfolio-list-wrap").hidden = false;
@@ -1121,7 +1644,7 @@ function closePortfolioProject(track = true) {
 function renderPortfolioProjectDetail(projectId, options = {}) {
   const project = publishedPortfolio().find((item) => item.id === projectId);
   if (!project) {
-    closePortfolioProject(false);
+    closePortfolioProject(false, { updateHash: false });
     return;
   }
 
@@ -1162,6 +1685,11 @@ function renderPortfolioProjectDetail(projectId, options = {}) {
   $("#portfolio-project-view").hidden = false;
   $("#portfolio-project-view").setAttribute("aria-hidden", "false");
   $("#portfolio-project-view").dataset.projectId = project.id;
+  const graph = createPublicDocumentGraph(content);
+  const documentNavigation = $("#portfolio-document-navigation");
+  if (documentNavigation) documentNavigation.innerHTML = publicDocumentNavigation("portfolio", project, graph, { part: "path" });
+  const childNavigation = $("#portfolio-document-children");
+  if (childNavigation) childNavigation.innerHTML = publicDocumentNavigation("portfolio", project, graph, { part: "children" });
   const projectCommentCount = commentCount("portfolio", project.id);
   $("#portfolio-project-meta").textContent = [
     portfolioCardTimestamp(project),
@@ -1208,14 +1736,14 @@ function renderPortfolioProjectDetail(projectId, options = {}) {
   }
   $("#portfolio-project-showcase-wrap").hidden = true;
   $("#portfolio-project-showcase").innerHTML = "";
-  $("#portfolio-project-sections").innerHTML = blocks.length
+  $("#portfolio-project-sections").innerHTML = publishedNotionMarkup(project) || (blocks.length
     ? renderSiteNarrativeBlocks(blocks, { rootSectionHeadingLevel: 2 })
     : `
       <section class="project-section-card accent">
         <h2 class="project-section-title">상세 페이지 준비 중</h2>
         <div class="project-section-body"><p>이 프로젝트의 상세 문서는 아직 작성 전입니다. 현재는 요약 정보만 먼저 공개되어 있습니다.</p></div>
       </section>
-    `;
+    `);
   $("#portfolio-project-highlights-wrap").hidden = true;
   $("#portfolio-project-points").innerHTML = "";
   $("#portfolio-project-comments").innerHTML = commentSectionMarkup("portfolio", project.id);
@@ -1285,6 +1813,11 @@ function renderPortfolio() {
   const projects = currentPortfolioCategory === "all"
     ? publishedPortfolio()
     : publishedPortfolio().filter((project) => project.category === currentPortfolioCategory);
+  const graph = createPublicDocumentGraph(content);
+  const roots = graph.rootsFor("portfolio", projects);
+  const included = new Set(projects.map((project) => `portfolio:${project.id}`));
+  const count = $("#portfolio-document-count");
+  if (count) count.textContent = `${projects.length}개 문서`;
 
   if (!projects.length) {
     $("#portfolio-list").innerHTML = `
@@ -1292,19 +1825,19 @@ function renderPortfolio() {
         <p class="empty-state-title">아직 공개된 포트폴리오가 없습니다.</p>
       </article>
     `;
-    closePortfolioProject(false);
+    closePortfolioProject(false, { updateHash: false });
     return;
   }
 
-  $("#portfolio-list").innerHTML = projects.map((project, index) => {
+  $("#portfolio-list").innerHTML = roots.map((project, index) => {
     const selected = state.selectedProjectId === project.id;
-    return portfolioIndexMarkup(project, index, "portfolio", selected);
+    return publicDocumentBranch("portfolio", project, portfolioIndexMarkup(project, index, "portfolio", selected), graph, included);
   }).join("");
 
   if (activePortfolioProjectId && publishedPortfolio().some((project) => project.id === activePortfolioProjectId)) {
     renderPortfolioProjectDetail(activePortfolioProjectId, { focus: false });
   } else {
-    closePortfolioProject(false);
+    closePortfolioProject(false, { updateHash: false });
   }
 }
 
@@ -1390,6 +1923,8 @@ function renderStudyFilters() {
 
 function renderStudyPosts(category = "all") {
   const visiblePosts = publishedStudyPosts();
+  const count = $("#study-document-count");
+  if (count) count.textContent = `${visiblePosts.length}개 문서`;
   if (!visiblePosts.length) {
     $("#study-filters").innerHTML = "";
     $("#study-filters").hidden = true;
@@ -1404,6 +1939,7 @@ function renderStudyPosts(category = "all") {
   const posts = category === "all"
     ? visiblePosts
     : visiblePosts.filter((post) => post.category === category);
+  if (count) count.textContent = `${posts.length}개 문서`;
 
   renderStudyFilters();
 
@@ -1416,13 +1952,9 @@ function renderStudyPosts(category = "all") {
     return;
   }
 
-  $("#study-list").innerHTML = posts.map((post, index) => `
-    <a class="archive-row list-button" href="#study/${escapeHtml(encodeURIComponent(String(post.id)))}" data-action="open-study-post" data-id="${escapeHtml(post.id)}">
-      <span class="archive-row-index">${String(index + 1).padStart(2, "0")}</span>
-      <h2 class="archive-row-title">${escapeHtml(post.title)}</h2>
-      <span class="archive-row-meta">${escapeHtml(resolveCategoryLabel("study", post.category))} · ${escapeHtml(post.date)}${commentCountSuffix("study", post.id)}</span>
-    </a>
-  `).join("");
+  const graph = createPublicDocumentGraph(content);
+  const included = new Set(posts.map((post) => `study:${post.id}`));
+  $("#study-list").innerHTML = graph.rootsFor("study", posts).map((post, index) => publicDocumentBranch("study", post, studyArchiveMarkup(post, index), graph, included)).join("");
 }
 
 function setStudyCategory(category) {
@@ -1445,7 +1977,7 @@ function estimateReadingMinutes(text) {
 }
 
 function openStudyPost(id, options = {}) {
-  const { pushHistory = true } = options;
+  const { pushHistory = true, focus = true } = options;
   const visiblePosts = publishedStudyPosts();
   const post = visiblePosts.find((item) => item.id === id);
   if (!post) return;
@@ -1462,6 +1994,11 @@ function openStudyPost(id, options = {}) {
   $("#study-post-view").hidden = false;
   $("#study-post-view").setAttribute("aria-hidden", "false");
   $("#study-post-view").dataset.postId = id;
+  const graph = createPublicDocumentGraph(content);
+  const documentNavigation = $("#study-document-navigation");
+  if (documentNavigation) documentNavigation.innerHTML = publicDocumentNavigation("study", post, graph, { part: "path" });
+  const childNavigation = $("#study-document-children");
+  if (childNavigation) childNavigation.innerHTML = publicDocumentNavigation("study", post, graph, { part: "children" });
   $("#study-post-meta").textContent = `${formatContentTimestamp(post.date, post.date)} · ${resolveCategoryLabel("study", post.category)}`;
   $("#study-post-title").textContent = post.title;
   const studyCommentCount = commentCount("study", post.id);
@@ -1469,7 +2006,7 @@ function openStudyPost(id, options = {}) {
     <span class="pill active">${estimateReadingMinutes(blocksToPlainText(blocks) || post.body)} min read</span>
     ${studyCommentCount > 0 ? `<span class="pill">댓글 ${studyCommentCount}</span>` : ""}
   `;
-  $("#study-post-body").innerHTML = renderSiteNarrativeBlocks(blocks);
+  $("#study-post-body").innerHTML = publishedNotionMarkup(post) || renderSiteNarrativeBlocks(blocks);
   $("#study-comments").innerHTML = commentSectionMarkup("study", post.id);
   $("#study-related-links").innerHTML = related.length
     ? related
@@ -1481,15 +2018,17 @@ function openStudyPost(id, options = {}) {
     ${nextPost ? `<a class="action-btn" href="#study/${escapeHtml(encodeURIComponent(String(nextPost.id)))}" data-action="open-study-post" data-id="${escapeHtml(nextPost.id)}">다음 글: ${escapeHtml(nextPost.title)}</a>` : ""}
   `;
   if (pushHistory) {
-    history.pushState({ page: "study", postId: id, scroll: 0 }, "", `#study/${id}`);
+    history.pushState({ page: "study", postId: id, scroll: 0 }, "", `#study/${encodeURIComponent(id)}`);
   }
-  $("#study-post-title").focus();
-  window.scrollTo(0, 0);
+  if (focus) {
+    $("#study-post-title").focus();
+    window.scrollTo(0, 0);
+  }
   trackEvent("open_study_post", { post: id });
 }
 
-function closeStudyPost(track = true) {
-  if (location.hash.startsWith("#study/")) {
+function closeStudyPost(track = true, { updateHash = true } = {}) {
+  if (updateHash && location.hash.startsWith("#study/")) {
     history.replaceState({ page: "study", scroll: 0 }, "", "#study");
   }
   $("#study-list-wrap").hidden = false;
@@ -1513,10 +2052,11 @@ function renderUpdates() {
 
   $("#updates-list").innerHTML = visibleUpdates.map((item) => `
     <article class="timeline-item" id="update-${escapeHtml(item.id)}">
+      <div class="document-navigation">${publicDocumentNavigation("update", item)}</div>
       <h2 class="timeline-title">${escapeHtml(item.title)}</h2>
       <div class="timeline-meta">${escapeHtml(item.date)} / ${escapeHtml(resolveCategoryLabel("update", item.category || "updates"))}${commentCountSuffix("update", item.id)}</div>
       <p class="timeline-desc">${escapeHtml(item.desc)}</p>
-      ${item.body ? `<div class="post-body">${renderSiteNarrativeBlocks(contentBlocks("update", item))}</div>` : ""}
+      ${item.notionDocumentId || item.body ? `<div class="post-body">${publishedNotionMarkup(item) || renderSiteNarrativeBlocks(contentBlocks("update", item))}</div>` : ""}
       ${commentSectionMarkup("update", item.id)}
     </article>
   `).join("");
@@ -1614,6 +2154,74 @@ const publicPageController = new PublicPageController({
   footer: new FooterRenderer()
 });
 
+let publicContentReady = false;
+let publicContentRefresh = null;
+let publicContentRefreshAgain = false;
+
+function publicReadingFocusKey(node) {
+  if (!node) return "";
+  if (node.id) return `id:${node.id}`;
+  if (node.tagName === "SUMMARY") {
+    const branch = node.closest("details[data-document-key]");
+    if (branch) return `summary:${branch.dataset.documentKey}`;
+  }
+  const data = node.dataset || {};
+  const form = node.closest?.("form")?.dataset || {};
+  return JSON.stringify([node.tagName, node.getAttribute?.("href") || "", data.action || "", data.type || "", data.id || "", data.category || "", data.commentId || "", data.openProjectId || "", form.targetType || "", form.targetId || "", form.commentId || ""]);
+}
+
+async function refreshPublishedContent() {
+  if (!publicContentReady || !document.body.dataset.notionWorkspace || currentPage === "admin") return;
+  if (publicContentRefresh) { publicContentRefreshAgain = true; return publicContentRefresh; }
+  publicContentRefresh = (async () => {
+    const previous = JSON.stringify(content);
+    await contentService.hydrate();
+    if (previous === JSON.stringify(content)) return;
+    // Capture input after the request so text typed while it was pending survives.
+    const fields = [...document.querySelectorAll(".page:not([hidden]) input[id], .page:not([hidden]) textarea[id]")].map((node) => ({ id: node.id, value: node.value, checked: node.checked }));
+    const expanded = [...document.querySelectorAll("details[data-document-key]")].map((node) => ({ key: node.dataset.documentKey, open: node.open }));
+    const focused = document.activeElement;
+    const focusKey = publicReadingFocusKey(focused);
+    const selection = typeof focused?.selectionStart === "number" ? [focused.selectionStart, focused.selectionEnd] : null;
+    const scroll = window.scrollY;
+    // Keep loaded document heights while their replacement previews initialize.
+    const frameHeights = new Map([...document.querySelectorAll("iframe[data-notion-document]")].map((frame) => [frame.dataset.notionDocument, frame.style.height]));
+    const studyId = $("#study-post-view")?.dataset.postId;
+    publicPageController.renderAll();
+    if (studyId && publishedStudyPosts().some((post) => post.id === studyId)) openStudyPost(studyId, { pushHistory: false, focus: false });
+    else if (studyId) closeStudyPost(false);
+    for (const field of fields) {
+      const node = document.getElementById(field.id);
+      if (node) {
+        node.value = field.value; node.checked = field.checked;
+        if (field.id.startsWith("comment-body-")) updateCommentCount(field.id.slice("comment-body-".length));
+      }
+    }
+    const openByKey = new Map(expanded.map((entry) => [entry.key, entry.open]));
+    for (const node of document.querySelectorAll("details[data-document-key]")) if (openByKey.has(node.dataset.documentKey)) node.open = openByKey.get(node.dataset.documentKey);
+    for (const frame of document.querySelectorAll("iframe[data-notion-document]")) {
+      const height = frameHeights.get(frame.dataset.notionDocument);
+      if (/^\d+px$/.test(height || "")) frame.style.height = height;
+    }
+    const nextFocus = focused?.isConnected ? focused : [...document.querySelectorAll("a[href], button, summary, input[id], textarea[id]")].find((node) => !node.closest?.("[hidden], [inert]") && (!node.getClientRects || node.getClientRects().length > 0) && publicReadingFocusKey(node) === focusKey);
+    if (nextFocus) {
+      nextFocus.focus({ preventScroll: true });
+      if (selection && typeof nextFocus.setSelectionRange === "function") nextFocus.setSelectionRange(...selection);
+    }
+    window.scrollTo(0, scroll);
+  })();
+  try { await publicContentRefresh; }
+  catch { /* Retain the current reading view when an automatic refresh is offline. */ }
+  finally {
+    publicContentRefresh = null;
+    if (publicContentRefreshAgain) { publicContentRefreshAgain = false; void refreshPublishedContent(); }
+  }
+}
+
+window.addEventListener("focus", () => { void refreshPublishedContent(); });
+window.addEventListener("storage", (event) => { if (event.key === "thecistus-published-revision") void refreshPublishedContent(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") void refreshPublishedContent(); });
+
 function adminEmptyMarkup(title, copy) {
   return `
     <article class="card admin-entry admin-empty">
@@ -1631,6 +2239,26 @@ function fillAdminField(id, value) {
 function formatLinksForTextarea(links) {
   return links.map((link) => `${link.label}|${link.href}`).join("\n");
 }
+
+function publishedNotionMarkup(item) {
+  const id = item?.notionDocumentId;
+  if (typeof id !== "string" || !/^[A-Za-z0-9._:-]{1,128}$/.test(id)) return "";
+  return `<iframe class="notion-published-document" data-notion-document="${escapeHtml(id)}" src="/preview/${encodeURIComponent(id)}?embed=1" title="${escapeHtml(item.title || "문서 본문")}" loading="lazy"></iframe>`;
+}
+
+function resizePublishedNotionDocument(event) {
+  if (event.origin !== location.origin || event.data?.type !== "notion-preview-height") return;
+  const height = Number(event.data.height);
+  if (!Number.isFinite(height) || height <= 0) return;
+  for (const frame of document.querySelectorAll("iframe[data-notion-document]")) {
+    if (frame.contentWindow !== event.source || frame.dataset.notionDocument !== event.data.documentId) continue;
+    frame.style.height = `${Math.min(100000, Math.max(80, Math.ceil(height)))}px`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  window.addEventListener("message", resizePublishedNotionDocument);
+});
 
 function renderSiteNarrativeBlocks(blocks, options = {}) {
   const normalized = normalizeEditorBlocks(blocks, { prefix: "render-block" });
@@ -1954,10 +2582,10 @@ function renderAdminContactPreview(values = {}) {
   }
 }
 
-function filteredAdminContentItems() {
+function filteredAdminContentItems(options = {}) {
   return flattenContentItems()
     .filter((item) => {
-      const statusMatch = item.status === adminState.contentFilterStatus;
+      const statusMatch = options.allStatuses || item.status === adminState.contentFilterStatus;
       const sectionMatch = adminState.contentFilterSection === "all" || item.type === adminState.contentFilterSection;
       const typeMatch = true;
       const categoryMatch = adminState.contentFilterCategory === "all" || item.category === adminState.contentFilterCategory;
@@ -1993,9 +2621,9 @@ function renderAdminContentFilters() {
 
   const sectionFilters = [
     { id: "all", label: "전체" },
-    { id: "portfolio", label: "Portfolio" },
+    { id: "portfolio", label: "Projects" },
     { id: "study", label: "Study" },
-    { id: "update", label: "Moments" }
+    { id: "update", label: "Updates" }
   ];
 
   if (statusNode) {
@@ -2049,21 +2677,9 @@ function renderAdminContentList() {
   const head = $("#admin-content-list-head");
   if (!node) return;
 
-  const items = filteredAdminContentItems();
-  const isTrash = adminState.contentFilterStatus === "trash";
-
-  // Auto-cleanup: purge trash items older than 30 days
-  const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-  let purged = false;
-  ["portfolio", "studyPosts", "updates"].forEach((key) => {
-    const before = content[key].length;
-    content[key] = content[key].filter((item) => {
-      if (item.status !== "trash" || !item.deletedAt) return true;
-      return Date.now() - new Date(item.deletedAt).getTime() < thirtyDaysMs;
-    });
-    if (content[key].length !== before) purged = true;
-  });
-  if (purged) saveContent("30일 지난 휴지통 항목을 자동 삭제했습니다.").catch(() => {});
+  const isBoard = adminState.contentListView === "board";
+  const items = filteredAdminContentItems({ allStatuses: isBoard });
+  const isTrash = !isBoard && adminState.contentFilterStatus === "trash";
 
   if (head) {
     const views = ["list", "table", "gallery", "board"];
@@ -2085,12 +2701,12 @@ function renderAdminContentList() {
   if (!items.length) {
     node.innerHTML = adminEmptyMarkup(
       isTrash ? "휴지통이 비어 있습니다" : "조건에 맞는 콘텐츠가 없습니다",
-      isTrash ? "삭제한 항목은 30일 동안 여기에 보관됩니다." : "검색어를 바꾸거나 새 항목을 추가해보세요."
+      isTrash ? "삭제한 항목을 여기에서 복원할 수 있습니다." : "검색어를 바꾸거나 새 항목을 추가해보세요."
     );
     return;
   }
 
-  const actionFor = (item) => isTrash
+  const actionFor = (item) => item.status === "trash"
     ? `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지 복원" title="복원" data-action="restore-content-item" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">복원</button>`
     : `<button class="admin-page-row-action admin-page-row-action-text" type="button" aria-label="페이지를 휴지통으로 이동" title="휴지통" data-action="move-to-trash" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">휴지통</button>`;
   const selectedClass = (item) => adminState.contentEditId === item.id && adminState.contentEditType === item.type ? "selected" : "";
@@ -2099,7 +2715,7 @@ function renderAdminContentList() {
     const subcopy = [item.categoryLabel].filter(Boolean).join(" · ");
     return `
       <div class="admin-page-row ${selectedClass(item)}">
-        <button class="admin-page-row-open" type="button" aria-label="${escapeHtml(item.title)} 편집" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+        <button class="admin-page-row-open" type="button" title="${escapeHtml(item.title)}" aria-label="${escapeHtml(item.title)} 편집" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
           <span class="admin-page-row-icon">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
           <span class="admin-page-row-body">
             <span class="admin-page-row-topline">
@@ -2118,13 +2734,13 @@ function renderAdminContentList() {
     node.innerHTML = `
       <div class="admin-db-table">
         <div class="admin-db-row admin-db-head">
-          <span>Title</span><span>Section</span><span>Category</span><span>Status</span><span>Date</span><span></span>
+          <span>제목</span><span>그룹</span><span>카테고리</span><span>상태</span><span>날짜</span><span></span>
         </div>
         ${items.map((item) => {
           const statusMeta = adminStatusMeta(item.status);
           return `
             <div class="admin-db-row ${selectedClass(item)}">
-              <button class="admin-db-row-open" type="button" aria-label="${escapeHtml(item.title)} 편집" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+              <button class="admin-db-row-open" type="button" title="${escapeHtml(item.title)}" aria-label="${escapeHtml(item.title)} 편집" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
                 <span class="admin-db-title"><span>${escapeHtml(item.icon || defaultPageIcon(item.type))}</span><strong>${escapeHtml(item.title)}</strong></span>
                 <span>${escapeHtml(contentTypeMeta(item.type).label)}</span>
                 <span>${escapeHtml(item.categoryLabel || "")}</span>
@@ -2147,7 +2763,7 @@ function renderAdminContentList() {
           const statusMeta = adminStatusMeta(item.status);
           return `
             <article class="admin-page-gallery-card ${selectedClass(item)}">
-              <button type="button" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
+              <button type="button" title="${escapeHtml(item.title)}" data-action="start-content-draft" data-type="${escapeHtml(item.type)}" data-id="${escapeHtml(item.id)}">
                 <span class="admin-page-gallery-cover cover-${escapeHtml(item.cover || defaultPageCover(item.type))}">${escapeHtml(item.icon || defaultPageIcon(item.type))}</span>
                 <strong>${escapeHtml(item.title)}</strong>
                 <span>${escapeHtml(item.categoryLabel || contentTypeMeta(item.type).label)}</span>
@@ -2210,6 +2826,11 @@ function adminPagePropertyItems() {
 function renderAdminPagePropertiesInline() {
   const node = $("#admin-page-properties-inline");
   if (!node) return;
+  const expanded = node.querySelector("details")?.open === true;
+  const active = document.activeElement;
+  const focusedKey = node.contains(active) ? active?.dataset?.propertyKey : "";
+  const selectionStart = active?.selectionStart;
+  const selectionEnd = active?.selectionEnd;
   const section = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
   const category = $("#admin-content-category")?.value || defaultCategoryId(section);
   const status = currentAdminStatusValue();
@@ -2226,14 +2847,26 @@ function renderAdminPagePropertiesInline() {
       ${escapeHtml(definition.label)}
     </option>
   `).join("");
-  const statusOptions = ["published", "draft", "trash"].map((item) => `
-    <option value="${escapeHtml(item)}" ${item === status ? "selected" : ""}>${escapeHtml(adminStatusMeta(item).label)}</option>
-  `).join("");
-  const coverOptions = ["sky", "mint", "rose", "amber", "violet"].map((item) => `
+  const coverOptions = PAGE_COVER_OPTIONS.map((item) => `
     <option value="${escapeHtml(item)}" ${item === cover ? "selected" : ""}>${escapeHtml(item)}</option>
   `).join("");
 
   node.innerHTML = `
+    <div class="admin-page-properties-primary">
+      <label class="admin-page-property-select">
+        <span class="admin-page-property-key">카테고리</span>
+        <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="category">
+          ${categoryOptions}
+        </select>
+      </label>
+      <div class="admin-page-property-select admin-page-property-compact">
+        <span class="admin-page-property-key">저장된 상태</span>
+        <span class="admin-status-badge status-${escapeHtml(adminStatusMeta(status).tone)}">${escapeHtml(adminStatusMeta(status).label)}</span>
+      </div>
+    </div>
+    <details class="admin-page-properties-more" ${expanded ? "open" : ""}>
+      <summary>페이지 속성</summary>
+      <div class="admin-page-properties-grid">
     <label class="admin-page-property-select admin-page-property-compact">
       <span class="admin-page-property-key">아이콘</span>
       <input class="admin-page-property-input" value="${escapeHtml(icon)}" maxlength="4" data-input-action="change-admin-property" data-property-key="icon">
@@ -2251,22 +2884,17 @@ function renderAdminPagePropertiesInline() {
       </select>
     </label>
     <label class="admin-page-property-select">
-      <span class="admin-page-property-key">카테고리</span>
-      <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="category">
-        ${categoryOptions}
-      </select>
-    </label>
-    <label class="admin-page-property-select admin-page-property-compact">
-      <span class="admin-page-property-key">상태</span>
-      <select class="admin-page-property-input" data-change-action="change-admin-property" data-property-key="status">
-        ${statusOptions}
-      </select>
-    </label>
-    <label class="admin-page-property-select">
       <span class="admin-page-property-key">날짜</span>
       <input class="admin-page-property-input" value="${escapeHtml(date)}" data-input-action="change-admin-property" data-property-key="date">
     </label>
+      </div>
+    </details>
   `;
+  if (focusedKey) {
+    const replacement = node.querySelector(`[data-property-key="${focusedKey}"]`);
+    replacement?.focus();
+    if (Number.isInteger(selectionStart)) replacement?.setSelectionRange?.(selectionStart, selectionEnd);
+  }
 }
 
 function editAdminProperty(key = "section", target = null) {
@@ -2338,6 +2966,17 @@ function renderAdminPageChrome() {
   const historyToggle = $("#admin-history-toggle");
   const undoButton = $("#admin-undo-btn");
   const redoButton = $("#admin-redo-btn");
+  const published = currentAdminStatusValue() === "published";
+  ["admin-content-submit", "admin-content-submit-top"].forEach((id) => {
+    const button = $(`#${id}`);
+    if (button) button.innerHTML = `<span>${published ? "변경 저장" : "게시"}</span>${published ? '<span class="admin-shortcut-hint">Ctrl/⌘ S</span>' : ""}`;
+  });
+  ["admin-content-draft", "admin-content-draft-top"].forEach((id) => {
+    const button = $(`#${id}`);
+    if (!button) return;
+    button.setAttribute("data-action", published ? "request-unpublish" : "save-draft");
+    button.innerHTML = `<span>${published ? "비공개로 전환" : "임시저장"}</span>${published ? "" : '<span class="admin-shortcut-hint">Ctrl/⌘ S</span>'}`;
+  });
 
   if (iconTrigger) iconTrigger.textContent = icon;
   if (previewToggle) {
@@ -2397,7 +3036,7 @@ function renderAdminPanelTabs() {
 
   const tabs = [
     { id: "content", label: "페이지", icon: "☰" },
-    { id: "taxonomy", label: "스키마", icon: "#" },
+    { id: "taxonomy", label: "카테고리 관리", icon: "#" },
     { id: "site", label: "홈", icon: "⌂" },
     { id: "contact", label: "연락", icon: "↗" }
   ];
@@ -2678,7 +3317,7 @@ function adminBlockTemplate(kind) {
 function defaultFieldForBlockKind(kind) {
   if (kind === "bookmark") return "href";
   if (["image", "file", "embed"].includes(kind)) return "url";
-  if (["paragraph", "heading1", "heading2", "quote", "text", "toggle", "callout", "code"].includes(kind)) return "body";
+  if (["paragraph", "heading1", "heading2", "heading3", "quote", "text", "toggle", "callout", "code"].includes(kind)) return "body";
   return "items";
 }
 
@@ -2816,7 +3455,7 @@ function adminConvertedBlock(kind, current = null, activeField = "") {
     collapsed: kind === "toggle" ? Boolean(current?.collapsed) : false
   };
 
-  if (["paragraph", "heading1", "heading2", "quote"].includes(kind)) {
+  if (["paragraph", "heading1", "heading2", "heading3", "quote"].includes(kind)) {
     return { ...template, body: plain };
   }
   if (kind === "text") {
@@ -2926,7 +3565,7 @@ function adminCaretAtStart(target) {
 
 function shouldSplitAdminBlockOnEnter(block, field) {
   const kind = block?.kind || "";
-  return field === "body" && ["paragraph", "quote"].includes(kind);
+  return field === "body" && ["paragraph", "heading1", "heading2", "heading3", "quote", "text", "callout"].includes(kind);
 }
 
 function adminEnterAction(block, field) {
@@ -2971,7 +3610,7 @@ function adminEnterAction(block, field) {
     if (field === "title") return kind === "facts" ? { type: "focus-fact", rowIndex: 0, rowField: "label" } : { type: "focus-field", field: "items" };
     return { type: "insert", kind: "paragraph" };
   }
-  if (["heading1", "heading2"].includes(kind)) {
+  if (["heading1", "heading2", "heading3"].includes(kind)) {
     return { type: "insert", kind: "paragraph" };
   }
   return { type: "insert", kind };
@@ -2999,7 +3638,7 @@ function isAdminBlockEmpty(block) {
   if (block.kind === "embed") {
     return !normalizeText(block.caption, "") && !normalizeText(block.url, "");
   }
-  if (["paragraph", "heading1", "heading2", "quote", "text", "toggle", "callout", "code"].includes(block.kind)) {
+  if (["paragraph", "heading1", "heading2", "heading3", "quote", "text", "toggle", "callout", "code"].includes(block.kind)) {
     return !normalizeText(block.kicker, "") && !normalizeText(block.title, "") && !normalizeText(block.body, "");
   }
   if (block.kind === "todo") {
@@ -3099,7 +3738,7 @@ class AdminBlockEditorController {
   clearSelection(render = false) {
     this.state.selectedBlockIndices = [];
     this.state.lastSelectedBlockIndex = -1;
-    if (render) this.renderBlockList();
+    if (render) syncAdminBlockSelectionHighlight();
   }
 
   setCurrent(index = -1) {
@@ -3141,6 +3780,7 @@ class AdminBlockEditorController {
   }
 
   setSelection(index, options = {}) {
+    this.syncBlocksFromDom();
     const { range = false, toggle = false } = options;
     const maxIndex = this.state.editorBlocks.length - 1;
     if (index < 0 || index > maxIndex) return;
@@ -3160,18 +3800,26 @@ class AdminBlockEditorController {
     this.state.lastSelectedBlockIndex = index;
     this.state.currentBlockIndex = index;
     this.normalizeSelection();
-    this.renderBlockList();
+    syncAdminBlockSelectionHighlight();
+    syncCurrentAdminBlockHighlight();
+    if (options.focus) focusAdminBlockCard(index);
   }
 
   syncBlocksFromDom() {
     const nodes = [...document.querySelectorAll(".admin-block-card")];
     if (!nodes.length) {
-      this.state.editorBlocks = [];
-      this.clearSelection();
+      this.normalizeSelection();
       return this.state.editorBlocks;
     }
+    const visibleBlocks = new Map(nodes.map((node, visibleIndex) => {
+      const index = Number(node.dataset.blockIndex ?? visibleIndex);
+      return [node.dataset.blockId, readEditorBlockFromNode(node, index)];
+    }));
+    const blocks = this.state.editorBlocks.length
+      ? this.state.editorBlocks.map((block) => visibleBlocks.get(block.id) || block)
+      : [...visibleBlocks.values()];
     this.state.editorBlocks = normalizeEditorBlocks(
-      nodes.map((node, index) => readEditorBlockFromNode(node, index)),
+      blocks,
       { prefix: `admin-${this.state.contentEditType}-block` }
     );
     this.normalizeSelection();
@@ -3194,6 +3842,7 @@ class AdminBlockEditorController {
       node.innerHTML = adminEmptyEditorMarkup(-1);
       this.setCurrent(-1);
       this.closeMenus();
+      if (this.state.editorBaselineSignature && !this.state.suppressHistory) markAdminContentDirty();
       return;
     }
 
@@ -3203,11 +3852,11 @@ class AdminBlockEditorController {
       const current = this.state.currentBlockIndex === index;
       const hasChildren = adminBlockHasChildren(blocks, index);
       const descendantCount = adminBlockDescendantIndices(blocks, index).length;
-      const header = ["paragraph", "heading1", "heading2", "quote", "divider"].includes(block.kind) ? "" : `
+      const header = ["paragraph", "heading1", "heading2", "heading3", "quote", "divider"].includes(block.kind) ? "" : `
         <div class="admin-block-head">
           <div class="admin-block-head-copy">
             <div class="admin-block-kind-meta">
-              <button class="admin-block-kind-chip" type="button" data-action="open-admin-slash-menu" data-index="${index}" data-field="body" data-mode="convert" aria-label="Change block type">
+              <button class="admin-block-kind-chip" type="button" data-action="open-admin-slash-menu" data-index="${index}" data-field="body" data-mode="convert" aria-label="블록 유형 변경">
                 ${escapeHtml(blockKindLabel(block.kind))}
               </button>
               ${hasChildren ? `<div class="admin-block-tree-meta">${block.collapsed ? `${descendantCount} hidden` : `${descendantCount} nested`}</div>` : ""}
@@ -3226,7 +3875,7 @@ class AdminBlockEditorController {
 
       const footer = ``;
 
-      if (block.kind === "paragraph" || block.kind === "heading1" || block.kind === "heading2" || block.kind === "quote" || block.kind === "divider") {
+      if (block.kind === "paragraph" || block.kind === "heading1" || block.kind === "heading2" || block.kind === "heading3" || block.kind === "quote" || block.kind === "divider") {
         const className = block.kind === "heading1"
           ? "admin-editable-heading-1"
           : block.kind === "heading2"
@@ -3235,12 +3884,12 @@ class AdminBlockEditorController {
               ? "admin-editable-quote"
               : "admin-editable-body";
         const placeholder = block.kind === "heading1"
-          ? "Heading 1"
+          ? "큰 제목"
           : block.kind === "heading2"
-            ? "Heading 2"
+            ? "작은 제목"
             : block.kind === "quote"
-              ? "Quote"
-              : "Type '/' for commands";
+              ? "인용문"
+              : "'/'를 입력해 블록 추가";
         return `
           <article class="admin-block-card ${selected ? "selected" : ""} ${current ? "current" : ""} admin-block-card-atomic" style="--block-indent:${block.indent * 1.45}rem" data-block-id="${escapeHtml(block.id)}" data-block-index="${index}" data-kind="${escapeHtml(block.kind)}" data-indent="${block.indent}" data-collapsed="${block.collapsed ? "true" : "false"}">
             ${side}
@@ -3264,11 +3913,11 @@ class AdminBlockEditorController {
             ${header}
             <div class="admin-block-fields">
               <div class="admin-field admin-span-2">
-                ${renderAdminEditable("kicker", block.kicker, "Kicker", "admin-editable-kicker")}
+                <div class="admin-block-kicker-field">${renderAdminEditable("kicker", block.kicker, "작은 제목", "admin-editable-kicker")}</div>
                 ${renderAdminEditable("title", block.title, "제목 없음", "admin-editable-title")}
               </div>
-              <label class="admin-field admin-field-tone">
-                <span class="admin-label">Tone</span>
+              <label class="admin-field admin-field-tone admin-block-options">
+                <span class="admin-label">강조 스타일</span>
                 <select class="admin-input" data-field="tone">
                   <option value="default" ${block.tone !== "accent" ? "selected" : ""}>기본</option>
                   <option value="accent" ${block.tone === "accent" ? "selected" : ""}>강조</option>
@@ -3460,10 +4109,12 @@ class AdminBlockEditorController {
         </article>
       `;
     }).join("") + adminEmptyEditorMarkup(blocks.length - 1, "빈 줄에서 '/'로 새 블록 추가");
+    syncAdminBlockSelectionHighlight();
     syncCurrentAdminBlockHighlight();
     renderAdminSlashMenu();
     renderAdminBlockContextMenu();
     renderAdminPageChrome();
+    if (this.state.editorBaselineSignature && !this.state.suppressHistory) markAdminContentDirty();
   }
 
   closeMenus() {
@@ -4057,6 +4708,8 @@ function setAdminBlockSelection(index, options = {}) {
 
 function adminBlockKindMeta(kindId) {
   return {
+    duplicate: { icon: "⧉", description: "현재 블록과 자식 블록을 복제합니다", hint: "Duplicate", keywords: ["복제", "duplicate"], commands: ["duplicate", "복제"] },
+    delete: { icon: "×", description: "현재 블록과 자식 블록을 삭제합니다", hint: "Delete", keywords: ["삭제", "delete"], commands: ["delete", "삭제"] },
     paragraph: {
       icon: "¶",
       description: "일반 텍스트를 바로 입력합니다",
@@ -4241,7 +4894,9 @@ function adminBlockKindGroup(kindId) {
     text: "advanced",
     links: "media",
     facts: "advanced",
-    showcase: "advanced"
+    showcase: "advanced",
+    duplicate: "actions",
+    delete: "actions"
   }[kindId] || "basic";
 }
 
@@ -4278,6 +4933,20 @@ function adminSelectionContext() {
   const editable = richEditableFromNode(anchor);
   if (!editable) return null;
   return { selection, range, editable };
+}
+
+function hasAdminTextSelection(target) {
+  if (typeof target?.selectionStart === "number" && target.selectionEnd > target.selectionStart) return true;
+  const selection = window.getSelection();
+  return Boolean(selection?.rangeCount && !selection.isCollapsed && selection.toString());
+}
+
+function adminBlocksClipboard(blocks) {
+  return {
+    [ADMIN_BLOCK_CLIPBOARD_MIME]: `${ADMIN_BLOCK_CLIPBOARD_PREFIX}${JSON.stringify(blocks)}`,
+    "text/plain": blocksToPlainText(blocks),
+    "text/html": renderSiteNarrativeBlocks(blocks)
+  };
 }
 
 function adminSelectionLinkNode(context = adminSelectionContext()) {
@@ -4446,7 +5115,8 @@ class AdminInteractionController {
   filteredSlashKinds() {
     const rawQuery = this.state.slashMenu.query.trim();
     const normalizedQuery = normalizeSlashSearchTerm(rawQuery);
-    const kinds = availableAdminBlockKinds(this.state.contentEditType);
+    const actionsAvailable = this.state.slashMenu.activeIndex >= 0 && (this.state.slashMenu.mode === "convert" || this.state.slashMenu.activeField === "items");
+    const kinds = [...availableAdminBlockKinds(this.state.contentEditType), ...(actionsAvailable ? [{ id: "duplicate", label: "블록 복제" }, { id: "delete", label: "블록 삭제" }] : [])];
     if (!normalizedQuery) return kinds;
     return kinds
       .map((kind, order) => {
@@ -4496,6 +5166,8 @@ class AdminInteractionController {
         sections.push({ id: groupId, label: adminBlockGroupLabel(groupId), items });
       }
     });
+    const actions = kinds.filter((kind) => ["duplicate", "delete"].includes(kind.id));
+    if (actions.length) sections.push({ id: "actions", label: "블록 작업", items: actions });
 
     return sections;
   }
@@ -4648,7 +5320,8 @@ class AdminInteractionController {
     if (key === "status") {
       this.closePropertyMenu();
       if (value === "draft") {
-        await saveDraft();
+        if (currentAdminStatusValue() === "published") requestUnpublishCurrentPage();
+        else await saveDraft();
       } else if (value === "published") {
         await commitContent("published");
       }
@@ -5059,6 +5732,22 @@ class AdminInteractionController {
     this.blockEditor.syncBlocksFromDom();
     const blocks = [...this.state.editorBlocks];
     const current = blocks[activeIndex];
+    if (["duplicate", "delete"].includes(kind)) {
+      if (!current) return;
+      if (!this.state.slashMenu.captureInput && activeField === "body") {
+        current.body = pendingValue || "";
+        const node = document.querySelector(`.admin-block-card[data-block-index="${activeIndex}"]`)?.querySelector('[data-editable="true"][data-field="body"]');
+        if (node) node.innerHTML = supportsRichBody(current.kind) ? sanitizeRichTextHtml(current.body) : editableContentHtml(current.body);
+      }
+      this.blockEditor.setSelection(activeIndex);
+      pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
+      this.closeSlashMenu();
+      if (kind === "duplicate") this.blockEditor.duplicateBlock(activeIndex);
+      else this.blockEditor.removeBlock(activeIndex);
+      pushAdminUndoSnapshot(adminSnapshotFromDom());
+      if (kind === "duplicate") focusAdminBlockCard(this.state.selectedBlockIndices[0] ?? activeIndex);
+      return;
+    }
     let insertIndex = activeIndex;
     if (activeIndex < 0) {
       rememberRecentAdminBlockKind(kind);
@@ -5146,7 +5835,14 @@ class AdminInteractionController {
     const blocks = this.blockEditor.copyableBlocks(index);
     if (!blocks.length) return;
     try {
-      await navigator.clipboard.writeText(`${ADMIN_BLOCK_CLIPBOARD_PREFIX}${JSON.stringify(blocks)}`);
+      const payload = adminBlocksClipboard(blocks);
+      if (navigator.clipboard.write && typeof ClipboardItem !== "undefined") {
+        // HTML keeps the private block payload for browsers that reject custom clipboard MIME types.
+        const html = `<div data-thecistus-blocks="${escapeHtml(payload[ADMIN_BLOCK_CLIPBOARD_MIME])}">${payload["text/html"]}</div>`;
+        await navigator.clipboard.write([new ClipboardItem({ "text/plain": new Blob([payload["text/plain"]], { type: "text/plain" }), "text/html": new Blob([html], { type: "text/html" }) })]);
+      } else {
+        await navigator.clipboard.writeText(payload["text/plain"]);
+      }
       this.closeBlockContextMenu();
       showToast("블록 복사", `${blocks.length}개 블록을 복사했습니다.`, "success");
     } catch {
@@ -5239,6 +5935,7 @@ class AdminInteractionController {
   }
 
   handleAdminKeydown(event) {
+    if (event.defaultPrevented || event.isComposing || event.key === "Process" || event.keyCode === 229) return;
     const target = event.target;
     const lowerKey = event.key.toLowerCase();
     if (
@@ -5303,6 +6000,47 @@ class AdminInteractionController {
       if (this.state.slashMenu.open && event.key === "Escape") this.closeSlashMenu();
       if (this.state.formatMenu.open && event.key === "Escape") this.closeFormatMenu();
       if (this.state.blockMenu.open && event.key === "Escape") this.closeBlockContextMenu();
+      return;
+    }
+
+    const index = adminBlockIndexFromTarget(target);
+    const blockText = target?.isContentEditable && target?.matches?.('[data-editable="true"][data-field="body"], [data-list-row-content="true"], [data-fact-field]');
+    const blockMode = target === card;
+    if (event.key === "Escape") {
+      if (this.state.slashMenu.open && this.updateSlashQuery(event)) return;
+      if ([this.state.insertMenu, this.state.propertyMenu, this.state.formatMenu, this.state.blockMenu].some((menu) => menu.open)) {
+        event.preventDefault();
+        this.blockEditor.closeMenus();
+        this.closePropertyMenu();
+        return;
+      }
+      if (blockMode && this.state.selectedBlockIndices.length) {
+        event.preventDefault();
+        this.blockEditor.clearSelection(true);
+        return;
+      }
+      if (target?.isContentEditable) {
+        event.preventDefault();
+        this.blockEditor.setSelection(index, { focus: true });
+        return;
+      }
+    }
+    if (blockMode && event.key === "Enter" && !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      event.preventDefault();
+      this.blockEditor.clearSelection(true);
+      focusAdminBlockBody(index);
+      return;
+    }
+    const duplicate = (event.metaKey || event.ctrlKey) && !event.shiftKey && !event.altKey && lowerKey === "d";
+    const move = (event.metaKey || event.ctrlKey) && event.shiftKey && !event.altKey && ["ArrowUp", "ArrowDown"].includes(event.key);
+    if ((blockText || blockMode) && (duplicate || move)) {
+      event.preventDefault();
+      if (this.state.editorSaving) return;
+      pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
+      if (duplicate) this.blockEditor.duplicateBlock(index);
+      else this.blockEditor.moveBlock(index, event.key === "ArrowUp" ? -1 : 1);
+      pushAdminUndoSnapshot(adminSnapshotFromDom());
+      focusAdminBlockCard(this.state.selectedBlockIndices[0] ?? index);
       return;
     }
 
@@ -5422,7 +6160,6 @@ class AdminInteractionController {
 
     if (this.updateSlashQuery(event)) return;
 
-    const index = adminBlockIndexFromTarget(target);
     const field = adminFieldNameFromTarget(target);
     const tag = target.tagName?.toLowerCase();
     const isEditable = Boolean(target?.isContentEditable);
@@ -5448,6 +6185,7 @@ class AdminInteractionController {
     }
 
     if (event.key === "Tab" && !event.metaKey && !event.ctrlKey && !event.altKey) {
+      if (!isEditable || field !== "body") return;
       event.preventDefault();
       this.blockEditor.indentBlocks(index, event.shiftKey ? -1 : 1);
       return;
@@ -5553,22 +6291,6 @@ class AdminInteractionController {
       }
     }
 
-    if ((event.metaKey || event.ctrlKey) && event.shiftKey && (event.key === "ArrowUp" || event.key === "ArrowDown")) {
-      event.preventDefault();
-      this.blockEditor.moveBlock(index, event.key === "ArrowUp" ? -1 : 1);
-      return;
-    }
-
-    if ((event.metaKey || event.ctrlKey) && !event.shiftKey && lowerKey === "d") {
-      event.preventDefault();
-      this.blockEditor.duplicateBlock(index);
-      return;
-    }
-
-    if (event.key === "Escape" && this.state.selectedBlockIndices.length > 1) {
-      event.preventDefault();
-      this.blockEditor.setSelection(index);
-    }
   }
 
   handleDocumentClick(event) {
@@ -5711,37 +6433,60 @@ class AdminInteractionController {
 
   handleCopy(event) {
     if (!event.target.closest(".admin-block-editor")) return;
-    if (adminSelectionContext()) return;
+    if (hasAdminTextSelection(event.target) || !this.state.selectedBlockIndices.length) return;
+    this.blockEditor.syncBlocksFromDom();
     const index = adminBlockIndexFromTarget(event.target);
     const blocks = this.blockEditor.copyableBlocks(index);
     if (!blocks.length) return;
-    event.clipboardData?.setData("text/plain", `${ADMIN_BLOCK_CLIPBOARD_PREFIX}${JSON.stringify(blocks)}`);
+    Object.entries(adminBlocksClipboard(blocks)).forEach(([type, value]) => event.clipboardData?.setData(type, value));
     event.preventDefault();
     showToast("블록 복사", `${blocks.length}개 블록을 복사했습니다.`, "success");
   }
 
   handleCut(event) {
     if (!event.target.closest(".admin-block-editor")) return;
-    if (adminSelectionContext()) return;
+    if (hasAdminTextSelection(event.target) || !this.state.selectedBlockIndices.length) return;
+    this.blockEditor.syncBlocksFromDom();
     const index = adminBlockIndexFromTarget(event.target);
     const blocks = this.blockEditor.copyableBlocks(index);
     if (!blocks.length) return;
-    event.clipboardData?.setData("text/plain", `${ADMIN_BLOCK_CLIPBOARD_PREFIX}${JSON.stringify(blocks)}`);
+    Object.entries(adminBlocksClipboard(blocks)).forEach(([type, value]) => event.clipboardData?.setData(type, value));
     event.preventDefault();
+    pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
     this.blockEditor.removeBlock(index);
+    pushAdminUndoSnapshot(adminSnapshotFromDom());
     showToast("블록 잘라내기", `${blocks.length}개 블록을 이동할 수 있게 잘라냈습니다.`, "success");
   }
 
   handlePaste(event) {
     if (!event.target.closest(".admin-block-editor")) return;
     const text = event.clipboardData?.getData("text/plain") || "";
+    let internal = event.clipboardData?.getData(ADMIN_BLOCK_CLIPBOARD_MIME) || "";
+    if (!internal) {
+      const template = document.createElement("template");
+      template.innerHTML = event.clipboardData?.getData("text/html") || "";
+      internal = template.content.querySelector?.("[data-thecistus-blocks]")?.getAttribute("data-thecistus-blocks") || "";
+    }
+    if (internal) {
+      const anchor = event.target?.matches?.('[data-empty-editor="true"]') ? adminEmptyEditorAnchorIndex(event.target) : adminBlockIndexFromTarget(event.target);
+      if (this.parseBlocksClipboard(internal).length) {
+        event.preventDefault();
+        pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
+        this.pasteBlocks(anchor, internal);
+        pushAdminUndoSnapshot(adminSnapshotFromDom());
+        return;
+      }
+    }
     if (event.target?.matches?.('[data-empty-editor="true"]')) {
       if (!text.trim()) return;
       event.preventDefault();
       const blocks = buildBlocksFromPlainPaste(text, null);
       if (blocks.length) {
-        this.blockEditor.insertBlocksAfter(-1, blocks);
-        focusAdminBlockField(0, defaultFieldForBlockKind(blocks[0].kind));
+        const anchor = adminEmptyEditorAnchorIndex(event.target);
+        pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
+        this.blockEditor.insertBlocksAfter(anchor, blocks);
+        focusAdminBlockField(anchor + 1, defaultFieldForBlockKind(blocks[0].kind));
+        pushAdminUndoSnapshot(adminSnapshotFromDom());
       }
       return;
     }
@@ -5753,7 +6498,7 @@ class AdminInteractionController {
       return;
     }
     if (!text.trim()) return;
-    if (adminSelectionContext()) return;
+    if (hasAdminTextSelection(event.target) || event.target?.isContentEditable) return;
     const blocks = buildBlocksFromPlainPaste(text, this.state.editorBlocks[index] || null);
     if (blocks.length <= 1) return;
     event.preventDefault();
@@ -5763,6 +6508,7 @@ class AdminInteractionController {
 
   handleInput(event) {
     const target = event.target;
+    if (target?.dataset?.inputAction === "change-admin-property" || target?.dataset?.changeAction === "change-admin-property") return;
     if (target?.closest?.("#admin-site-form")) {
       renderAdminSitePreview({
         title: $("#admin-site-title")?.value,
@@ -5837,6 +6583,8 @@ class AdminInteractionController {
   }
 
   handleChange(event) {
+    const target = event.target;
+    if (target?.dataset?.inputAction === "change-admin-property" || target?.dataset?.changeAction === "change-admin-property") return;
     if (event.target?.closest?.("#admin-site-form")) {
       renderAdminSitePreview({
         title: $("#admin-site-title")?.value,
@@ -6179,8 +6927,7 @@ function editableContentHtml(value) {
 function editableNodeRawText(node) {
   return String(node?.innerText || "")
     .replace(/\u00a0/g, " ")
-    .replace(/\r/g, "")
-    .replace(/\n{3,}/g, "\n\n");
+    .replace(/\r/g, "");
 }
 
 function editableNodeText(node) {
@@ -6281,7 +7028,7 @@ function renderAdminFactEditor(items = [], options = {}) {
   `;
 }
 
-function adminEmptyEditorMarkup(anchorIndex = -1, placeholder = "Type '/' for commands") {
+function adminEmptyEditorMarkup(anchorIndex = -1, placeholder = "'/'를 입력해 블록 추가") {
   return `
     <div class="admin-empty-editor">
       <div
@@ -6360,18 +7107,78 @@ function applyAdminFieldToBlock(block, field, value, index) {
 }
 
 function caretOffsetInEditable(node) {
+  return adminEditableSelectionOffsets(node).start;
+}
+
+function adminEditableSelectionOffsets(node) {
   const selection = window.getSelection();
   const fullText = editableNodeRawText(node);
-  if (!selection?.rangeCount) return fullText.length;
+  if (!selection?.rangeCount) return { start: fullText.length, end: fullText.length };
   const range = selection.getRangeAt(0);
-  if (!node?.contains(range.startContainer)) return fullText.length;
-  const probe = range.cloneRange();
-  probe.selectNodeContents(node);
-  probe.setEnd(range.startContainer, range.startOffset);
-  return Math.min(
-    normalizeMultilineText(probe.toString(), "", { preserveEdges: true }).length,
-    fullText.length
-  );
+  if (!node?.contains(range.startContainer) || !node.contains(range.endContainer || range.startContainer)) return { start: fullText.length, end: fullText.length };
+  const offset = (container, position) => {
+    const probe = range.cloneRange();
+    probe.selectNodeContents(node);
+    probe.setEnd(container, position);
+    return Math.min(normalizeMultilineText(probe.toString(), "", { preserveEdges: true }).length, fullText.length);
+  };
+  return { start: offset(range.startContainer, range.startOffset), end: offset(range.endContainer || range.startContainer, range.endOffset ?? range.startOffset) };
+}
+
+function setAdminEditableSelection(node, start = 0, end = start) {
+  if (!node) return;
+  node.focus();
+  if (!node.isContentEditable) { node.setSelectionRange?.(start, end); return; }
+  const point = (offset) => {
+    let remaining = Math.max(0, offset); let found = null;
+    const visit = (parent) => [...parent.childNodes].some((child, index) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        const length = child.textContent?.length || 0;
+        if (remaining <= length) { found = { node: child, offset: remaining }; return true; }
+        remaining -= length;
+      } else if (child.tagName === "BR") {
+        if (!remaining) { found = { node: parent, offset: index }; return true; }
+        remaining -= 1;
+      } else if (visit(child)) return true;
+      return false;
+    });
+    visit(node);
+    return found || { node, offset: node.childNodes.length };
+  };
+  const from = point(start); const to = point(end);
+  const range = document.createRange();
+  range.setStart?.(from.node, from.offset); range.setEnd?.(to.node, to.offset);
+  const selection = window.getSelection();
+  selection?.removeAllRanges(); selection?.addRange(range);
+}
+
+const adminSnapshotSelections = new WeakMap();
+
+function captureAdminEditorSelection() {
+  const target = document.activeElement;
+  if (!target) return null;
+  const card = adminBlockCardFromTarget(target);
+  if (target === card) return { blockId: card.dataset.blockId, mode: "block", selectedIds: adminState.selectedBlockIndices.map((index) => adminState.editorBlocks[index]?.id).filter(Boolean) };
+  if (!target.isContentEditable && !["INPUT", "TEXTAREA"].includes(target.tagName)) return null;
+  const offsets = target.isContentEditable ? adminEditableSelectionOffsets(target) : { start: target.selectionStart || 0, end: target.selectionEnd || 0 };
+  return { ...offsets, id: target.id, blockId: card?.dataset.blockId, field: adminFieldNameFromTarget(target), rowIndex: Number(target.closest?.('[data-row-index]')?.dataset.rowIndex ?? -1), rowField: target.dataset.factField || "" };
+}
+
+function restoreAdminEditorSelection(snapshot) {
+  const selection = adminSnapshotSelections.get(snapshot);
+  if (!selection) return;
+  const index = adminState.editorBlocks.findIndex((block) => block.id === selection.blockId);
+  if (selection.mode === "block" && index >= 0) {
+    adminState.selectedBlockIndices = selection.selectedIds.map((id) => adminState.editorBlocks.findIndex((block) => block.id === id)).filter((item) => item >= 0);
+    syncAdminBlockSelectionHighlight(); focusAdminBlockCard(index); return;
+  }
+  let target = selection.id ? document.getElementById(selection.id) : null;
+  const card = document.querySelector(`.admin-block-card[data-block-index="${index}"]`);
+  if (selection.rowIndex >= 0) {
+    const row = card?.querySelector(`[data-row-index="${selection.rowIndex}"]`);
+    target = selection.rowField ? row?.querySelector(`[data-fact-field="${selection.rowField}"]`) : row?.querySelector('[data-list-row-content="true"]');
+  } else if (card) target = card.querySelector(`[data-editable="true"][data-field="${selection.field}"]`) || card.querySelector(`input[data-field="${selection.field}"], textarea[data-field="${selection.field}"]`);
+  if (target) setAdminEditableSelection(target, selection.start, selection.end);
 }
 
 function splitEditableValueAtCaret(node) {
@@ -6379,7 +7186,7 @@ function splitEditableValueAtCaret(node) {
   const offset = caretOffsetInEditable(node);
   return {
     before: fullText.slice(0, offset),
-    after: fullText.slice(offset)
+    after: fullText.slice(adminEditableSelectionOffsets(node).end)
   };
 }
 
@@ -6407,7 +7214,7 @@ function splitEditableHtmlAtCaret(node) {
 
   const afterRange = range.cloneRange();
   afterRange.selectNodeContents(node);
-  afterRange.setStart(range.startContainer, range.startOffset);
+  afterRange.setStart(range.endContainer || range.startContainer, range.endOffset ?? range.startOffset);
 
   return {
     before: sanitizeRichTextHtml(rangeHtml(beforeRange)),
@@ -6500,7 +7307,7 @@ function adminSnapshotFromDom() {
   syncAdminPageMetaFromDom();
   const type = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
   const blocks = syncAdminBlocksFromDom();
-  return {
+  const snapshot = {
     key: adminHistoryPageKey(),
     type,
     editingId: $("#admin-content-edit-id")?.value?.trim() || adminState.contentEditId || "",
@@ -6515,6 +7322,8 @@ function adminSnapshotFromDom() {
     blocks: JSON.parse(JSON.stringify(blocks || [])),
     savedAt: new Date().toISOString()
   };
+  adminSnapshotSelections.set(snapshot, captureAdminEditorSelection());
+  return snapshot;
 }
 
 function adminSnapshotSignature(snapshot) {
@@ -6538,7 +7347,11 @@ function pushAdminUndoSnapshot(snapshot = adminSnapshotFromDom(), options = {}) 
   if (!snapshot || adminState.suppressHistory) return;
   const signature = adminSnapshotSignature(snapshot);
   const previous = adminState.undoStack[adminState.undoStack.length - 1];
-  if (previous && adminSnapshotSignature(previous) === signature) return;
+  if (previous && adminSnapshotSignature(previous) === signature) {
+    const selection = adminSnapshotSelections.get(snapshot);
+    if (selection) adminSnapshotSelections.set(previous, selection);
+    return;
+  }
   adminState.undoStack.push(snapshot);
   if (adminState.undoStack.length > ADMIN_HISTORY_STACK_LIMIT) {
     adminState.undoStack = adminState.undoStack.slice(-ADMIN_HISTORY_STACK_LIMIT);
@@ -6577,7 +7390,8 @@ function applyAdminSnapshot(snapshot, options = {}) {
   } finally {
     adminState.suppressHistory = false;
   }
-  if (options.dirty !== false) setAdminStatus("변경사항 있음");
+  if (options.dirty !== false) markAdminContentDirty();
+  restoreAdminEditorSelection(snapshot);
 }
 
 function loadAdminHistoryStore() {
@@ -6632,6 +7446,7 @@ function scheduleAdminHistorySnapshot() {
 
 function adminUndo() {
   ensureAdminHistoryState();
+  clearTimeout(adminState.historySnapshotTimer);
   const current = adminSnapshotFromDom();
   if (current) pushAdminUndoSnapshot(current, { clearRedo: false, persist: false });
   if (adminState.undoStack.length < 2) return;
@@ -6643,6 +7458,12 @@ function adminUndo() {
 
 function adminRedo() {
   ensureAdminHistoryState();
+  clearTimeout(adminState.historySnapshotTimer);
+  const current = adminSnapshotFromDom();
+  if (current && adminState.undoStack.length && adminSnapshotSignature(current) !== adminSnapshotSignature(adminState.undoStack.at(-1))) {
+    pushAdminUndoSnapshot(current);
+    return;
+  }
   const next = adminState.redoStack.pop();
   if (!next) return;
   adminState.undoStack.push(next);
@@ -6945,9 +7766,10 @@ function buildBlocksFromPlainPaste(text = "", sourceBlock = null) {
 }
 
 function focusAdminBlockField(index, field = "title") {
-  const selector = `.admin-block-card[data-block-index="${index}"] [data-field="${field}"]`;
-  const fallback = `.admin-block-card[data-block-index="${index}"] [data-editable="true"]`;
-  focusAdminNodeWithRetry(() => document.querySelector(selector) || document.querySelector(fallback), {
+  focusAdminNodeWithRetry(() => {
+    const card = document.querySelector(`.admin-block-card[data-block-index="${index}"]`);
+    return card?.querySelector(`[data-editable="true"][data-field="${field}"], input[data-field="${field}"], textarea[data-field="${field}"], select[data-field="${field}"]`) || card?.querySelector('[data-editable="true"]');
+  }, {
     collapseToEnd: field === "body" || field === "items" || field === "kicker",
     selectInput: field !== "body" && field !== "items"
   });
@@ -7018,15 +7840,16 @@ function selectAdminSlashKind(kind) {
 
 function readEditorBlockFromNode(node, index) {
   const kind = node.dataset.kind || "text";
-  if (["paragraph", "heading1", "heading2", "quote"].includes(kind)) {
+  const fieldNode = (field) => node.querySelector(`[data-editable="true"][data-field="${field}"], input[data-field="${field}"], textarea[data-field="${field}"], select[data-field="${field}"]`);
+  if (["paragraph", "heading1", "heading2", "heading3", "quote"].includes(kind)) {
     return {
       id: node.dataset.blockId || "",
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
       body: parseAdminBlockField(kind, "body", supportsRichBody(kind)
-        ? node.querySelector('[data-field="body"]')?.innerHTML || ""
-        : editableNodeRawText(node.querySelector('[data-field="body"]')), index)
+        ? fieldNode("body")?.innerHTML || ""
+        : editableNodeRawText(fieldNode("body")), index)
     };
   }
   if (kind === "divider") {
@@ -7043,10 +7866,10 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      kicker: editableNodeText(node.querySelector('[data-field="kicker"]')),
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
-      body: parseAdminBlockField(kind, "body", node.querySelector('[data-field="body"]')?.innerHTML || "", index),
-      tone: node.querySelector('[data-field="tone"]')?.value || "default"
+      kicker: editableNodeText(fieldNode("kicker")),
+      title: editableNodeText(fieldNode("title")),
+      body: parseAdminBlockField(kind, "body", fieldNode("body")?.innerHTML || "", index),
+      tone: fieldNode("tone")?.value || "default"
     };
   }
   if (kind === "toggle" || kind === "callout" || kind === "code") {
@@ -7055,13 +7878,13 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      title: editableNodeText(fieldNode("title")),
       body: parseAdminBlockField(
         kind,
         "body",
         supportsRichBody(kind)
-          ? node.querySelector('[data-field="body"]')?.innerHTML || ""
-          : editableNodeRawText(node.querySelector('[data-field="body"]')),
+          ? fieldNode("body")?.innerHTML || ""
+          : editableNodeRawText(fieldNode("body")),
         index
       )
     };
@@ -7072,9 +7895,9 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
-      href: normalizeText(editableNodeRawText(node.querySelector('[data-field="href"]')), ""),
-      body: parseAdminBlockField(kind, "body", node.querySelector('[data-field="body"]')?.innerHTML || "", index)
+      title: editableNodeText(fieldNode("title")),
+      href: normalizeText(editableNodeRawText(fieldNode("href")), ""),
+      body: parseAdminBlockField(kind, "body", fieldNode("body")?.innerHTML || "", index)
     };
   }
   if (kind === "image") {
@@ -7083,9 +7906,9 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
-      url: parseAdminBlockField(kind, "url", editableNodeRawText(node.querySelector('[data-field="url"]')), index),
-      caption: parseAdminBlockField(kind, "caption", editableNodeRawText(node.querySelector('[data-field="caption"]')), index)
+      title: editableNodeText(fieldNode("title")),
+      url: parseAdminBlockField(kind, "url", editableNodeRawText(fieldNode("url")), index),
+      caption: parseAdminBlockField(kind, "caption", editableNodeRawText(fieldNode("caption")), index)
     };
   }
   if (kind === "file") {
@@ -7094,9 +7917,9 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
-      url: parseAdminBlockField(kind, "url", editableNodeRawText(node.querySelector('[data-field="url"]')), index),
-      description: parseAdminBlockField(kind, "description", editableNodeRawText(node.querySelector('[data-field="description"]')), index)
+      title: editableNodeText(fieldNode("title")),
+      url: parseAdminBlockField(kind, "url", editableNodeRawText(fieldNode("url")), index),
+      description: parseAdminBlockField(kind, "description", editableNodeRawText(fieldNode("description")), index)
     };
   }
   if (kind === "embed") {
@@ -7105,8 +7928,8 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      url: parseAdminBlockField(kind, "url", editableNodeRawText(node.querySelector('[data-field="url"]')), index),
-      caption: parseAdminBlockField(kind, "caption", editableNodeRawText(node.querySelector('[data-field="caption"]')), index)
+      url: parseAdminBlockField(kind, "url", editableNodeRawText(fieldNode("url")), index),
+      caption: parseAdminBlockField(kind, "caption", editableNodeRawText(fieldNode("caption")), index)
     };
   }
   if (kind === "todo") {
@@ -7115,7 +7938,7 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      title: editableNodeText(fieldNode("title")),
       items: parseAdminListItemsFromNode(node, "todo")
     };
   }
@@ -7125,7 +7948,7 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      title: editableNodeText(fieldNode("title")),
       items: parseAdminListItemsFromNode(node, "numbered")
     };
   }
@@ -7135,7 +7958,7 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      title: editableNodeText(fieldNode("title")),
       items: parseAdminListItemsFromNode(node, "bullets")
     };
   }
@@ -7145,7 +7968,7 @@ function readEditorBlockFromNode(node, index) {
       kind,
       collapsed: node.dataset.collapsed === "true",
       indent: Number(node.dataset.indent ?? 0) || 0,
-      title: editableNodeText(node.querySelector('[data-field="title"]')),
+      title: editableNodeText(fieldNode("title")),
       items: parseAdminFactItemsFromNode(node)
     };
   }
@@ -7154,8 +7977,8 @@ function readEditorBlockFromNode(node, index) {
     kind,
     collapsed: node.dataset.collapsed === "true",
     indent: Number(node.dataset.indent ?? 0) || 0,
-    title: editableNodeText(node.querySelector('[data-field="title"]')),
-    items: parseAdminLinks(editableNodeRawText(node.querySelector('[data-field="items"]')), `${kind}-${index + 1}`)
+    title: editableNodeText(fieldNode("title")),
+    items: parseAdminLinks(editableNodeRawText(fieldNode("items")), `${kind}-${index + 1}`)
   };
 }
 
@@ -7235,6 +8058,29 @@ function adminBlockCardFromTarget(target) {
   return target?.closest?.(".admin-block-card") || null;
 }
 
+function syncAdminBlockSelectionHighlight() {
+  document.querySelectorAll(".admin-block-card").forEach((card) => {
+    const selected = adminState.selectedBlockIndices.includes(Number(card.dataset.blockIndex));
+    card.classList.toggle("selected", selected);
+    card.setAttribute("tabindex", "-1");
+    card.setAttribute("role", "group");
+    card.setAttribute("aria-roledescription", "블록");
+    card.setAttribute("aria-label", `${blockKindLabel(card.dataset.kind)}${selected ? ", 선택됨" : ""}`);
+    card.querySelector('[data-open-block-menu="true"]')?.setAttribute("aria-pressed", String(selected));
+  });
+}
+
+function focusAdminBlockCard(index) {
+  requestAnimationFrame(() => document.querySelector(`.admin-block-card[data-block-index="${index}"]`)?.focus());
+}
+
+function focusAdminBlockBody(index) {
+  focusAdminNodeWithRetry(() => {
+    const card = document.querySelector(`.admin-block-card[data-block-index="${index}"]`);
+    return card?.querySelector('[data-editable="true"][data-field="body"]') || card?.querySelector('[data-list-row-content="true"]') || card?.querySelector('[data-fact-field]') || card?.querySelector('[data-editable="true"]');
+  }, { collapseToEnd: true });
+}
+
 function syncCurrentAdminBlockHighlight() {
   document.querySelectorAll(".admin-block-card").forEach((node) => {
     const index = Number(node.dataset.blockIndex ?? -1);
@@ -7301,6 +8147,8 @@ function setAdminContentCategoryFilter(categoryId) {
 }
 
 function renderAdminContentForm() {
+  adminState.editorBaselineSignature = "";
+  adminState.pendingEditorSaveStatus = null;
   const type = adminState.contentEditType || "portfolio";
   const item = collectionForType(type).find((entry) => entry.id === adminState.contentEditId) || null;
   closeAdminPropertyMenu();
@@ -7333,6 +8181,9 @@ function renderAdminContentForm() {
   pushAdminUndoSnapshot(adminSnapshotFromDom(), { persist: false });
   renderAdminPreviewPane();
   renderAdminHistoryPanel();
+  adminState.editorBaselineSignature = adminSnapshotSignature(adminSnapshotFromDom());
+  adminState.editorDirty = false;
+  editorDraftService.open();
 }
 
 function replaceTypeIdAcrossContent(oldTypeId, nextTypeId) {
@@ -7479,8 +8330,24 @@ function renderAdmin() {
   if ($("#admin-page-save-state")) $("#admin-page-save-state").textContent = adminState.status || "";
 }
 
+function uniqueAdminPageId(candidate, existingIds, currentId = "", fallback = "page") {
+  const raw = String(candidate || "").trim();
+  if (raw === currentId && /^[a-z0-9][a-z0-9._:-]{0,127}$/i.test(currentId)) return currentId;
+  const sanitized = slugify(raw, "").replace(/[^a-z0-9_-]/g, "").replace(/^[^a-z0-9]+/i, "");
+  const base = (sanitized || fallback).slice(0, 128).replace(/-+$/, "");
+  let id = base;
+  let count = 2;
+  while (existingIds.has(id) && id !== currentId) {
+    const suffix = `-${count++}`;
+    id = `${base.slice(0, 128 - suffix.length).replace(/-+$/, "")}${suffix}`;
+  }
+  return id;
+}
+
 class AdminEditorController {
   startDraft(type = adminState.contentEditType || "portfolio", id = "") {
+    if (id && type === adminState.contentEditType && id === adminState.contentEditId && adminState.activePanel === "content") return true;
+    if (!confirmAdminEditorNavigation(() => startContentDraft(type, id))) return false;
     adminState.activePanel = "content";
     adminState.contentEditType = type || "portfolio";
     adminState.contentEditId = id || null;
@@ -7503,6 +8370,7 @@ class AdminEditorController {
         selection?.addRange(range);
       }
     });
+    return true;
   }
 
   buildContentItemFromForm(status = "published") {
@@ -7525,10 +8393,11 @@ class AdminEditorController {
 
     const targetCollection = [...collectionForType(type)];
     const existingIds = new Set(targetCollection.map((item) => item.id));
-    const id = uniqueId(
+    const id = uniqueAdminPageId(
       requestedId || title || `${type}-${targetCollection.length + 1}`,
       existingIds,
-      editingType === type ? editingId : ""
+      editingType === type ? editingId : "",
+      `${type}-${targetCollection.length + 1}`
     );
 
     const existingItem = editingId && editingType === type
@@ -7601,8 +8470,11 @@ class AdminEditorController {
     return { nextItem, type, editingId, editingType };
   }
 
-  async commit(status = "published", event = null) {
+  async commit(status = "published", event = null, options = {}) {
     if (event) event.preventDefault();
+    if (adminState.editorSaving) return false;
+    const wasPublished = currentAdminStatusValue() === "published";
+    if (wasPublished && status === "draft" && !options.confirmedUnpublish) return requestUnpublishCurrentPage();
 
     syncAdminPageMetaFromDom();
     const titleInput = $("#admin-content-title");
@@ -7620,15 +8492,17 @@ class AdminEditorController {
       return;
     }
 
-    const form = $("#admin-content-form");
-    const submitBtn = status === "published" ? $("#admin-content-submit") : $("#admin-content-draft");
-    const topSubmitBtn = status === "published" ? $("#admin-content-submit-top") : $("#admin-content-draft-top");
-    form?.setAttribute("aria-busy", "true");
+    const previousContent = cloneData(content);
+    const saveSnapshot = adminSnapshotFromDom();
+    const previousEditId = adminState.contentEditId;
+    const previousEditType = adminState.contentEditType;
+    setAdminEditorSaving(true);
+    adminState.pendingEditorSaveStatus = status;
+    adminState.pendingContentMutation = null;
     setAdminStatus("저장 중…");
-    if (submitBtn) submitBtn.disabled = true;
-    if (topSubmitBtn) topSubmitBtn.disabled = true;
 
     try {
+      const draftContext = await editorDraftService.pause();
       saveAdminHistorySnapshot(adminSnapshotFromDom());
       const { nextItem, type, editingId, editingType } = this.buildContentItemFromForm(status);
 
@@ -7648,53 +8522,99 @@ class AdminEditorController {
       adminState.contentEditType = type;
       adminState.contentEditId = nextItem.id;
 
-      renderAdminContentList();
-      const label = status === "draft" ? "임시저장됨" : "게시됨";
-      await persistContent(label, label, status === "draft" ? "페이지를 임시저장했습니다." : "페이지를 게시했습니다.", label);
+      const label = wasPublished ? (status === "draft" ? "비공개로 전환됨" : "변경 저장됨") : (status === "draft" ? "임시저장됨" : "게시됨");
+      await saveContent(label);
+      const draftCleared = await editorDraftService.clear(draftContext, true);
+      adminState.pendingEditorSaveStatus = null;
+      adminState.pendingEditorRecovery = null;
+      adminState.pendingContentMutation = null;
+      renderAllContent();
       saveAdminHistorySnapshot(adminSnapshotFromDom());
+      showToast(label, wasPublished ? (status === "draft" ? "편집 내용을 저장하고 공개 목록에서 숨겼습니다." : "공개 상태를 유지하며 변경사항을 저장했습니다.") : (status === "draft" ? "페이지를 임시저장했습니다." : "페이지를 게시했습니다."), "success");
+      if (!draftCleared) showToast("저장 완료 · 복구 초안 정리 실패", "수동 저장은 완료했습니다. 서버의 복구 초안을 정리하지 못했습니다.");
+      return true;
+    } catch (error) {
+      replaceContentData(previousContent);
+      adminState.contentEditId = previousEditId;
+      adminState.contentEditType = previousEditType;
+      adminState.editorDirty = true;
+      if (error?.status === 401) {
+        adminState.pendingEditorRecovery = { snapshot: saveSnapshot, saveStatus: status };
+        authState.clear();
+        renderAdminAuth();
+        setAdminStatus("세션이 만료되었습니다. 다시 로그인해 주세요.");
+        showToast("세션 만료", "관리자 로그인 후 다시 시도해 주세요.");
+      } else {
+        setAdminStatus("저장에 실패했습니다. 변경사항을 유지했습니다.");
+        showSaveErrorModal(wasPublished ? (status === "draft" ? "비공개 전환" : "변경 저장") : (status === "draft" ? "임시저장" : "게시"), error);
+      }
+      return false;
     } finally {
-      form?.removeAttribute("aria-busy");
-      if (submitBtn) submitBtn.disabled = false;
-      if (topSubmitBtn) topSubmitBtn.disabled = false;
+      setAdminEditorSaving(false);
+      setAdminStatus(adminState.status);
+      editorDraftService.resume();
     }
   }
 
   async moveToTrash(type, id) {
-    if (!ensureAdminAuthenticated()) return;
-    const col = collectionForType(type);
-    const idx = col.findIndex((e) => e.id === id);
-    if (idx < 0) return;
-
-    const currentStatus = normalizeContentStatus(col[idx].status);
-    col[idx] = {
-      ...col[idx],
-      status: "trash",
-      previousStatus: currentStatus === "trash" ? (col[idx].previousStatus || "published") : currentStatus,
-      deletedAt: new Date().toISOString()
-    };
-    setCollectionForType(type, col);
-
-    if (adminState.contentEditId === id && adminState.contentEditType === type) {
-      adminState.contentEditId = null;
-    }
-
-    renderAdminContentList();
-    renderAdminContentForm();
-    await persistContent("Moved to trash", "Moved to trash", "Item moved to trash.", "Trash");
+    return this.persistItemStatus(type, id, "trash");
   }
 
   async restoreItem(type, id) {
-    if (!ensureAdminAuthenticated()) return;
-    const col = collectionForType(type);
-    const idx = col.findIndex((e) => e.id === id);
-    if (idx < 0) return;
+    return this.persistItemStatus(type, id, "restore");
+  }
 
-    const restoredStatus = normalizeContentStatus(col[idx].previousStatus || "published");
-    col[idx] = { ...col[idx], status: restoredStatus, previousStatus: null, deletedAt: null };
-    setCollectionForType(type, col);
+  async persistItemStatus(type, id, action) {
+    if (!ensureAdminAuthenticated()) return false;
+    const item = collectionForType(type).find((entry) => entry.id === id);
+    if (!item || (action === "trash") === (item.status === "trash")) return false;
+    if (!confirmAdminEditorNavigation(() => this.persistItemStatus(type, id, action))) return false;
 
-    renderAdminContentList();
-    await persistContent("Restored", "Restored", `Item restored to ${restoredStatus}.`, "Restore");
+    const previousContent = cloneData(content);
+    const editorSnapshot = adminSnapshotFromDom();
+    const previousEditId = adminState.contentEditId;
+    const previousEditType = adminState.contentEditType;
+    const restoredStatus = item.previousStatus === "draft" ? "draft" : "published";
+    const label = action === "trash" ? "휴지통 이동" : "복원";
+    adminState.pendingContentMutation = { action, type, id };
+    adminState.pendingEditorSaveStatus = null;
+    setAdminEditorSaving(true);
+    setAdminStatus(`${label} 중…`);
+    try {
+      const draftContext = await editorDraftService.pause();
+      const nextItem = action === "trash"
+        ? { ...item, status: "trash", previousStatus: normalizeContentStatus(item.status), deletedAt: new Date().toISOString() }
+        : { ...item, status: restoredStatus, previousStatus: null, deletedAt: null };
+      setCollectionForType(type, collectionForType(type).map((entry) => entry.id === id ? nextItem : entry));
+      await saveContent(`${label} 완료`);
+      if (action === "trash" && previousEditId === id && previousEditType === type) await editorDraftService.clear(draftContext, true);
+      adminState.pendingContentMutation = null;
+      adminState.pendingEditorRecovery = null;
+      if (action === "trash" && previousEditId === id && previousEditType === type) adminState.contentEditId = null;
+      renderAllContent();
+      showToast(`${label} 완료`, action === "trash" ? "페이지를 휴지통으로 이동했습니다." : `페이지를 ${adminStatusMeta(restoredStatus).label} 상태로 복원했습니다.`, "success",
+        action === "trash" ? { action: "undo-trash", label: "되돌리기", type, id } : null);
+      return true;
+    } catch (error) {
+      replaceContentData(previousContent);
+      adminState.contentEditId = previousEditId;
+      adminState.contentEditType = previousEditType;
+      if (error?.status === 401) {
+        adminState.pendingEditorRecovery = { snapshot: editorSnapshot, saveStatus: null, retryMutation: { action, type, id } };
+        authState.clear();
+        renderAdminAuth();
+        setAdminStatus("세션이 만료되었습니다. 다시 로그인해 주세요.");
+        showToast("세션 만료", "편집 내용을 보존했습니다. 로그인 후 다시 시도해 주세요.");
+      } else {
+        setAdminStatus(`${label}에 실패했습니다. 변경사항을 유지했습니다.`);
+        showSaveErrorModal(label, error);
+      }
+      return false;
+    } finally {
+      setAdminEditorSaving(false);
+      setAdminStatus(adminState.status);
+      editorDraftService.resume();
+    }
   }
 
   async permanentDelete(type, id) {
@@ -7717,11 +8637,12 @@ class AdminEditorController {
 const adminEditorController = new AdminEditorController();
 
 function startContentDraft(type = adminState.contentEditType || "portfolio", id = "") {
-  closeAdminSidebar();
   const preferredType = !id && (!type || type === adminState.contentEditType) && adminState.contentFilterSection !== "all"
     ? adminState.contentFilterSection
     : type;
-  adminEditorController.startDraft(preferredType, id);
+  const started = adminEditorController.startDraft(preferredType, id);
+  if (started) closeAdminSidebar();
+  return started;
 }
 
 function adminTemplateBlocks(type = adminState.contentEditType || "portfolio", templateId = "blank") {
@@ -7801,6 +8722,7 @@ function applyAdminContentTemplate(templateId = "blank") {
 }
 
 function duplicateAdminContentItem() {
+  if (!confirmAdminEditorNavigation(() => duplicateAdminContentItem())) return;
   const type = $("#admin-content-type")?.value || adminState.contentEditType || "portfolio";
   const item = currentAdminContentItem();
   if (!item) {
@@ -7808,7 +8730,7 @@ function duplicateAdminContentItem() {
     return;
   }
 
-  startContentDraft(type);
+  if (!startContentDraft(type)) return;
   fillAdminField("admin-content-type", type);
   fillAdminField("admin-content-type-id", defaultAdminTypeId(type));
   fillAdminField("admin-content-category", item.category || defaultCategoryId(type));
@@ -7831,6 +8753,11 @@ function duplicateAdminContentItem() {
 }
 
 function setAdminPanel(panel) {
+  if (panel === adminState.activePanel) {
+    closeAdminSidebar();
+    return;
+  }
+  if (!confirmAdminEditorNavigation(() => setAdminPanel(panel))) return;
   adminState.activePanel = panel;
   closeAdminSidebar();
   renderAdminPanelTabs();
@@ -7921,7 +8848,7 @@ async function saveContentDraft(event) {
 
 async function saveDraft() {
   if (!ensureAdminAuthenticated()) return;
-  await adminEditorController.commit("draft");
+  await adminEditorController.commit(currentAdminStatusValue() === "published" ? "published" : "draft");
 }
 
 async function commitContent(status = "published", event = null) {
@@ -8103,7 +9030,15 @@ async function verifyAdminOtp(event) {
     await contentService.hydrate();
     fillAdminField("admin-otp-code", "");
     setAdminStatus("이메일 인증으로 로그인했습니다.");
+    const editorRecovery = adminState.pendingEditorRecovery;
     renderAllContent();
+    if (editorRecovery) {
+      applyAdminSnapshot(editorRecovery.snapshot);
+      adminState.pendingEditorSaveStatus = editorRecovery.saveStatus;
+      adminState.pendingContentMutation = editorRecovery.retryMutation || null;
+      adminState.pendingEditorRecovery = null;
+      setAdminStatus(editorRecovery.retryMutation ? "편집 내용을 복원했습니다. 요청한 작업을 다시 시도해 주세요." : "편집 내용을 복원했습니다. 다시 저장해 주세요.");
+    }
     showToast("로그인 완료", "관리자 세션이 활성화되었습니다.", "success");
   } catch (error) {
     console.error(error);
@@ -8118,6 +9053,7 @@ async function verifyAdminOtp(event) {
 }
 
 async function logoutAdmin() {
+  if (!confirmAdminEditorNavigation(() => logoutAdmin())) return;
   try {
     await requestJson(AUTH_LOGOUT_API_URL, {
       method: "POST",
@@ -8364,7 +9300,8 @@ async function init() {
   saveState();
 
   const rawHash = window.location.hash.slice(1); // e.g. "portfolio/xyz" or "study/abc" or "portfolio"
-  const [hashPage, hashSubId] = rawHash.split("/");
+  const [hashPage, encodedSubId] = rawHash.split("/");
+  const hashSubId = decodePublicRouteId(encodedSubId);
   const initialPage = ["portfolio", "study", "updates", "admin"].includes(hashPage) ? hashPage : "home";
 
   if (hashSubId && initialPage === "portfolio") {
@@ -8372,11 +9309,13 @@ async function init() {
     if (project) activePortfolioProjectId = hashSubId;
   }
 
-  showPage(initialPage, { updateHash: false, track: true });
+  showPage(initialPage, { updateHash: false, pushHistory: false, track: true });
 
   if (hashSubId && initialPage === "study") {
     requestAnimationFrame(() => openStudyPost(hashSubId, { pushHistory: false }));
   }
+  if (hashSubId && initialPage === "updates") openPublicDocument("update", hashSubId, { pushHistory: false });
+  publicContentReady = true;
 }
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -8385,18 +9324,32 @@ window.addEventListener("DOMContentLoaded", () => {
     showToast("초기화 실패", "콘텐츠를 불러오는 중 문제가 발생했습니다.");
   });
 });
+window.addEventListener("beforeunload", (event) => {
+  if (!adminState.editorSaving && !hasUnsavedAdminContent()) return;
+  event.preventDefault();
+  event.returnValue = "";
+});
+
 window.addEventListener("hashchange", () => {
   const raw = window.location.hash.slice(1);
-  const [page, subId] = raw.split("/");
+  const [page, encodedSubId] = raw.split("/");
+  const subId = decodePublicRouteId(encodedSubId);
   if (!["home", "portfolio", "study", "updates", "admin"].includes(page)) return;
   if (page === "portfolio" && subId) {
     activePortfolioProjectId = subId;
-    showPage("portfolio", { updateHash: false, pushHistory: false, track: true });
+    showPage("portfolio", { updateHash: false, pushHistory: false, track: true, resumeNavigation: () => openPortfolioProject(subId, "history") });
     return;
   }
   if (page === "study" && subId) {
-    showPage("study", { updateHash: false, pushHistory: false, track: true });
+    if (!showPage("study", { updateHash: false, pushHistory: false, track: true, resumeNavigation: () => {
+      showPage("study", { track: false });
+      openStudyPost(subId);
+    } })) return;
     requestAnimationFrame(() => openStudyPost(subId, { pushHistory: false }));
+    return;
+  }
+  if (page === "updates" && subId) {
+    openPublicDocument("update", subId, { pushHistory: false });
     return;
   }
   showPage(page || "home", { updateHash: false, pushHistory: false, track: true });
@@ -8405,6 +9358,12 @@ window.addEventListener("hashchange", () => {
 window.addEventListener("popstate", (e) => {
   const st = e.state;
   const scroll = st?.scroll || 0;
+  const [routePage, encodedRouteId] = window.location.hash.slice(1).split("/");
+  const routeId = decodePublicRouteId(encodedRouteId);
+  if (st?.page === "updates" && st.updateId || routePage === "updates" && routeId) {
+    openPublicDocument("update", st?.updateId || routeId, { pushHistory: false });
+    return;
+  }
 
   if (st?.page === "portfolio") {
     if (st.projectId) {
@@ -8412,13 +9371,19 @@ window.addEventListener("popstate", (e) => {
     } else {
       activePortfolioProjectId = null;
     }
-    showPage("portfolio", { updateHash: false, pushHistory: false, track: false, restoreScroll: scroll });
+    showPage("portfolio", { updateHash: false, pushHistory: false, track: false, restoreScroll: scroll, resumeNavigation: st.projectId ? () => {
+      openPortfolioProject(st.projectId, "history");
+      window.scrollTo(0, scroll);
+    } : null });
     return;
   }
 
   if (st?.page === "study") {
     if (st.postId) {
-      showPage("study", { updateHash: false, pushHistory: false, track: false, restoreScroll: 0 });
+      if (!showPage("study", { updateHash: false, pushHistory: false, track: false, restoreScroll: 0, resumeNavigation: () => {
+        showPage("study", { track: false });
+        openStudyPost(st.postId);
+      } })) return;
       requestAnimationFrame(() => openStudyPost(st.postId, { pushHistory: false }));
     } else {
       showPage("study", { updateHash: false, pushHistory: false, track: false, restoreScroll: scroll });
@@ -8448,6 +9413,14 @@ function runDeclarativeHandler(handler, event, target) {
 }
 
 const declarativeClickHandlers = {
+  "restore-editor-draft": () => editorDraftService.restore(),
+  "discard-editor-draft": () => editorDraftService.discard(),
+  "keep-editing": () => dismissUnsavedChanges(),
+  "discard-changes": () => discardAdminEditorChanges(),
+  "request-unpublish": () => requestUnpublishCurrentPage(),
+  "cancel-unpublish": () => cancelUnpublishCurrentPage(),
+  "confirm-unpublish": () => confirmUnpublishCurrentPage(),
+  "undo-trash": (target) => restoreContentItem(target.dataset.type || "", target.dataset.id || ""),
   "show-public-page": (target) => showPage(target.dataset.page || "home"),
   "toggle-public-menu": () => togglePublicMenu(),
   "close-portfolio-project": () => closePortfolioProject(),
@@ -8466,9 +9439,10 @@ const declarativeClickHandlers = {
   "toggle-comment-editor": (target) => toggleCommentEditor(target.dataset.commentId || ""),
   "delete-comment": (target) => deleteComment(target.dataset.commentId || ""),
   "open-home-feed-item": (target) => openHomeFeedItem(target.dataset.type || "", target.dataset.id || ""),
+  "open-public-document": (target) => openPublicDocument(target.dataset.type || "", target.dataset.id || ""),
   "set-portfolio-category": (target) => setPortfolioCategory(target.dataset.category || "all"),
   "set-study-category": (target) => setStudyCategory(target.dataset.category || "all"),
-  "open-study-post": (target) => openStudyPost(target.dataset.id || ""),
+  "open-study-post": (target) => openPublicDocument("study", target.dataset.id || ""),
   "set-admin-content-status-filter": (target) => setAdminContentStatusFilter(target.dataset.status || "published"),
   "set-admin-content-section-filter": (target) => setAdminContentSectionFilter(target.dataset.section || "all"),
   "set-admin-content-category-filter": (target) => setAdminContentCategoryFilter(target.dataset.category || "all"),
@@ -8524,6 +9498,7 @@ const declarativeChangeHandlers = {
 function handleDeclarativeClick(event) {
   const target = event.target.closest("[data-action]");
   if (!target) return;
+  if (target.tagName === "A" && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (event.button !== undefined && event.button !== 0))) return;
   const handler = declarativeClickHandlers[target.dataset.action];
   if (!handler) return;
   event.preventDefault();
@@ -8577,14 +9552,19 @@ document.addEventListener("keydown", function (e) {
 });
 
 adminInteractionController.bindEvents();
+document.addEventListener("keydown", handleUnsavedChangesKeydown, true);
 document.addEventListener("click", handleDeclarativeClick, true);
 document.addEventListener("submit", handleDeclarativeSubmit, true);
 document.addEventListener("input", handleDeclarativeInput);
 document.addEventListener("change", handleDeclarativeChange);
 document.addEventListener("mousedown", handleDeclarativeMouseDown);
 ADMIN_DRAWER_MEDIA.addEventListener("change", renderAdminShellState);
+PUBLIC_MENU_MEDIA.addEventListener("change", (event) => {
+  if (!event.matches) setPublicMenuOpen(false);
+});
 
 document.addEventListener("click", (event) => {
+  if (event.target.closest("a[href]") && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || (event.button !== undefined && event.button !== 0))) return;
   const brand = event.target.closest(".brand");
   if (brand) {
     event.preventDefault();

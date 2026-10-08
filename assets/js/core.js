@@ -2,7 +2,7 @@
 const defaultContent = {
   site: {
     eyebrow: "thecistus.com / personal",
-    title: "thecistus",
+    title: "작업과 기록",
     lead: "",
     status: "personal page",
     focus: "archive / notes / updates"
@@ -44,9 +44,9 @@ const defaultContent = {
   updates: [],
   taxonomy: {
     types: [
-      { id: "portfolio", label: "Portfolio", group: "portfolio" },
+      { id: "portfolio", label: "Projects", group: "portfolio" },
       { id: "study", label: "Study", group: "study" },
-      { id: "update", label: "Moments", group: "update" }
+      { id: "update", label: "Updates", group: "update" }
     ],
     categories: [
       { id: "web", label: "Web", group: "portfolio" },
@@ -67,6 +67,7 @@ const CONTENT_GROUPS = ["portfolio", "study", "update"];
 
 const PUBLIC_CONTENT_API_URL = "/api/content";
 const ADMIN_CONTENT_API_URL = "/api/admin/content";
+const ADMIN_EDITOR_DRAFTS_API_URL = "/api/admin/editor-drafts";
 const ADMIN_CONTENT_RESET_API_URL = "/api/admin/content/reset";
 const AUTH_SESSION_API_URL = "/api/auth/session";
 const AUTH_REQUEST_CODE_API_URL = "/api/auth/request-code";
@@ -76,7 +77,7 @@ const COMMENTS_API_URL = "/api/comments";
 const CONTENT_EXPORT_VERSION = 1;
 const STORAGE_KEY = "thecistus-raid-state-v3";
 const MOBILE_RAID_KEY = "thecistus-mobile-raid-collapsed";
-const pageLabels = { home: "Home", portfolio: "Portfolio", study: "Study", updates: "Moments", admin: "Admin" };
+const pageLabels = { home: "Home", portfolio: "Projects", study: "Study", updates: "Updates", admin: "Admin" };
 const PAGE_ICON_OPTIONS = ["📄", "📝", "📚", "💡", "🧠", "⚙️", "🎯", "🧪", "🌿", "✨"];
 const PAGE_COVER_OPTIONS = ["sand", "sky", "mint", "peach", "stone"];
 
@@ -160,6 +161,19 @@ class AdminUIState {
       dragTargetPlacement: "before",
       currentBlockIndex: -1,
       editorBlocks: [],
+      editorBaselineSignature: "",
+      editorDirty: false,
+      editorSaving: false,
+      pendingEditorSaveStatus: null,
+      pendingEditorRecovery: null,
+      pendingEditorNavigation: null,
+      editorNavigationGeneration: 0,
+      editorNavigationFocus: null,
+      editorNavigationInert: [],
+      unpublishFocus: null,
+      unpublishInert: [],
+      unpublishPageKey: "",
+      pendingContentMutation: null,
       recentBlockKinds: [],
       selectedBlockIndices: [],
       lastSelectedBlockIndex: -1,
@@ -325,9 +339,9 @@ function normalizeTaxonomyGroup(value) {
 
 function defaultTypeLabel(group) {
   return {
-    portfolio: "Portfolio",
+    portfolio: "Projects",
     study: "Study",
-    update: "Moments"
+    update: "Updates"
   }[group] || "콘텐츠";
 }
 
@@ -504,13 +518,13 @@ function normalizeText(value, fallback = "") {
 
 function normalizeMultilineText(value, fallback = "", options = {}) {
   if (typeof value !== "string") return fallback;
-  const next = value
+  let next = value
     .replace(/\u00a0/g, " ")
-    .replace(/\r/g, "")
-    .replace(/\n{3,}/g, "\n\n");
+    .replace(/\r/g, "");
   if (options.preserveEdges) {
     return next || fallback;
   }
+  next = next.replace(/\n{3,}/g, "\n\n");
   const trimmed = next.trim();
   return trimmed || fallback;
 }
@@ -629,7 +643,7 @@ function jsStringLiteral(value) {
 }
 
 function supportsRichBody(kind) {
-  return ["paragraph", "quote", "text", "toggle", "callout", "bookmark"].includes(kind);
+  return ["paragraph", "heading1", "heading2", "heading3", "heading3", "quote", "text", "toggle", "callout", "bookmark"].includes(kind);
 }
 
 function sanitizeRichTextHtml(value) {
@@ -652,6 +666,8 @@ function sanitizeRichTextHtml(value) {
     if (tag === "br") return "<br>";
     if (tag === "strong" || tag === "b") return inner ? `<strong>${inner}</strong>` : "";
     if (tag === "em" || tag === "i") return inner ? `<em>${inner}</em>` : "";
+    if (tag === "u") return inner ? `<u>${inner}</u>` : "";
+    if (tag === "s" || tag === "strike" || tag === "del") return inner ? `<s>${inner}</s>` : "";
     if (tag === "code") return inner ? `<code>${inner}</code>` : "";
     if (tag === "a") {
       const href = sanitizeUrl(node.getAttribute("href") || "");
@@ -859,6 +875,7 @@ function normalizeEditorBlock(block, index, options = {}) {
     "paragraph",
     "heading1",
     "heading2",
+    "heading3",
     "quote",
     "divider",
     "todo",
@@ -891,7 +908,7 @@ function normalizeEditorBlock(block, index, options = {}) {
     body: kind === "code"
       ? normalizeMultilineText(draft.body, "", { preserveEdges: true })
       : supportsRichBody(kind)
-        ? sanitizeRichTextHtml(draft.body)
+        ? sanitizeRichTextHtml(/^heading[123]$/.test(kind) && !/<\/?(?:strong|b|em|i|u|s|strike|del|code|a|br)\b|&(?:amp|lt|gt|quot|#39);/i.test(draft.body || "") ? escapeHtml(draft.body || "") : draft.body)
         : normalizeMultilineText(draft.body, ""),
     tone: draft.tone === "accent" ? "accent" : "default",
     items: []
@@ -1054,6 +1071,84 @@ function normalizePageCover(cover, type) {
   return PAGE_COVER_OPTIONS.includes(cover) ? cover : defaultPageCover(type);
 }
 
+function normalizeContentStatus(status) {
+  return ["published", "draft", "trash"].includes(status) ? status : "published";
+}
+
+function publishedNotionReference(draft) {
+  const id = draft?.notionDocumentId;
+  return typeof id === "string" && /^[A-Za-z0-9._:-]{1,128}$/.test(id)
+    ? { notionDocumentId: id }
+    : {};
+}
+
+function normalizePublicDocumentPages(pages) {
+  if (!Array.isArray(pages)) return [];
+  const seen = new Set();
+  const validId = (id) => typeof id === "string" && /^[A-Za-z0-9._:-]{1,128}$/.test(id);
+  return pages.filter((page) => page && validId(page._id) && validId(page.sourceId)
+    && ["portfolio", "study", "update"].includes(page.group) && !seen.has(page._id)
+    && seen.add(page._id)).map((page) => ({
+    _id: page._id, sourceId: page.sourceId, group: page.group,
+    title: String(page.title || "제목 없음"), icon: typeof page.icon === "string" ? page.icon : "",
+    ...(validId(page.parentDocument) ? { parentDocument: page.parentDocument } : {}),
+    order: Number.isFinite(page.order) ? page.order : null
+  }));
+}
+
+function createPublicDocumentGraph(payload) {
+  const groups = { portfolio: payload.portfolio || [], study: payload.studyPosts || [], update: payload.updates || [] };
+  const entries = new Map();
+  for (const [group, items] of Object.entries(groups)) {
+    for (const item of items) if (!item.status || item.status === "published") entries.set(`${group}:${item.id}`, item);
+  }
+  // Only nodes with a visible public collection entry can become navigation links.
+  const nodes = normalizePublicDocumentPages(payload.notionPages).filter((node) => entries.has(`${node.group}:${node.sourceId}`));
+  const byId = new Map(nodes.map((node) => [node._id, node]));
+  const byItem = new Map(nodes.map((node) => [`${node.group}:${node.sourceId}`, node]));
+  const positions = new Map(nodes.map((node, index) => [node._id, index]));
+  for (const node of nodes) {
+    const visited = new Set([node._id]);
+    let ancestor = node.parentDocument;
+    while (ancestor && byId.has(ancestor) && !visited.has(ancestor)) {
+      visited.add(ancestor);
+      ancestor = byId.get(ancestor).parentDocument;
+    }
+    if (ancestor || !byId.has(node.parentDocument)) delete node.parentDocument;
+  }
+  const children = new Map();
+  for (const node of nodes) {
+    const siblings = children.get(node.parentDocument) || [];
+    siblings.push(node);
+    children.set(node.parentDocument, siblings);
+  }
+  const ancestors = (node) => {
+    const path = [];
+    const visited = new Set([node?._id]);
+    let parent = node?.parentDocument;
+    while (parent && byId.has(parent) && !visited.has(parent)) {
+      visited.add(parent);
+      const entry = byId.get(parent);
+      path.unshift(entry);
+      parent = entry.parentDocument;
+    }
+    return path;
+  };
+  const rootsFor = (group, items) => {
+    const included = new Set(items.map((item) => item.id));
+    return items.filter((item) => {
+      const node = byItem.get(`${group}:${item.id}`);
+      const parent = byId.get(node?.parentDocument);
+      return !parent || parent.group !== group || !included.has(parent.sourceId);
+    }).sort((a, b) => {
+      const left = byItem.get(`${group}:${a.id}`);
+      const right = byItem.get(`${group}:${b.id}`);
+      return left && right ? positions.get(left._id) - positions.get(right._id) : 0;
+    });
+  };
+  return { nodes, byId, byItem, children, ancestors, rootsFor, entries };
+}
+
 function normalizePortfolioItems(items) {
   if (!Array.isArray(items)) return [];
   const existingIds = new Set();
@@ -1063,6 +1158,7 @@ function normalizePortfolioItems(items) {
     existingIds.add(id);
     return {
       id,
+      ...publishedNotionReference(draft),
       status: ["published", "draft", "trash"].includes(draft.status) ? draft.status : "published",
       year: normalizeText(draft.year, new Date().getFullYear().toString()),
       date: normalizeText(draft.date, ""),
@@ -1097,6 +1193,7 @@ function normalizeStudyPosts(posts) {
     const body = normalizeText(draft.body, "");
     return {
       id,
+      ...publishedNotionReference(draft),
       status: ["published", "draft", "trash"].includes(draft.status) ? draft.status : "published",
       date: normalizeText(draft.date, new Date().toISOString().slice(0, 10)),
       typeId: slugify(normalizeText(draft.typeId || draft.type, "study"), "study"),
@@ -1125,6 +1222,7 @@ function normalizeUpdates(items) {
     existingIds.add(id);
     return {
       id,
+      ...publishedNotionReference(draft),
       status: ["published", "draft", "trash"].includes(draft.status) ? draft.status : "published",
       date: normalizeText(draft.date, new Date().toISOString().slice(0, 10)),
       typeId: slugify(normalizeText(draft.typeId || draft.type, "update"), "update"),
@@ -1177,6 +1275,7 @@ function normalizeContentPayload(payload) {
     portfolio: normalizePortfolioItems(draft.portfolio),
     studyPosts: normalizeStudyPosts(draft.studyPosts),
     updates: normalizeUpdates(draft.updates),
+    notionPages: normalizePublicDocumentPages(draft.notionPages),
     taxonomy: normalizeTaxonomy(draft.taxonomy),
     contact: normalizeContact(draft.contact),
     footer: normalizeText(draft.footer, defaultContent.footer)
@@ -1190,6 +1289,7 @@ const state = browserStateStore.load();
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const ADMIN_BLOCK_CLIPBOARD_PREFIX = "__THECISTUS_BLOCKS__::";
+const ADMIN_BLOCK_CLIPBOARD_MIME = "application/x-thecistus-blocks";
 let currentStudyCategory = "all";
 let currentPortfolioCategory = "all";
 let currentPage = "home";
@@ -1265,7 +1365,7 @@ const COSMOS_SYSTEM_CONFIG = [
   {
     id: "portfolio",
     name: "Alpha",
-    sectionLabel: "Portfolio",
+    sectionLabel: "Projects",
     page: "portfolio",
     starColor: "255, 209, 129",
     emptyCopy: "포트폴리오 글이 추가되면 새 행성이 생성됩니다."
@@ -1281,7 +1381,7 @@ const COSMOS_SYSTEM_CONFIG = [
   {
     id: "updates",
     name: "Gamma",
-    sectionLabel: "Moments",
+    sectionLabel: "Updates",
     page: "updates",
     starColor: "190, 140, 255",
     emptyCopy: "근황이 추가되면 이 항성계에 행성이 늘어납니다."
@@ -1298,7 +1398,7 @@ const analytics = {
 function contentTypeMeta(type) {
   return {
     portfolio: {
-      label: "Portfolio",
+      label: "Projects",
       dateLabel: "작성 날짜",
       datePlaceholder: "2026-04-13T11:30",
       categoryPlaceholder: "web",
@@ -1324,7 +1424,7 @@ function contentTypeMeta(type) {
       detailVisible: false
     },
     update: {
-      label: "Moments",
+      label: "Updates",
       dateLabel: "날짜",
       datePlaceholder: "2026-04-02",
       categoryPlaceholder: "updates",
@@ -1446,7 +1546,7 @@ function portfolioCaseStudy(project) {
     .filter((block) => block.kind === "bullets")
     .flatMap((block) => block.items.map((item) => item.text))
     .filter(Boolean);
-  const extraBlocks = blocks.filter((block) => ["paragraph", "heading1", "heading2", "quote", "divider", "toggle", "callout", "code", "image", "file", "embed", "bookmark"].includes(block.kind));
+  const extraBlocks = blocks.filter((block) => ["paragraph", "heading1", "heading2", "heading3", "quote", "divider", "toggle", "callout", "code", "image", "file", "embed", "bookmark"].includes(block.kind));
 
   return {
     detail,
@@ -1478,7 +1578,7 @@ function blocksToPlainText(blocks) {
     if (block.kind === "paragraph" || block.kind === "quote") {
       return richTextToPlainText(block.body);
     }
-    if (block.kind === "heading1" || block.kind === "heading2") {
+    if (block.kind === "heading1" || block.kind === "heading2" || block.kind === "heading3") {
       return normalizeText(block.body || block.title, "");
     }
     if (block.kind === "divider") {

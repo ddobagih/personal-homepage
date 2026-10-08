@@ -8,6 +8,14 @@ PRIVATE_PATHS=(
   "/.env"
   "/server.js"
   "/content-store.js"
+  "/editor-draft-store.js"
+  "/notion-store.js"
+  "/notion-content.js"
+  "/admin-src/"
+  "/data/notion-documents.json"
+  "/data/notion-uploads/"
+  "/data/notion-backups/"
+  "/data/editor-drafts.json"
   "/package.json"
   "/package-lock.json"
   "/deploy/"
@@ -94,23 +102,24 @@ try {
   process.exit(1);
 }
 const forbidden = new Set(["status", "previousStatus", "deletedAt"]);
-function walk(value) {
+function walk(value, trail = []) {
   if (!value || typeof value !== "object") return;
   if (Array.isArray(value)) {
-    for (const item of value) walk(item);
+    for (const item of value) walk(item, trail);
     return;
   }
   for (const [key, child] of Object.entries(value)) {
-    if (forbidden.has(key)) {
+    if (forbidden.has(key) && !(key === "status" && trail.length === 1 && trail[0] === "site")) {
       console.error(`[smoke] /api/content exposes admin metadata key: ${key}`);
       process.exit(1);
     }
-    walk(child);
+    walk(child, [...trail, key]);
   }
 }
 walk(payload?.content);
 NODE
 expect_status "/api/admin/content" "401"
+expect_status "/api/admin/editor-drafts?key=study:new" "401"
 
 for path in "${PRIVATE_PATHS[@]}"; do
   expect_not_2xx "$path"
